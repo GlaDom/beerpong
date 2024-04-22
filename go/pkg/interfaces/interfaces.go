@@ -10,3 +10,11 @@ type GameResponse struct {
 	Teams   []Team  `json:"teams" gorm:"foreignKey:game_id"`
 	Matches []Match `json:"matches" gorm:"foreignKey:game_id"`
 }
+
+type MatchUpdateRequest struct {
+	Matches []Match `json:"matches"`
+}
+
+type TeamUpdateRequest struct {
+	Teams []Team `json:"teams"`
+}

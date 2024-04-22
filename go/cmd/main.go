@@ -31,10 +31,18 @@ func main() {
 	gameRepo := repo.NewGameRepo(psqlInfo)
 
 	//game routes
-	router.POST(apiPrefix+"/creategame", gameRepo.CreateGame)
-	router.GET(apiPrefix+"/getgame", gameRepo.GetGame)
-	router.DELETE(apiPrefix+"/games/:id", gameRepo.DeleteGame)
-	router.PUT(apiPrefix+"/games/:id", gameRepo.UpdateGame)
+
+	//game specific endpoints
+	router.POST(apiPrefix+"/createGame", gameRepo.CreateGame)
+	router.GET(apiPrefix+"/getGame", gameRepo.GetGame)
+	router.PUT(apiPrefix+"/finishGame/:id", gameRepo.FinishGame)
+	// router.DELETE(apiPrefix+"/games/:id", gameRepo.DeleteGame)
+
+	//match specific endpoints
+	router.PUT(apiPrefix+"/updateMatches", gameRepo.UpdateMatches)
+
+	//team specific endpoint
+	router.PUT(apiPrefix+"/updateTeams", gameRepo.UpdateTeams)
 
 	router.Run(":8080")
 }

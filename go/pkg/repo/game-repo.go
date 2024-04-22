@@ -5,6 +5,7 @@ import (
 	"log"
 	"math/rand"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gladom/beerpong/pkg/interfaces"
@@ -55,15 +56,15 @@ func (gr *Gamerepo) GetGame(c *gin.Context) {
 	// id := c.Param("id")
 	game := interfaces.GameResponse{}
 	if tx := gr.db.Where("is_finished=false").First(&game.Game); tx.Error != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": tx.Error})
+		c.JSON(http.StatusNotFound, gin.H{"error": tx.Error.Error()})
 		return
 	}
 	if tx := gr.db.Where("game_id=?", game.Game.ID).Find(&game.Teams); tx.Error != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": tx.Error})
+		c.JSON(http.StatusNotFound, gin.H{"error": tx.Error.Error()})
 		return
 	}
 	if tx := gr.db.Where("game_id=?", game.Game.ID).Find(&game.Matches); tx.Error != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": tx.Error})
+		c.JSON(http.StatusNotFound, gin.H{"error": tx.Error.Error()})
 		return
 	}
 
@@ -71,16 +72,37 @@ func (gr *Gamerepo) GetGame(c *gin.Context) {
 }
 
 func (gr *Gamerepo) UpdateMatches(c *gin.Context) {
-
-	c.JSON(http.StatusOK, nil)
+	var updateRequest interfaces.MatchUpdateRequest
+	if err := c.ShouldBindJSON(&updateRequest); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	for _, m := range updateRequest.Matches {
+		m.UpdatedAt = time.Now()
+		if tx := gr.db.Where("game_id=? and away_team=? and home_team=?", m.GameID, m.AwayTeam, m.HomeTeam).Save(&m); tx.Error != nil {
+			c.JSON(http.StatusConflict, gin.H{"error": tx.Error.Error()})
+			return
+		}
+	}
+	c.JSON(http.StatusOK, gin.H{})
 }
 
-func (gr *Gamerepo) DeleteGame(c *gin.Context) {
-	// id := c.Param("id")
-	c.JSON(http.StatusOK, gin.H{"message": "Game deleted"})
+func (gr *Gamerepo) UpdateTeams(c *gin.Context) {
+	var updateRequest interfaces.TeamUpdateRequest
+	if err := c.ShouldBindJSON(&updateRequest); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	for _, t := range updateRequest.Teams {
+		if tx := gr.db.Where("game_id=? and team_name=?", t.GameID, t.TeamName).Save(&t); tx.Error != nil {
+			c.JSON(http.StatusConflict, gin.H{"error": tx.Error.Error()})
+			return
+		}
+	}
+	c.JSON(http.StatusOK, gin.H{})
 }
 
-func (gr *Gamerepo) UpdateGame(c *gin.Context) {
+func (gr *Gamerepo) FinishGame(c *gin.Context) {
 	// id := c.Param("id")
 
 	c.JSON(http.StatusOK, interfaces.Game{})
