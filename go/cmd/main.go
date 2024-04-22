@@ -32,7 +32,7 @@ func main() {
 
 	//game routes
 	router.POST(apiPrefix+"/creategame", gameRepo.CreateGame)
-	router.GET(apiPrefix+"/games/:id", gameRepo.GetGame)
+	router.GET(apiPrefix+"/getgame", gameRepo.GetGame)
 	router.DELETE(apiPrefix+"/games/:id", gameRepo.DeleteGame)
 	router.PUT(apiPrefix+"/games/:id", gameRepo.UpdateGame)
 

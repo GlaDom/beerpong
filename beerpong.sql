@@ -3,11 +3,13 @@ CREATE TABLE games (
   mode INTEGER,
   amount_of_teams INTEGER,
   is_finished BOOLEAN,
+  updated_at TIMESTAMP,
   created_at TIMESTAMP
 );
 
 CREATE TABLE teams (
-  game_id INTEGER PRIMARY KEY,
+  id SERIAL PRIMARY KEY,
+  game_id INTEGER,
   team_name VARCHAR(255),
   group_name VARCHAR(255),
   points INTEGER,
@@ -19,11 +21,12 @@ CREATE TABLE teams (
 CREATE TABLE matches (
   game_id INTEGER,
   type VARCHAR(255),
-  group_number INTEGER,
+  group_number VARCHAR(255),
   home_team VARCHAR(255),
   away_team VARCHAR(255),
   points_home INTEGER,
   points_away INTEGER,
   created_at TIMESTAMP,
+  updated_at TIMESTAMP,
   FOREIGN KEY (game_id) REFERENCES games(id)
 );
