@@ -1,0 +1,66 @@
+<ng-container class="flex flex-col">
+    <p-card>
+        <p-steps [model]="items" [readonly]="false" [activeIndex]="activeIndex" (activeIndexChange)="onActiveIndexChange($event)"></p-steps>
+    </p-card>
+    <ng-container *ngIf="false">
+        <p-card header="Waehlen Sie einen Spielmodus aus" class="m-1">
+            <form>
+                <p-toggleButton formControlName="checked" onLabel="{{GAMEMODE_30_TEAMS}}" offLabel="{{GAMEMODE_30_TEAMS}}"></p-toggleButton>
+            </form>
+        </p-card>
+        <div>
+            <p-button label="Weiter" (onClick)="onActiveIndexChange(1)"></p-button>
+        </div>
+    </ng-container>
+    <ng-container *ngIf="!teamsSet">
+        <form [formGroup]="gameForm">
+            <p-card header="Tragen Sie ihre Mannschaften ein" class="m-1">
+                <ng-container formArrayName="groups">
+                    <ng-container *ngFor="let groupForm of groups.controls; let i=index">
+                        <div class="my-1" [formGroupName]="i">
+                            <p-card header="Gruppe {{groupForm.get('name')?.value}}">
+                                <div class="flex flex-col">
+                                    <input formControlName="team1" pInputText placeholder="Mannschaft 1" class="my-1"/>
+                                    <input formControlName="team2" pInputText placeholder="Mannschaft 2" class="my-1"/>
+                                    <input formControlName="team3" pInputText placeholder="Mannschaft 3" class="my-1"/>
+                                    <input formControlName="team4" pInputText placeholder="Mannschaft 4" class="my-1"/>
+                                    <input formControlName="team5" pInputText placeholder="Mannschaft 5" class="my-1"/>
+                                </div>
+                            </p-card>
+    
+                        </div>
+                    </ng-container>
+                </ng-container>
+            </p-card>
+        </form>
+        <div class="flex flex-row-reverse">
+            <p-button label="Weiter" (onClick)="onActiveIndexChange(1)"></p-button>
+        </div>
+    </ng-container>
+    <ng-container *ngIf="teamsSet">
+        <form [formGroup]="gameForm">
+            <p-card header="Gruppenuebersicht" class="m-1">
+                <div class="flex flex-row space-x-5">
+                    <ng-container formArrayName="groups">
+                        <ng-container *ngFor="let groupForm of groups.controls; let i=index">
+                            <div class="my-1">
+                                <p-card header="Gruppe {{groupForm.get('name')?.value}}">
+                                    <div class="flex flex-col">
+                                        <span class="my-1">1. {{groupForm.get('team1')?.value}}</span>
+                                        <span class="my-1">2. {{groupForm.get('team2')?.value}}</span>
+                                        <span class="my-1">3. {{groupForm.get('team3')?.value}}</span>
+                                        <span class="my-1">4. {{groupForm.get('team4')?.value}}</span>
+                                        <span class="my-1">5. {{groupForm.get('team5')?.value}}</span>
+                                    </div>
+                                </p-card>
+                            </div>
+                        </ng-container>
+                    </ng-container>
+                </div>
+            </p-card>
+        </form>
+        <div class="flex flex-row-reverse">
+            <p-button label="Weiter" (onClick)="onActiveIndexChange(1)"></p-button>
+        </div>
+    </ng-container>
+</ng-container>
