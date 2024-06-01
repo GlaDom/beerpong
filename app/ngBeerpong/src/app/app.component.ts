@@ -4,7 +4,7 @@ import { MenuItem } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { StepsModule } from 'primeng/steps'
 import { DividerModule } from 'primeng/divider';
-import { CardModule } from 'primeng/card';
+import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -16,7 +16,8 @@ import { CardModule } from 'primeng/card';
   imports: [
     ButtonModule,
     DividerModule,
-    BeerpongSetupComponent
+    BeerpongSetupComponent,
+    RouterOutlet
   ]
 })
 export class AppComponent implements OnInit {
