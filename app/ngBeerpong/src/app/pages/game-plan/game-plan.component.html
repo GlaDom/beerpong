@@ -1,1 +1,7 @@
-<app-game-card></app-game-card>
+<div class="flex flex-wrap">
+    <ng-container *ngIf="matches.length>0">
+        <ng-container *ngFor="let m of matches">
+            <app-game-card [match]="m"></app-game-card>
+        </ng-container>
+    </ng-container>
+</div>

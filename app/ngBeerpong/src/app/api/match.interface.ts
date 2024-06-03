@@ -1,15 +1,15 @@
 // match.interface.ts
 
 interface Match {
-    gameId: number;
+    game_id: number;
     type: string;
-    groupNumber: string;
-    homeTeam: string;
-    awayTeam: string;
-    pointsHome: number;
-    pointsAway: number;
-    updatedAt: Date;
-    createdAt: Date;
+    group_number: string;
+    home_team: string;
+    away_team: string;
+    points_home: number;
+    points_away: number;
+    updated_at: Date;
+    created_at: Date;
   }
   
   export default Match;

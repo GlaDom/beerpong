@@ -5,6 +5,7 @@ import { importProvidersFrom } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { GamePlanComponent } from './app/pages/game-plan/game-plan.component';
 import { BeerpongSetupComponent } from './app/pages/beerpong-setup/beerpong-setup.component';
+import { HttpClientModule } from '@angular/common/http';
 
 const routes: Routes = [
   {
@@ -19,6 +20,7 @@ bootstrapApplication(AppComponent, {
   providers: [
     importProvidersFrom(BrowserAnimationsModule),
     importProvidersFrom(BrowserModule),
-    importProvidersFrom(RouterModule.forRoot(routes))
+    importProvidersFrom(RouterModule.forRoot(routes)),
+    importProvidersFrom(HttpClientModule),
   ]
 })  .catch(err => console.error(err));

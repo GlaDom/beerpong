@@ -2,13 +2,13 @@
 
 interface Team {
     id: number;
-    gameId: number;
-    teamName: string;
-    groupName: string;
+    game_id: number;
+    team_name: string;
+    group_name: string;
     points: number;
     rank: number;
-    createdAt: Date;
+    created_at: Date;
   }
   
-  export default Team;
+export default Team;
   
