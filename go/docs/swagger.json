@@ -1,0 +1,335 @@
+{
+    "schemes": [
+        "http"
+    ],
+    "swagger": "2.0",
+    "info": {
+        "description": "This is a beerpong server.",
+        "title": "Gin Swagger Beerpong API",
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "name": "API Support",
+            "url": "http://www.swagger.io/support",
+            "email": "support@swagger.io"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0"
+    },
+    "host": "localhost:8080",
+    "basePath": "/api/v1",
+    "paths": {
+        "/createGame": {
+            "post": {
+                "description": "create a new game",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Game"
+                ],
+                "summary": "Create a new game",
+                "parameters": [
+                    {
+                        "description": "New game to create",
+                        "name": "NewGame",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_gladom_beerpong_pkg_models.NewGame"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_gladom_beerpong_pkg_models.NewGame"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/finishGame/:id": {
+            "put": {
+                "tags": [
+                    "Game"
+                ],
+                "summary": "Finish the current game",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Game Id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/getGame": {
+            "get": {
+                "description": "Get the current not finished game",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Game"
+                ],
+                "summary": "Get game",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_gladom_beerpong_pkg_models.GameResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/updateMatches": {
+            "put": {
+                "tags": [
+                    "Match"
+                ],
+                "summary": "Update the matches from a specific game",
+                "parameters": [
+                    {
+                        "description": "Update Matches",
+                        "name": "MatchUpdateRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_gladom_beerpong_pkg_models.MatchUpdateRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/updateTeams": {
+            "put": {
+                "tags": [
+                    "Teams"
+                ],
+                "summary": "Update the teams from the actual game",
+                "parameters": [
+                    {
+                        "description": "Teams to update",
+                        "name": "Teams",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_gladom_beerpong_pkg_models.TeamUpdateRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "github_com_gladom_beerpong_pkg_models.Game": {
+            "type": "object",
+            "properties": {
+                "amount_of_teams": {
+                    "type": "integer"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "is_finished": {
+                    "type": "boolean"
+                },
+                "mode": {
+                    "type": "integer"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_gladom_beerpong_pkg_models.GameResponse": {
+            "type": "object",
+            "properties": {
+                "game": {
+                    "$ref": "#/definitions/github_com_gladom_beerpong_pkg_models.Game"
+                },
+                "matches": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_gladom_beerpong_pkg_models.Match"
+                    }
+                },
+                "teams": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_gladom_beerpong_pkg_models.Team"
+                    }
+                }
+            }
+        },
+        "github_com_gladom_beerpong_pkg_models.Match": {
+            "type": "object",
+            "properties": {
+                "away_team": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "game_id": {
+                    "type": "integer"
+                },
+                "group_number": {
+                    "type": "string"
+                },
+                "home_team": {
+                    "type": "string"
+                },
+                "points_away": {
+                    "type": "integer"
+                },
+                "points_home": {
+                    "type": "integer"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_gladom_beerpong_pkg_models.MatchUpdateRequest": {
+            "type": "object",
+            "properties": {
+                "matches": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_gladom_beerpong_pkg_models.Match"
+                    }
+                }
+            }
+        },
+        "github_com_gladom_beerpong_pkg_models.NewGame": {
+            "type": "object",
+            "properties": {
+                "game": {
+                    "$ref": "#/definitions/github_com_gladom_beerpong_pkg_models.Game"
+                },
+                "teams": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_gladom_beerpong_pkg_models.Team"
+                    }
+                }
+            }
+        },
+        "github_com_gladom_beerpong_pkg_models.Team": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "game_id": {
+                    "type": "integer"
+                },
+                "group_name": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "points": {
+                    "type": "integer"
+                },
+                "rank": {
+                    "type": "integer"
+                },
+                "team_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_gladom_beerpong_pkg_models.TeamUpdateRequest": {
+            "type": "object",
+            "properties": {
+                "teams": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_gladom_beerpong_pkg_models.Team"
+                    }
+                }
+            }
+        }
+    }
+}

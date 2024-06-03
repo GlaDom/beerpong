@@ -1,0 +1,221 @@
+basePath: /api/v1
+definitions:
+  github_com_gladom_beerpong_pkg_models.Game:
+    properties:
+      amount_of_teams:
+        type: integer
+      created_at:
+        type: string
+      id:
+        type: integer
+      is_finished:
+        type: boolean
+      mode:
+        type: integer
+      updated_at:
+        type: string
+    type: object
+  github_com_gladom_beerpong_pkg_models.GameResponse:
+    properties:
+      game:
+        $ref: '#/definitions/github_com_gladom_beerpong_pkg_models.Game'
+      matches:
+        items:
+          $ref: '#/definitions/github_com_gladom_beerpong_pkg_models.Match'
+        type: array
+      teams:
+        items:
+          $ref: '#/definitions/github_com_gladom_beerpong_pkg_models.Team'
+        type: array
+    type: object
+  github_com_gladom_beerpong_pkg_models.Match:
+    properties:
+      away_team:
+        type: string
+      created_at:
+        type: string
+      game_id:
+        type: integer
+      group_number:
+        type: string
+      home_team:
+        type: string
+      points_away:
+        type: integer
+      points_home:
+        type: integer
+      type:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  github_com_gladom_beerpong_pkg_models.MatchUpdateRequest:
+    properties:
+      matches:
+        items:
+          $ref: '#/definitions/github_com_gladom_beerpong_pkg_models.Match'
+        type: array
+    type: object
+  github_com_gladom_beerpong_pkg_models.NewGame:
+    properties:
+      game:
+        $ref: '#/definitions/github_com_gladom_beerpong_pkg_models.Game'
+      teams:
+        items:
+          $ref: '#/definitions/github_com_gladom_beerpong_pkg_models.Team'
+        type: array
+    type: object
+  github_com_gladom_beerpong_pkg_models.Team:
+    properties:
+      created_at:
+        type: string
+      game_id:
+        type: integer
+      group_name:
+        type: string
+      id:
+        type: integer
+      points:
+        type: integer
+      rank:
+        type: integer
+      team_name:
+        type: string
+    type: object
+  github_com_gladom_beerpong_pkg_models.TeamUpdateRequest:
+    properties:
+      teams:
+        items:
+          $ref: '#/definitions/github_com_gladom_beerpong_pkg_models.Team'
+        type: array
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: This is a beerpong server.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Gin Swagger Beerpong API
+  version: "1.0"
+paths:
+  /createGame:
+    post:
+      consumes:
+      - application/json
+      description: create a new game
+      parameters:
+      - description: New game to create
+        in: body
+        name: NewGame
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_gladom_beerpong_pkg_models.NewGame'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/github_com_gladom_beerpong_pkg_models.NewGame'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Create a new game
+      tags:
+      - Game
+  /finishGame/:id:
+    put:
+      parameters:
+      - description: Game Id
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Finish the current game
+      tags:
+      - Game
+  /getGame:
+    get:
+      description: Get the current not finished game
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_gladom_beerpong_pkg_models.GameResponse'
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get game
+      tags:
+      - Game
+  /updateMatches:
+    put:
+      parameters:
+      - description: Update Matches
+        in: body
+        name: MatchUpdateRequest
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_gladom_beerpong_pkg_models.MatchUpdateRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Update the matches from a specific game
+      tags:
+      - Match
+  /updateTeams:
+    put:
+      parameters:
+      - description: Teams to update
+        in: body
+        name: Teams
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_gladom_beerpong_pkg_models.TeamUpdateRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Update the teams from the actual game
+      tags:
+      - Teams
+schemes:
+- http
+swagger: "2.0"
