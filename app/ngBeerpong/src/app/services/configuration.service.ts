@@ -12,6 +12,6 @@ export class ConfigurationService {
   constructor(public httpClient: HttpClient) { }
 
   GetGame(url: string) {
-    return this.httpClient.get<BeerpongGame>(url+"/getGame").pipe()
+    return this.httpClient.get<BeerpongGame>(this.url+"/getGame").pipe()
   }
 }

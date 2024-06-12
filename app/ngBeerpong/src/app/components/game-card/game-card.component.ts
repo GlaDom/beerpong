@@ -5,6 +5,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { ChipModule } from 'primeng/chip';
 import { ButtonModule } from 'primeng/button';
 import Match from '../../api/match.interface';
+import { FormsModule, NgModel } from '@angular/forms';
 
 @Component({
   selector: 'app-game-card',
@@ -14,7 +15,8 @@ import Match from '../../api/match.interface';
     DividerModule,
     InputNumberModule,
     ChipModule,
-    ButtonModule
+    ButtonModule,
+    FormsModule
   ],
   templateUrl: './game-card.component.html',
   styleUrl: './game-card.component.css'
@@ -39,5 +41,6 @@ export class GameCardComponent implements OnInit {
     } else {
       this.label = 'primary'
     }
+    console.log(this.match)
   }
 }
