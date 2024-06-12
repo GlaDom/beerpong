@@ -75,14 +75,16 @@ func (gr *Gamerepo) CreateGame(c *gin.Context) {
 func (gr *Gamerepo) GetGame(c *gin.Context) {
 	// id := c.Param("id")
 	game := models.GameResponse{}
+	teams := []models.Team{}
 	if tx := gr.db.Where("is_finished=false").First(&game.Game); tx.Error != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": tx.Error.Error()})
 		return
 	}
-	if tx := gr.db.Where("game_id=?", game.Game.ID).Find(&game.Teams); tx.Error != nil {
+	if tx := gr.db.Where("game_id=?", game.Game.ID).Find(&teams); tx.Error != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": tx.Error.Error()})
 		return
 	}
+	game.Groups = gr.getGroups(teams)
 	if tx := gr.db.Where("game_id=?", game.Game.ID).Find(&game.Matches); tx.Error != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": tx.Error.Error()})
 		return
@@ -164,6 +166,33 @@ func (gr *Gamerepo) handleGameMode30Teams(game *models.NewGame) error {
 		return tx.Error
 	}
 	return nil
+}
+
+func (gr *Gamerepo) getGroups(teams []models.Team) []models.Group {
+	retval := []models.Group{}
+	groupMap := map[string]models.Group{}
+
+	for _, t := range teams {
+		if _, ok := groupMap[t.GroupName]; ok {
+			tmpTeams := groupMap[t.GroupName].Teams
+			tmpTeams = append(tmpTeams, t)
+			mapEntry := models.Group{
+				GroupName: t.GroupName,
+				Teams:     tmpTeams,
+			}
+			groupMap[t.GroupName] = mapEntry
+		} else {
+			groupMap[t.GroupName] = models.Group{
+				GroupName: t.GroupName,
+				Teams:     []models.Team{t},
+			}
+		}
+	}
+
+	for _, k := range groupMap {
+		retval = append(retval, k)
+	}
+	return retval
 }
 
 func (gr *Gamerepo) calculateMatchesPerGroup(teams []models.Team, gameId int) []models.Match {

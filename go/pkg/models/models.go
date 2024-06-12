@@ -47,7 +47,7 @@ type NewGame struct {
 
 type GameResponse struct {
 	Game    Game    `json:"game"`
-	Teams   []Team  `json:"teams"`
+	Groups  []Group `json:"groups"`
 	Matches []Match `json:"matches"`
 }
 
@@ -57,4 +57,9 @@ type MatchUpdateRequest struct {
 
 type TeamUpdateRequest struct {
 	Teams []Team `json:"teams"`
+}
+
+type Group struct {
+	GroupName string `json:"group_name"`
+	Teams     []Team `json:"teams"`
 }
