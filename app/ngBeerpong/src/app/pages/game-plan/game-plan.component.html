@@ -1,7 +1,43 @@
-<div class="flex flex-wrap">
-    <ng-container *ngIf="matches.length>0">
-        <ng-container *ngFor="let m of matches">
-            <app-game-card [match]="m"></app-game-card>
-        </ng-container>
-    </ng-container>
-</div>
+<ng-container *ngIf="!loading">
+    <p-tabView>
+        <p-tabPanel header="Gruppen A-C">
+            <div class="flex">
+                <div class="flex flex-col">
+                    <ng-container *ngFor="let m of sortedMatches[0]">
+                        <app-game-card [match]="m"></app-game-card>
+                    </ng-container>
+                </div>
+                <div class="flex flex-col">
+                    <ng-container *ngFor="let m of sortedMatches[1]">
+                        <app-game-card [match]="m"></app-game-card>
+                    </ng-container>
+                </div>
+                <div class="flex flex-col">
+                    <ng-container *ngFor="let m of sortedMatches[2]">
+                        <app-game-card [match]="m"></app-game-card>
+                    </ng-container>
+                </div>
+            </div>
+        </p-tabPanel>
+        <p-tabPanel header="Gruppen D-F">
+            <div class="flex">
+                <div class="flex flex-col">
+                    <ng-container *ngFor="let m of sortedMatches[3]">
+                        <app-game-card [match]="m"></app-game-card>
+                    </ng-container>
+                </div>
+                <div class="flex flex-col">
+                    <ng-container *ngFor="let m of sortedMatches[4]">
+                        <app-game-card [match]="m"></app-game-card>
+                    </ng-container>
+                </div>
+                <div class="flex flex-col">
+                    <ng-container *ngFor="let m of sortedMatches[5]">
+                        <app-game-card [match]="m"></app-game-card>
+                    </ng-container>
+                </div>
+            </div>
+        </p-tabPanel>
+    </p-tabView>
+    <p-button label="Gruppenphase abschliessen"></p-button>
+</ng-container>

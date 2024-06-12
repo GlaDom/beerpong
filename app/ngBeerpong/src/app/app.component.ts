@@ -4,9 +4,9 @@ import { MenuItem } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { StepsModule } from 'primeng/steps'
 import { DividerModule } from 'primeng/divider';
-import { RouterOutlet } from '@angular/router';
+import { Router, RouterOutlet } from '@angular/router';
 import { ConfigurationService } from './services/configuration.service';
-import { Observable } from 'rxjs';
+import { Observable, Observer } from 'rxjs';
 import { BeerpongGame } from './store/game.state';
 import Match from './api/match.interface';
 import { Store } from '@ngrx/store';
@@ -31,9 +31,24 @@ export class AppComponent implements OnInit {
   title = 'SKBeerpong';
   game$: Observable<BeerpongGame>;
 
+  gameObserver: Observer<any> = {
+    next: (game) => {
+      if(game && game.beerpong.matches?.length>0) {
+        this.router.navigateByUrl("/gameplan")
+      }
+    },
+    error: function (err: any): void {
+      throw new Error('Function not implemented.');
+    },
+    complete: function (): void {
+      throw new Error('Function not implemented.');
+    }
+  }
+
   constructor(
     private configService: ConfigurationService,
-    private beerpongStore: Store<BeerpongGame>
+    private beerpongStore: Store<BeerpongGame>,
+    private router: Router
   ) {
     this.game$ = new Observable<BeerpongGame>();
   }
@@ -41,8 +56,6 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     this.beerpongStore.dispatch(loadGame())
     this.game$ = this.beerpongStore.select(selectGame)
-    let games = this.game$.subscribe(game => {
-      console.log(game)
-    })
+    this.game$.subscribe(this.gameObserver)
   }
 }

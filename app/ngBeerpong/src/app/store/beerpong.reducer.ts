@@ -12,7 +12,6 @@ export const beerpongReducer = createReducer(initialState,
         return state
     }),
     on(loadGameSuccess, (state, {game}) => {
-        console.log(game)
         return {
             groups: game.groups,
             matches: game.matches
@@ -23,7 +22,3 @@ export const beerpongReducer = createReducer(initialState,
         return state
     })
 );
-
-// export function beerpongReducer(state, action) {
-//     return _beerpongReducer(state, action)
-// }
