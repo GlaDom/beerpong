@@ -8,6 +8,8 @@ import { BeerpongGame } from '../../store/game.state';
 import { selectGame } from '../../store/beerpong.selectors';
 import { TabViewModule } from 'primeng/tabview';
 import { ButtonModule } from 'primeng/button';
+import { PanelModule } from 'primeng/panel';
+import { FieldsetModule } from 'primeng/fieldset';
 
 @Component({
   selector: 'app-game-plan',
@@ -17,16 +19,21 @@ import { ButtonModule } from 'primeng/button';
     NgIf,
     NgFor,
     TabViewModule,
-    ButtonModule
+    ButtonModule,
+    PanelModule,
+    FieldsetModule
   ],
-  templateUrl: './game-plan.component.html',
-  styleUrl: './game-plan.component.css'
+  templateUrl: './admin-space.component.html',
+  styleUrl: './admin-space.component.css'
 })
-export class GamePlanComponent implements OnInit {
+export class AdminSpaceComponent implements OnInit {
 
     //$game: Observable<BeerpongGame>
     matches: Match[] = []
     sortedMatches: Match[][] = []
+    quaterFinalMatches: Match[] = []
+    semiFinalMatches: Match[] = []
+    finalMatch: Match[] = [] 
     loading: boolean = true
 
     constructor(
@@ -39,6 +46,9 @@ export class GamePlanComponent implements OnInit {
         if(game.beerpong.matches.length>0) {
           this.matches = game.beerpong.matches
           this.sortedMatches = this.sortMatches(this.matches)
+          this.quaterFinalMatches = this.filterMatches('quaterfinal', this.matches)
+          this.semiFinalMatches = this.filterMatches('semifinal', this.matches)
+          this.finalMatch = this.filterMatches('final', this.matches)
           this.loading = false
         }
       })
@@ -79,6 +89,12 @@ export class GamePlanComponent implements OnInit {
             break
         }
       }
+      return retval
+    }
+
+    filterMatches(filter: string, matches: Match[]): Match[] {
+      let retval: Match[] = matches.filter(m => m.type==filter)
+      console.log(retval)
       return retval
     }
 }

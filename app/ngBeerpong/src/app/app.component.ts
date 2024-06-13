@@ -8,10 +8,11 @@ import { Router, RouterOutlet } from '@angular/router';
 import { ConfigurationService } from './services/configuration.service';
 import { Observable, Observer } from 'rxjs';
 import { BeerpongGame } from './store/game.state';
-import Match from './api/match.interface';
 import { Store } from '@ngrx/store';
 import { loadGame } from './store/beerpong.actions';
 import { selectGame } from './store/beerpong.selectors';
+import { TabMenuModule } from 'primeng/tabmenu';
+import { NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-root',
@@ -24,10 +25,13 @@ import { selectGame } from './store/beerpong.selectors';
     ButtonModule,
     DividerModule,
     BeerpongSetupComponent,
-    RouterOutlet
+    RouterOutlet,
+    TabMenuModule,
+    NgIf
   ]
 })
 export class AppComponent implements OnInit {
+  items: MenuItem[] | undefined = []
   title = 'SKBeerpong';
   game$: Observable<BeerpongGame>;
 
@@ -57,5 +61,10 @@ export class AppComponent implements OnInit {
     this.beerpongStore.dispatch(loadGame())
     this.game$ = this.beerpongStore.select(selectGame)
     this.game$.subscribe(this.gameObserver)
+    this.items = [
+      {label: "Home", icon: "pi pi-home", routerLink: "/home"},
+      {label: "Spielplan", icon: "pi pi-list", routerLink: "/gameplan"},
+      {label: "AdminBereich", icon: "pi pi-code", routerLink: "/adminspace"}
+    ]
   }
 }

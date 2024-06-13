@@ -39,5 +39,34 @@
             </div>
         </p-tabPanel>
     </p-tabView>
-    <p-button label="Gruppenphase abschliessen"></p-button>
+    <div class="flex flex-row-reverse mt-5">
+        <p-button label="Gruppenphase abschliessen"></p-button>
+    </div>
+    <div>
+        <p-fieldset legend="Viertelfinals">
+            <div class="flex flex-row flex-wrap">
+                <ng-container *ngFor="let m of quaterFinalMatches">
+                    <app-game-card [match]="m"></app-game-card>
+                </ng-container>
+            </div>
+        </p-fieldset>
+    </div>
+    <div class="mt-5">
+        <p-fieldset legend="Halbfinals">
+            <div class="flex flex-row flex-wrap">
+                <ng-container *ngFor="let m of semiFinalMatches">
+                    <app-game-card [match]="m"></app-game-card>
+                </ng-container>
+            </div>
+        </p-fieldset>
+    </div>
+    <div class="mt-5">
+        <p-fieldset legend="Finale">
+            <div class="flex flex-row flex-wrap">
+                <ng-container *ngFor="let m of finalMatch">
+                    <app-game-card [match]="m"></app-game-card>
+                </ng-container>
+            </div>
+        </p-fieldset>
+    </div>
 </ng-container>

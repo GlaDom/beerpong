@@ -3,7 +3,8 @@ import { AppComponent } from './app/app.component';
 import { BrowserAnimationsModule, provideAnimations } from '@angular/platform-browser/animations';
 import { importProvidersFrom } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { GamePlanComponent } from './app/pages/game-plan/game-plan.component';
+import { AdminSpaceComponent } from './app/pages/admin-space/admin-space.component';
+import { GameplanComponent } from './app/pages/gameplan/gameplan.component';
 import { BeerpongSetupComponent } from './app/pages/beerpong-setup/beerpong-setup.component';
 import { HttpClientModule } from '@angular/common/http';
 import { provideEffects } from '@ngrx/effects';
@@ -15,10 +16,13 @@ import { provideRouterStore } from '@ngrx/router-store';
 
 const routes: Routes = [
   {
-    path: "gameplan", component: GamePlanComponent
+    path: "adminspace", component: AdminSpaceComponent
   },
   {
     path: "gameconfiguration", component: BeerpongSetupComponent
+  },
+  {
+    path: "gameplan", component: GameplanComponent
   }
 ];
 
@@ -28,6 +32,7 @@ bootstrapApplication(AppComponent, {
     importProvidersFrom(BrowserModule),
     importProvidersFrom(RouterModule.forRoot(routes)),
     importProvidersFrom(HttpClientModule),
+    provideAnimations(),
     provideEffects(BeerpongEffects),
     provideStore({
         beerpong: beerpongReducer,
