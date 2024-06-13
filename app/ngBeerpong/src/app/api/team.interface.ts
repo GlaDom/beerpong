@@ -7,7 +7,7 @@ interface Team {
     group_name: string;
     points: number;
     rank: number;
-    created_at: Date;
+    created_at?: Date;
   }
   
 export default Team;

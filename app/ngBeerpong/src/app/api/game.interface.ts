@@ -5,8 +5,8 @@ interface Game {
   mode: number;
   amountOfTeams: number;
   isFinished: boolean;
-  updatedAt: Date;
-  createdAt: Date;
+  updatedAt?: Date;
+  createdAt?: Date;
 }
 
 export default Game;

@@ -22,6 +22,21 @@ export class BeerpongEffects {
         )
     )
 
+    updateMatch$ = createEffect(() => this.actions$.pipe(
+        ofType('[GamePlan Component] Update Match'),
+        exhaustMap((match: any) => this.configService.UpdateMatch(match.match)
+            .pipe(
+                map(match => {
+                    console.log(match)
+                    return ({type: '[GamePlan Component] Update Match Success', match})
+                }),
+                catchError(() => {
+                    console.log('error update match')
+                    return EMPTY
+                })
+            ))
+    ))
+
     constructor(
         private actions$: Actions,
         private configService: ConfigurationService,

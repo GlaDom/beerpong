@@ -39,7 +39,6 @@ export class GamePlanComponent implements OnInit {
         if(game.beerpong.matches.length>0) {
           this.matches = game.beerpong.matches
           this.sortedMatches = this.sortMatches(this.matches)
-          console.log(this.sortedMatches)
           this.loading = false
         }
       })
@@ -48,7 +47,6 @@ export class GamePlanComponent implements OnInit {
     sortMatches(matches: Match[]): Match[][] {
       let retval: Match[][] = [[], [], [], [], [], []]
       for(let i = 0;i<matches.length;i++) {
-        console.log(matches[i].group_number)
         switch(matches[i].group_number) {
           case "A": {
             retval[0].push(matches[i]);

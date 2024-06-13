@@ -8,8 +8,8 @@ interface Match {
     away_team: string;
     points_home: number;
     points_away: number;
-    updated_at: Date;
-    created_at: Date;
+    updated_at?: Date;
+    created_at?: Date;
   }
   
   export default Match;
