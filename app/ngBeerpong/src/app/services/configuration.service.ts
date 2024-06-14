@@ -19,4 +19,47 @@ export class ConfigurationService {
   UpdateMatch(match: Match) {
     return this.httpClient.put<Match>(this.url+"/updateMatches", match).pipe()
   }
+
+  sortMatches(matches: Match[]): Match[][] {
+    let retval: Match[][] = [[], [], [], [], [], []]
+    for(let i = 0;i<matches.length;i++) {
+      switch(matches[i].group_number) {
+        case "A": {
+          retval[0].push(matches[i]);
+          break;
+        }
+        case "B": {
+          retval[1].push(matches[i]);
+          break;
+        }
+        case "C": {
+          retval[2].push(matches[i]);
+          break;
+        }
+        case "D": {
+          retval[3].push(matches[i]);
+          break;
+        }
+        case "E": {
+          retval[4].push(matches[i]);
+          break;
+        }
+        case "F": {
+          retval[5].push(matches[i]);
+          break;
+        }
+        case "": {
+          break;
+        }
+        default: 
+          break
+      }
+    }
+    return retval
+  }
+
+  filterMatches(filter: string, matches: Match[]): Match[] {
+    let retval: Match[] = matches.filter(m => m.type==filter)
+    return retval
+  }
 }

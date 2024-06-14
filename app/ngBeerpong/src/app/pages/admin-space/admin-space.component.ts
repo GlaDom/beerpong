@@ -45,56 +45,14 @@ export class AdminSpaceComponent implements OnInit {
       this.beerpongStore.select(selectGame).subscribe((game: any) => {
         if(game.beerpong.matches.length>0) {
           this.matches = game.beerpong.matches
-          this.sortedMatches = this.sortMatches(this.matches)
-          this.quaterFinalMatches = this.filterMatches('quaterfinal', this.matches)
-          this.semiFinalMatches = this.filterMatches('semifinal', this.matches)
-          this.finalMatch = this.filterMatches('final', this.matches)
+          this.sortedMatches = this.configService.sortMatches(this.matches)
+          this.quaterFinalMatches = this.configService.filterMatches('quaterfinal', this.matches)
+          this.semiFinalMatches = this.configService.filterMatches('semifinal', this.matches)
+          this.finalMatch = this.configService.filterMatches('final', this.matches)
           this.loading = false
         }
       })
     }
 
-    sortMatches(matches: Match[]): Match[][] {
-      let retval: Match[][] = [[], [], [], [], [], []]
-      for(let i = 0;i<matches.length;i++) {
-        switch(matches[i].group_number) {
-          case "A": {
-            retval[0].push(matches[i]);
-            break;
-          }
-          case "B": {
-            retval[1].push(matches[i]);
-            break;
-          }
-          case "C": {
-            retval[2].push(matches[i]);
-            break;
-          }
-          case "D": {
-            retval[3].push(matches[i]);
-            break;
-          }
-          case "E": {
-            retval[4].push(matches[i]);
-            break;
-          }
-          case "F": {
-            retval[5].push(matches[i]);
-            break;
-          }
-          case "": {
-            break;
-          }
-          default: 
-            break
-        }
-      }
-      return retval
-    }
-
-    filterMatches(filter: string, matches: Match[]): Match[] {
-      let retval: Match[] = matches.filter(m => m.type==filter)
-      console.log(retval)
-      return retval
-    }
+    
 }

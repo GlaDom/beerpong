@@ -1,34 +1,20 @@
-<p-card header="Gruppe A">
-    <div class="flex flex-row justify-between w-44">
-        <div class="flex flex-row justify-between w-44">
-            <div>Name</div>
-            <div>G</div>
-            <div>B</div>
-            <div>P</div>
+<p-card header="Gruppe {{group?.group_name}}">
+    <div class="flex flex-col justify-between">
+        <div class="flex flex-row justify-between">
+            <p>Name</p>
+            <p>G</p>
+            <p>B</p>
+            <p>P</p>
         </div>
     </div>
     <div class="flex flex-col">
-        <div class="flex flex-row justify-between">
-            <p>Team 1</p>
-            <p>25</p>
-            <p>15</p>
-            <p>10</p>
-        </div>
-        <div class="flex flex-row justify-between">
-            <p>Team 2</p>
-            <p>8</p>
-        </div>
-        <div class="flex flex-row justify-between">
-            <p>Team 3</p>
-            <p>8</p>
-        </div>
-        <div class="flex flex-row justify-between">
-            <p>Team 4</p>
-            <p>6</p>
-        </div>
-        <div class="flex flex-row justify-between">
-            <p>Team 5</p>
-            <p>5</p>
-        </div>
+        <ng-container *ngFor="let t of group?.teams">
+            <div class="flex flex-row justify-between">
+                <p>{{t.team_name}}</p>
+                <p>X</p>
+                <p>X</p>
+                <p>{{t.points}}</p>
+            </div>
+        </ng-container>
     </div>
 </p-card>

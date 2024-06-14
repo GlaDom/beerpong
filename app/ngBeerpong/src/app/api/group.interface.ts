@@ -1,6 +1,8 @@
+import Team from "./team.interface"
+
 interface Group {
-    GroupName: string
-    Teams: string[]
+    group_name: string
+    teams: Team[]
 }
 
 export default Group
