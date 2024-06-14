@@ -9,11 +9,15 @@
             <div class="flex flex-col mt-2 mb-2">
                 <div class="flex flex-row justify-between">
                     <p>{{match?.home_team}}</p>
-                    <p>{{match?.points_home}}</p>
+                    <div class="rounded-sm w-7 flex flex-row-reverse px-1 {{getColor(match?.points_home)}}">
+                        <p>{{match?.points_home}}</p>
+                    </div>
                 </div>
                 <div class="flex flex-row justify-between">
                     <p>{{match?.away_team}}</p>
-                    <p>{{match?.points_away}}</p>
+                    <div class="rounded-sm w-7 flex flex-row-reverse px-1 {{getColor(match?.points_away)}}">
+                        <p>{{match?.points_away}}</p>
+                    </div>
                 </div>
             </div>
             <hr>
