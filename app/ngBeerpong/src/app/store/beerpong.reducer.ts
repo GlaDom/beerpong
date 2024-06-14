@@ -1,6 +1,6 @@
 import { createReducer, on } from "@ngrx/store";
 import { BeerpongGame } from "./game.state";
-import { loadGame, loadGameSuccess, updateMatch, updateMatchSuccess } from "./beerpong.actions";
+import { loadGame, loadGameSuccess, updateMatch, updateMatchSuccess, updateTeams, updateTeamsSuccess } from "./beerpong.actions";
 
 export const initialState: BeerpongGame = {
     groups: [],
@@ -33,6 +33,30 @@ export const beerpongReducer = createReducer(initialState,
         return {
             ...state,
             matches: matches
+        }
+    }),
+    on(updateTeams, (state) => {
+        return state
+    }),
+    on(updateTeamsSuccess, (state, {teams}) => {
+        console.log(teams)
+        let groups = state.groups.map(m => Object.assign({}, m))
+        //search for correct group
+        let group = groups.filter(g => g.group_name==teams[0].group_name)
+        //exclude old teams form group
+        console.log(teams[0], group[0])
+        let oldTeams = group[0].teams.filter(t => t.id!=teams[0].id && t.id!=teams[1].id)
+        //add new teams
+        oldTeams.push(...teams)
+        //assign new teams to group
+        group[0].teams = oldTeams
+        //add updated group to groups
+        let oldGroups = groups.filter(g => g.group_name!=teams[0].group_name)
+        oldGroups.push(group[0])
+        console.log(group[0])
+        return {
+            ...state,
+            groups: oldGroups
         }
     })
 );

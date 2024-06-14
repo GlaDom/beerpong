@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { BeerpongGame } from '../store/game.state';
 import Match from '../api/match.interface';
+import TeamUpdate from '../api/team-update.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -18,6 +19,10 @@ export class ConfigurationService {
 
   UpdateMatch(match: Match) {
     return this.httpClient.put<Match>(this.url+"/updateMatches", match).pipe()
+  }
+
+  UpdateTeams(teams: TeamUpdate[]) {
+    return this.httpClient.put<TeamUpdate[]>(this.url+"/updateTeams", {teams: teams}).pipe()
   }
 
   sortMatches(matches: Match[]): Match[][] {

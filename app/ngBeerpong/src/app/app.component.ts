@@ -38,7 +38,8 @@ export class AppComponent implements OnInit {
   gameObserver: Observer<any> = {
     next: (game) => {
       if(game && game.beerpong.matches?.length>0) {
-        this.router.navigateByUrl("/gameplan")
+        console.log('game loaded')
+        // this.router.navigateByUrl("/gameplan")
       }
     },
     error: function (err: any): void {
@@ -62,9 +63,9 @@ export class AppComponent implements OnInit {
     this.game$ = this.beerpongStore.select(selectGame)
     this.game$.subscribe(this.gameObserver)
     this.items = [
-      {label: "Home", icon: "pi pi-home", routerLink: "/home"},
-      {label: "Spielplan", icon: "pi pi-list", routerLink: "/gameplan"},
-      {label: "AdminBereich", icon: "pi pi-code", routerLink: "/adminspace"}
+      {label: "Home", icon: "pi pi-home", route: "/home"},
+      {label: "Spielplan", icon: "pi pi-list", route: "/gameplan"},
+      {label: "AdminBereich", icon: "pi pi-code", route: "/adminspace"}
     ]
   }
 }

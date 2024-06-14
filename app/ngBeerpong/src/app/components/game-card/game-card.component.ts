@@ -8,8 +8,9 @@ import Match from '../../api/match.interface';
 import { FormsModule, NgModel } from '@angular/forms';
 import { BeerpongGame } from '../../store/game.state';
 import { Store } from '@ngrx/store';
-import { updateMatch } from '../../store/beerpong.actions';
+import { updateMatch, updateTeams } from '../../store/beerpong.actions';
 import { EventEmitter } from 'stream';
+import TeamUpdate from '../../api/team-update.interface';
 
 @Component({
   selector: 'app-game-card',
@@ -68,6 +69,8 @@ export class GameCardComponent implements OnInit {
         m.points_away = this.points_away
         console.log(m)
         this.beerpongstore.dispatch(updateMatch({match: m}))
+        let teamsToUpdate = this.getTeamsToUpdate(m)
+        this.beerpongstore.dispatch(updateTeams({teams: teamsToUpdate}))
       }
     } else {
       this.label = 'primary'
@@ -85,5 +88,33 @@ export class GameCardComponent implements OnInit {
       points_away: this.points_away,
     }
     return newMatch
+  }
+
+  getTeamsToUpdate(match: Match): TeamUpdate[] {
+    let retval: TeamUpdate[] = []
+    let teamOne: TeamUpdate = {
+      game_id: match.game_id,
+      team_name: match.away_team,
+      group_name: match.group_number,
+      points_to_add: 0,
+      cups_hitted: match.points_away,
+      cups_got: match.points_home
+    }
+    let teamTwo: TeamUpdate = {
+      game_id: match.game_id,
+      team_name: match.home_team,
+      group_name: match.group_number,
+      points_to_add: 0,
+      cups_hitted: match.points_home,
+      cups_got: match.points_away
+    }
+    if(match.points_away>match.points_home) {
+      teamOne.points_to_add=3;
+    } else {
+      teamTwo.points_to_add=3;
+    }
+    retval.push(teamOne)
+    retval.push(teamTwo)
+    return retval
   }
 }

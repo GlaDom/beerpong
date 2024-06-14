@@ -37,6 +37,21 @@ export class BeerpongEffects {
             ))
     ))
 
+    updateTeams$ = createEffect(() => this.actions$.pipe(
+        ofType('[Admin-space Component] Update Teams'),
+        exhaustMap((teams: any) => this.configService.UpdateTeams(teams.teams)
+            .pipe(
+                map(teams => {
+                    console.log(teams)
+                    return ({type: '[Admin-space Component] Update Teams Success', teams})
+                }),
+                catchError(() => {
+                    console.log('error update teams')
+                    return EMPTY
+                })
+            ))
+    ))
+
     constructor(
         private actions$: Actions,
         private configService: ConfigurationService,
