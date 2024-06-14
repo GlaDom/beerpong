@@ -102,19 +102,17 @@ func (gr *Gamerepo) GetGame(c *gin.Context) {
 //	 	@Failure 	400 {object} map[string]any
 //		@Router		/updateMatches [put]
 func (gr *Gamerepo) UpdateMatches(c *gin.Context) {
-	var updateRequest models.MatchUpdateRequest
-	if err := c.ShouldBindJSON(&updateRequest); err != nil {
+	var m models.Match
+	if err := c.ShouldBindJSON(&m); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	for _, m := range updateRequest.Matches {
-		m.UpdatedAt = time.Now()
-		if tx := gr.db.Where("game_id=? and away_team=? and home_team=?", m.GameID, m.AwayTeam, m.HomeTeam).Save(&m); tx.Error != nil {
-			c.JSON(http.StatusConflict, gin.H{"error": tx.Error.Error()})
-			return
-		}
+	m.UpdatedAt = time.Now()
+	if tx := gr.db.Where("game_id=? and away_team=? and home_team=?", m.GameID, m.AwayTeam, m.HomeTeam).Save(&m); tx.Error != nil {
+		c.JSON(http.StatusConflict, gin.H{"error": tx.Error.Error()})
+		return
 	}
-	c.JSON(http.StatusOK, gin.H{})
+	c.JSON(http.StatusOK, m)
 }
 
 // Update Teams godoc
@@ -127,17 +125,27 @@ func (gr *Gamerepo) UpdateMatches(c *gin.Context) {
 //	@Router		/updateTeams [put]
 func (gr *Gamerepo) UpdateTeams(c *gin.Context) {
 	var updateRequest models.TeamUpdateRequest
+	retval := []models.Team{}
 	if err := c.ShouldBindJSON(&updateRequest); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 	for _, t := range updateRequest.Teams {
-		if tx := gr.db.Where("game_id=? and team_name=?", t.GameID, t.TeamName).Save(&t); tx.Error != nil {
+		//get current team entry
+		var currentTeam *models.Team
+		if tx := gr.db.Where("game_id=? and team_name=?", t.GameID, t.TeamName).First(&currentTeam); tx.Error != nil {
+			c.JSON(http.StatusNotFound, gin.H{"error": tx.Error.Error()})
+		}
+		//update properties of team
+		newTeam := gr.getUpdatedTeam(currentTeam, &t)
+		retval = append(retval, *newTeam)
+		//save new team entry
+		if tx := gr.db.Where("game_id=? and team_name=?", t.GameID, t.TeamName).Save(&newTeam); tx.Error != nil {
 			c.JSON(http.StatusConflict, gin.H{"error": tx.Error.Error()})
 			return
 		}
 	}
-	c.JSON(http.StatusOK, gin.H{})
+	c.JSON(http.StatusOK, retval)
 }
 
 // Finish Game
@@ -269,4 +277,17 @@ func generateSchedule(teams []models.Team, gameId int, group string) []models.Ma
 	}
 
 	return schedule
+}
+
+func (gr *Gamerepo) getUpdatedTeam(currentTeam *models.Team, newTeam *models.TeamUpdate) *models.Team {
+	retval := &models.Team{
+		ID:        currentTeam.ID,
+		GameID:    currentTeam.GameID,
+		GroupName: currentTeam.GroupName,
+		TeamName:  currentTeam.TeamName,
+		Points:    currentTeam.Points + newTeam.PointsToAdd,
+		CupsHit:   currentTeam.CupsHit + newTeam.CupsHitted,
+		CupsGet:   currentTeam.CupsGet + newTeam.CupsGot,
+	}
+	return retval
 }
