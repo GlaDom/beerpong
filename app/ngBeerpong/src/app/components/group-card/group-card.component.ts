@@ -1,14 +1,17 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { CardModule } from 'primeng/card';
 import Group from '../../api/group.interface';
-import { NgFor } from '@angular/common';
+import { NgFor, NgIf } from '@angular/common';
+import { TableModule } from 'primeng/table';
 
 @Component({
   selector: 'app-group-card',
   standalone: true,
   imports: [
     CardModule,
-    NgFor
+    NgFor,
+    NgIf,
+    TableModule
   ],
   templateUrl: './group-card.component.html',
   styleUrl: './group-card.component.css'

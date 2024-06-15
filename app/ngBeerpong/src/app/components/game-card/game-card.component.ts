@@ -64,10 +64,8 @@ export class GameCardComponent implements OnInit {
       this.label = 'contrast'
       if(this.match.group_number != '' && this.match.game_id != 0) {
         let m: Match = this.getCopyOfMatch(this.match)
-        console.log(this.points_home, this.points_away)
         m.points_home = this.points_home
         m.points_away = this.points_away
-        console.log(m)
         this.beerpongstore.dispatch(updateMatch({match: m}))
         let teamsToUpdate = this.getTeamsToUpdate(m)
         this.beerpongstore.dispatch(updateTeams({teams: teamsToUpdate}))

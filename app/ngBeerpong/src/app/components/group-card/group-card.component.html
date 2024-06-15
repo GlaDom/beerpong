@@ -1,5 +1,25 @@
 <p-card header="Gruppe {{group?.group_name}}">
-    <div class="flex flex-col justify-between">
+    <ng-container *ngIf="group">
+        <p-table [value]="group.teams">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Name</th>
+                    <th>G</th>
+                    <th>B</th>
+                    <th>P</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-team>
+                <tr>
+                    <td>{{ team.team_name }}</td>
+                    <td>{{ team.cups_hit }}</td>
+                    <td>{{ team.cups_get }}</td>
+                    <td>{{ team.points }}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </ng-container>
+    <!-- <div class="flex flex-col justify-between">
         <div class="flex flex-row justify-between">
             <p>Name</p>
             <p>G</p>
@@ -11,10 +31,10 @@
         <ng-container *ngFor="let t of group?.teams">
             <div class="flex flex-row justify-between">
                 <p>{{t.team_name}}</p>
-                <p>X</p>
-                <p>X</p>
+                <p>{{t.cups_hit}}</p>
+                <p>{{t.cups_get}}</p>
                 <p>{{t.points}}</p>
             </div>
         </ng-container>
-    </div>
+    </div> -->
 </p-card>

@@ -1,10 +1,11 @@
 import { createReducer, on } from "@ngrx/store";
-import { BeerpongGame } from "./game.state";
+import { BeerpongGame, Status } from "./game.state";
 import { loadGame, loadGameSuccess, updateMatch, updateMatchSuccess, updateTeams, updateTeamsSuccess } from "./beerpong.actions";
 
 export const initialState: BeerpongGame = {
     groups: [],
-    matches: []
+    matches: [],
+    toastStatus: 'notset'
 }
 
 export const beerpongReducer = createReducer(initialState,
@@ -12,9 +13,11 @@ export const beerpongReducer = createReducer(initialState,
         return state
     }),
     on(loadGameSuccess, (state, {game}) => {
+        let newToastState: Status = 'notset'
         return {
             groups: game.groups,
-            matches: game.matches
+            matches: game.matches,
+            toastStatus: newToastState,
         }
     }),
     on(updateMatch, state => {
@@ -30,9 +33,11 @@ export const beerpongReducer = createReducer(initialState,
                 m.points_away = match.points_away
             }
         })
+        let newToastState: Status = 'success'
         return {
             ...state,
-            matches: matches
+            matches: matches,
+            toastStatus: newToastState
         }
     }),
     on(updateTeams, (state) => {
@@ -53,10 +58,12 @@ export const beerpongReducer = createReducer(initialState,
         //add updated group to groups
         let oldGroups = groups.filter(g => g.group_name!=teams[0].group_name)
         oldGroups.push(group[0])
-        console.log(group[0])
+        //reset toastState because otherwise there would be two successfull toasts on admin-space component
+        let newToastState: Status = 'notset'
         return {
             ...state,
-            groups: oldGroups
+            groups: oldGroups,
+            toastStatus: newToastState
         }
     })
 );

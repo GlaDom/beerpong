@@ -22,6 +22,7 @@ CREATE TABLE teams (
 
 CREATE TABLE matches (
   game_id INTEGER,
+  match_id SERIAL,
   type VARCHAR(255),
   group_number VARCHAR(255),
   home_team VARCHAR(255),

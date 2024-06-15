@@ -28,6 +28,7 @@ type Team struct {
 // Match repräsentiert die Matches-Tabelle
 type Match struct {
 	GameID      int       `json:"game_id"`
+	MatchID     int       `json:"match_id"`
 	Type        string    `json:"type"`
 	GroupNumber string    `json:"group_number"`
 	HomeTeam    string    `json:"home_team"`

@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { ConfigurationService } from "../services/configuration.service";
 import { EMPTY, catchError, exhaustMap, map } from "rxjs";
-import { BeerpongGame } from "./game.state";
+import { BeerpongGame, Status } from "./game.state";
 
 @Injectable()
 export class BeerpongEffects {
@@ -12,10 +12,9 @@ export class BeerpongEffects {
         exhaustMap(() => this.configService.GetGame("")
             .pipe(
                 map(game => {
-                    console.log(game)
                     return ({type: '[App Component] Load Game Succes', game})}),
                 catchError(() => {
-                    console.log('error')
+                    console.log('error load game')
                     return EMPTY
                 })
             ))
@@ -27,7 +26,6 @@ export class BeerpongEffects {
         exhaustMap((match: any) => this.configService.UpdateMatch(match.match)
             .pipe(
                 map(match => {
-                    console.log(match)
                     return ({type: '[GamePlan Component] Update Match Success', match})
                 }),
                 catchError(() => {
@@ -42,7 +40,6 @@ export class BeerpongEffects {
         exhaustMap((teams: any) => this.configService.UpdateTeams(teams.teams)
             .pipe(
                 map(teams => {
-                    console.log(teams)
                     return ({type: '[Admin-space Component] Update Teams Success', teams})
                 }),
                 catchError(() => {

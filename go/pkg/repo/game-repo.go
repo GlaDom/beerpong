@@ -5,6 +5,7 @@ import (
 	"log"
 	"math/rand"
 	"net/http"
+	"sort"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -88,6 +89,13 @@ func (gr *Gamerepo) GetGame(c *gin.Context) {
 	if tx := gr.db.Where("game_id=?", game.Game.ID).Find(&game.Matches); tx.Error != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": tx.Error.Error()})
 		return
+	}
+
+	game.Matches = gr.sortMatchesById(game.Matches)
+
+	game.Groups = gr.sortGroupsByAlphabet(game.Groups)
+	for _, g := range game.Groups {
+		g.Teams = gr.sortTeamsByPoints(g.Teams)
 	}
 
 	c.JSON(http.StatusOK, game)
@@ -174,6 +182,27 @@ func (gr *Gamerepo) handleGameMode30Teams(game *models.NewGame) error {
 		return tx.Error
 	}
 	return nil
+}
+
+func (gr *Gamerepo) sortGroupsByAlphabet(groups []models.Group) []models.Group {
+	sort.Slice(groups, func(i, j int) bool {
+		return groups[i].GroupName < groups[j].GroupName
+	})
+	return groups
+}
+
+func (gr *Gamerepo) sortTeamsByPoints(teams []models.Team) []models.Team {
+	sort.Slice(teams, func(i, j int) bool {
+		return teams[i].Points > teams[j].Points
+	})
+	return teams
+}
+
+func (gr *Gamerepo) sortMatchesById(matches []models.Match) []models.Match {
+	sort.Slice(matches, func(i, j int) bool {
+		return matches[i].MatchID < matches[j].MatchID
+	})
+	return matches
 }
 
 func (gr *Gamerepo) getGroups(teams []models.Team) []models.Group {

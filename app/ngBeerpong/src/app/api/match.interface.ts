@@ -2,6 +2,7 @@
 
 interface Match {
     game_id: number;
+    match_id?: number;
     type: string;
     group_number: string;
     home_team: string;

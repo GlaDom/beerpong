@@ -43,7 +43,6 @@ export class GameplanComponent implements OnInit {
     this.beerpongstore.select(selectGame).subscribe((game: any) => {
       if(game.beerpong.groups && game.beerpong.groups.length > 0) {
         this.groups = game.beerpong.groups
-        console.log(this.groups[0])
         this.matches = game.beerpong.matches
         this.regularMatches = this.configService.sortMatches(this.matches)
         this.quaterFinals = this.configService.filterMatches('quaterfinal', this.matches)
@@ -52,6 +51,5 @@ export class GameplanComponent implements OnInit {
       }
     })
   }
-
 
 }

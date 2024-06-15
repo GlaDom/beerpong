@@ -6,6 +6,8 @@ interface Team {
   team_name: string;
   group_name: string;
   points: number;
+  cups_hit: number;
+  cups_get: number;
   rank: number;
   created_at?: Date;
 }

@@ -1,0 +1,13 @@
+:host {
+    ::ng-deep .p-card-content {
+        padding: 0;
+    }
+
+    ::ng-deep .p-datatable .p-datatable-tbody > tr > td {
+        padding: 0.25rem 0.25rem;
+    }
+
+    ::ng-deep .p-datatable .p-datatable-thead > tr > th {
+        padding: 0.25rem 0.25rem;
+    }
+}
