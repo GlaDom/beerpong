@@ -1,0 +1,10 @@
+:host {
+    ::ng-deep .p-chip {
+        height: 24px;
+        font-size: small;
+    }    
+
+    ::ng-deep .p-card-content {
+        padding: 0;
+    }
+}

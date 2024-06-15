@@ -2,17 +2,48 @@ package main
 
 import (
 	"fmt"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
+	_ "github.com/gladom/beerpong/docs"
 	"github.com/gladom/beerpong/pkg/repo"
 	_ "github.com/lib/pq"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
+//	@title			Gin Swagger Beerpong API
+//	@version		1.0
+//	@description	This is a beerpong server.
+//	@termsOfService	http://swagger.io/terms/
+
+//	@contact.name	API Support
+//	@contact.url	http://www.swagger.io/support
+//	@contact.email	support@swagger.io
+
+//	@license.name	Apache 2.0
+//	@license.url	http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @host		localhost:8080
+// @BasePath	/api/v1
+// @schemes	http
 func main() {
 
 	router := gin.Default()
+	router.Use(func(c *gin.Context) {
+		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+		c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT")
+		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
 
-	const apiPrefix = "/api"
+		if c.Request.Method == "OPTIONS" {
+			c.AbortWithStatus(http.StatusOK)
+			return
+		}
+
+		c.Next()
+	})
+
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	// Verbindungsinformationen zur PostgreSQL-Datenbank
 	const (
@@ -30,19 +61,15 @@ func main() {
 
 	gameRepo := repo.NewGameRepo(psqlInfo)
 
-	//game routes
-
-	//game specific endpoints
-	router.POST(apiPrefix+"/createGame", gameRepo.CreateGame)
-	router.GET(apiPrefix+"/getGame", gameRepo.GetGame)
-	router.PUT(apiPrefix+"/finishGame/:id", gameRepo.FinishGame)
-	// router.DELETE(apiPrefix+"/games/:id", gameRepo.DeleteGame)
-
-	//match specific endpoints
-	router.PUT(apiPrefix+"/updateMatches", gameRepo.UpdateMatches)
-
-	//team specific endpoint
-	router.PUT(apiPrefix+"/updateTeams", gameRepo.UpdateTeams)
-
+	v1 := router.Group("/api/v1")
+	{
+		v1.POST("/createGame", gameRepo.CreateGame)
+		v1.GET("/getGame", gameRepo.GetGame)
+		v1.PUT("/finishGame/:id", gameRepo.FinishGame)
+		// router.DELETE(apiPrefix+"/games/:id", gameRepo.DeleteGame)
+		v1.PUT("/updateMatches", gameRepo.UpdateMatches)
+		v1.PUT("/updateTeams", gameRepo.UpdateTeams)
+	}
 	router.Run(":8080")
+
 }

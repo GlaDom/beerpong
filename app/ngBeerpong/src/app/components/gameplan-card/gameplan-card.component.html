@@ -1,0 +1,29 @@
+<div class="mt-1">
+    <p-card>
+        <div class="flex flex-col">
+            <div class="flex flex-row gap-2 mb-2">
+                <p-chip label="Gruppe {{match?.group_number}}" styleClass="p-chip"></p-chip>
+                <p-chip label="Tisch {{match?.group_number}}"></p-chip>
+            </div>
+            <hr>
+            <div class="flex flex-col mt-2 mb-2">
+                <div class="flex flex-row justify-between">
+                    <p>{{match?.home_team}}</p>
+                    <div class="rounded-sm w-7 flex flex-row-reverse px-1 {{getColor(match?.points_home)}}">
+                        <p>{{match?.points_home}}</p>
+                    </div>
+                </div>
+                <div class="flex flex-row justify-between">
+                    <p>{{match?.away_team}}</p>
+                    <div class="rounded-sm w-7 flex flex-row-reverse px-1 {{getColor(match?.points_away)}}">
+                        <p>{{match?.points_away}}</p>
+                    </div>
+                </div>
+            </div>
+            <hr>
+            <div class="mt-3">
+                <p-chip label="Tulpe" icon="pi pi-user"></p-chip>
+            </div>
+        </div>
+    </p-card>
+</div>

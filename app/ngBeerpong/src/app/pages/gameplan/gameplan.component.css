@@ -1,0 +1,4 @@
+.scrollable {
+    max-height: 500px; /* Definiere hier die maximale Höhe, ab der gescrollt werden soll */
+    overflow-y: auto;  /* Aktiviert das vertikale Scrollen, wenn der Inhalt die maximale Höhe überschreitet */
+}

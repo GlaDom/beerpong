@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/gladom/beerpong/pkg/interfaces"
+	"github.com/gladom/beerpong/pkg/models"
 )
 
 func TestMatchCalculation(t *testing.T) {
@@ -16,8 +16,8 @@ func TestMatchCalculation(t *testing.T) {
 	fmt.Print(matches)
 }
 
-func getTestTeams() []interfaces.Team {
-	teams := []interfaces.Team{
+func getTestTeams() []models.Team {
+	teams := []models.Team{
 		{GameID: 1, TeamName: "Team1", GroupName: "A", Points: 0, Rank: 0},
 		{GameID: 1, TeamName: "Team2", GroupName: "A", Points: 0, Rank: 0},
 		{GameID: 1, TeamName: "Team3", GroupName: "A", Points: 0, Rank: 0},

@@ -1,0 +1,79 @@
+<p-toast />
+<ng-container *ngIf="!loading">
+    <p-tabView>
+        <p-tabPanel header="Gruppen A-C">
+            <div class="flex">
+                <div class="flex flex-col flex-1">
+                    <ng-container *ngFor="let m of sortedMatches[0]">
+                        <app-game-card [match]="m"></app-game-card>
+                    </ng-container>
+                </div>
+                <div class="flex flex-col flex-1">
+                    <ng-container *ngFor="let m of sortedMatches[1]">
+                        <app-game-card [match]="m"></app-game-card>
+                    </ng-container>
+                </div>
+                <div class="flex flex-col flex-1">
+                    <ng-container *ngFor="let m of sortedMatches[2]">
+                        <app-game-card [match]="m"></app-game-card>
+                    </ng-container>
+                </div>
+            </div>
+        </p-tabPanel>
+        <p-tabPanel header="Gruppen D-F">
+            <div class="flex">
+                <div class="flex flex-col flex-1">
+                    <ng-container *ngFor="let m of sortedMatches[3]">
+                        <app-game-card [match]="m"></app-game-card>
+                    </ng-container>
+                </div>
+                <div class="flex flex-col flex-1">
+                    <ng-container *ngFor="let m of sortedMatches[4]">
+                        <app-game-card [match]="m"></app-game-card>
+                    </ng-container>
+                </div>
+                <div class="flex flex-col flex-1">
+                    <ng-container *ngFor="let m of sortedMatches[5]">
+                        <app-game-card [match]="m"></app-game-card>
+                    </ng-container>
+                </div>
+            </div>
+        </p-tabPanel>
+    </p-tabView>
+    <div class="flex flex-row-reverse mt-5">
+        <p-button label="Gruppenphase abschliessen"></p-button>
+    </div>
+    <div>
+        <p-fieldset legend="Viertelfinals">
+            <div class="flex flex-row">
+                <ng-container *ngFor="let m of quaterFinalMatches">
+                    <div class="flex-1">
+                        <app-game-card [match]="m"></app-game-card>
+                    </div>
+                </ng-container>
+            </div>
+        </p-fieldset>
+    </div>
+    <div class="mt-5">
+        <p-fieldset legend="Halbfinals">
+            <div class="flex flex-row">
+                <ng-container *ngFor="let m of semiFinalMatches">
+                    <div class="flex-1">
+                        <app-game-card [match]="m"></app-game-card>
+                    </div>
+                </ng-container>
+            </div>
+        </p-fieldset>
+    </div>
+    <div class="mt-5">
+        <p-fieldset legend="Finale">
+            <div class="flex flex-row justify-around">
+                <ng-container *ngFor="let m of finalMatch">
+                    <div class="w-1/2">
+                        <app-game-card [match]="m"></app-game-card>
+                    </div>
+                </ng-container>
+            </div>
+        </p-fieldset>
+    </div>
+</ng-container>
