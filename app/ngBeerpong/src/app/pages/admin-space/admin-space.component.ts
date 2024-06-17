@@ -12,6 +12,8 @@ import { PanelModule } from 'primeng/panel';
 import { FieldsetModule } from 'primeng/fieldset';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
+import { finishGame } from '../../store/beerpong.actions';
+import { BeerpongSetupComponent } from '../../components/beerpong-setup/beerpong-setup.component';
 
 @Component({
   selector: 'app-game-plan',
@@ -24,7 +26,8 @@ import { MessageService } from 'primeng/api';
     ButtonModule,
     PanelModule,
     FieldsetModule,
-    ToastModule
+    ToastModule,
+    BeerpongSetupComponent
   ],
   providers: [
     MessageService
@@ -35,8 +38,10 @@ import { MessageService } from 'primeng/api';
 export class AdminSpaceComponent implements OnInit {
 
     //$game: Observable<BeerpongGame>
+    gameId: number | undefined;
     matches: Match[] = [];
     sortedMatches: Match[][] = [];
+    roundOfsixteen: Match[] = [];
     quaterFinalMatches: Match[] = [];
     semiFinalMatches: Match[] = [];
     finalMatch: Match[] = [] ;
@@ -51,22 +56,29 @@ export class AdminSpaceComponent implements OnInit {
     ngOnInit(): void {
       this.beerpongStore.select(selectGame).subscribe((game: any) => {
         if(game.beerpong.matches.length>0) {
-          console.log(game.beerpong.toastStatus)
+          console.log(game.beerpong.groups[0].teams[0].game_id)
+          this.gameId = game.beerpong.groups[0].teams[0].game_id
           this.matches = game.beerpong.matches
           this.sortedMatches = this.configService.sortMatches(this.matches)
+          this.roundOfsixteen = this.configService.filterMatches('round_of_16', this.matches)
           this.quaterFinalMatches = this.configService.filterMatches('quaterfinal', this.matches)
           this.semiFinalMatches = this.configService.filterMatches('semifinal', this.matches)
           this.finalMatch = this.configService.filterMatches('final', this.matches)
-          this.loading = false
-
+          
           if(game.beerpong.toastStatus==='success') {
             this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Match successfully updated!' })
           } else if(game.beerpong.toastStatus==='failed') {
             this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to update Match!' })
           }
         }
+        this.loading = false
       })
     }
 
-    
+    finishTournament(): void {
+      console.log(this.gameId)
+      if(this.gameId) {
+        this.beerpongStore.dispatch(finishGame({gameId: this.gameId}))
+      }
+    }
 }

@@ -1,10 +1,16 @@
 // game.interface.ts
 
+import { Referee } from "./referee";
+import Team from "./team.interface";
+
 interface Game {
-  id: number;
+  id?: number;
   mode: number;
-  amountOfTeams: number;
-  isFinished: boolean;
+  amount_of_teams: number;
+  is_finished: boolean;
+  game_time: number;
+  referee: Referee[];
+  teams: Team[];
   updatedAt?: Date;
   createdAt?: Date;
 }

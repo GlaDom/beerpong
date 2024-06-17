@@ -3,6 +3,7 @@ import { HttpClient, HttpParams } from "@angular/common/http";
 import { BeerpongGame } from '../store/game.state';
 import Match from '../api/match.interface';
 import TeamUpdate from '../api/team-update.interface';
+import { GameRequest } from '../api/game-request';
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +13,10 @@ export class ConfigurationService {
   private url: string = "http://localhost:8080/api/v1";
 
   constructor(public httpClient: HttpClient) { }
+
+  CreateGame(game: GameRequest) {
+    return this.httpClient.post<GameRequest>(this.url+"/createGame", game).pipe()
+  }
 
   GetGame(url: string) {
     return this.httpClient.get<BeerpongGame>(this.url+"/getGame").pipe()
@@ -25,9 +30,17 @@ export class ConfigurationService {
     return this.httpClient.put<TeamUpdate[]>(this.url+"/updateTeams", {teams: teams}).pipe()
   }
 
+  FinishGame(gameId: number) {
+    console.log(gameId)
+    return this.httpClient.put<string>(this.url+"/finishGame/id="+gameId, null).pipe()
+  }
+
   sortMatches(matches: Match[]): Match[][] {
     let retval: Match[][] = [[], [], [], [], [], []]
     for(let i = 0;i<matches.length;i++) {
+      if(matches[i].type!=='regular') {
+        break
+      }
       switch(matches[i].group_number) {
         case "A": {
           retval[0].push(matches[i]);

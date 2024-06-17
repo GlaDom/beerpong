@@ -12,7 +12,7 @@ func TestMatchCalculation(t *testing.T) {
 
 	testTeams := getTestTeams()
 
-	matches := repo.calculateMatchesPerGroup(testTeams, 1)
+	matches := repo.calculateMatchesPerGroup(testTeams, 1, []models.Referee{})
 	fmt.Print(matches)
 }
 

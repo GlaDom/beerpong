@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { BeerpongSetupComponent } from './pages/beerpong-setup/beerpong-setup.component'
+import { BeerpongSetupComponent } from './components/beerpong-setup/beerpong-setup.component'
 import { MenuItem } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { StepsModule } from 'primeng/steps'
@@ -60,7 +60,7 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     this.beerpongStore.dispatch(loadGame())
-    this.game$ = this.beerpongStore.select(selectGame)
+    // this.game$ = this.beerpongStore.select(selectGame)
     this.game$.subscribe(this.gameObserver)
     this.items = [
       {label: "Home", icon: "pi pi-home", route: "/home"},

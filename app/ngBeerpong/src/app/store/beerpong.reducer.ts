@@ -1,6 +1,7 @@
 import { createReducer, on } from "@ngrx/store";
 import { BeerpongGame, Status } from "./game.state";
-import { loadGame, loadGameSuccess, updateMatch, updateMatchSuccess, updateTeams, updateTeamsSuccess } from "./beerpong.actions";
+import { createGame, createGameSuccess, finishGame, finishGameSuccess, loadGame, loadGameFailure, loadGameSuccess, updateMatch, updateMatchSuccess, updateTeams, updateTeamsSuccess } from "./beerpong.actions";
+import { group } from "console";
 
 export const initialState: BeerpongGame = {
     groups: [],
@@ -9,6 +10,16 @@ export const initialState: BeerpongGame = {
 }
 
 export const beerpongReducer = createReducer(initialState,
+    on(createGame, state => {
+        return state
+    }),
+    on(createGameSuccess, (state, {game}) => {
+        return {
+            ...state,
+            matches: game.matches,
+            groups: game.groups
+        }
+    }),
     on(loadGame, state => {
         return state
     }),
@@ -19,6 +30,16 @@ export const beerpongReducer = createReducer(initialState,
             matches: game.matches,
             toastStatus: newToastState,
         }
+    }),
+    on(loadGameFailure, (state) => {
+        let initalGameState: BeerpongGame = {
+            matches: [],
+            groups: [],
+            toastStatus: 'notset'
+        }
+        state = initalGameState
+        console.log('reducer called')
+        return state
     }),
     on(updateMatch, state => {
         console.log(state)
@@ -65,5 +86,17 @@ export const beerpongReducer = createReducer(initialState,
             groups: oldGroups,
             toastStatus: newToastState
         }
+    }),
+    on(finishGame, (state) => {
+        return state
+    }),
+    on(finishGameSuccess, (state) => {
+        let initalGameState: BeerpongGame = {
+            matches: [],
+            groups: [],
+            toastStatus: 'notset'
+        }
+        state = initalGameState
+        return state
     })
 );

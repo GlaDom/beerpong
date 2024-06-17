@@ -1,21 +1,34 @@
 import { Injectable } from "@angular/core";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { ConfigurationService } from "../services/configuration.service";
-import { EMPTY, catchError, exhaustMap, map } from "rxjs";
-import { BeerpongGame, Status } from "./game.state";
+import { EMPTY, Observable, catchError, exhaustMap, map, of, startWith, switchMap } from "rxjs";
 
 @Injectable()
 export class BeerpongEffects {
 
+    createGame$ = createEffect(() => this.actions$.pipe(
+        ofType('[Admin-space Component] Create Game'),
+        switchMap((game: any) => this.configService.CreateGame(game.game)
+            .pipe(
+                map((game) => {
+                    return ({type: '[Admin-space Component] Create Game Success', game})
+                }),
+                catchError((error) => {
+                    console.log(error, "error create game")
+                    return EMPTY
+                })
+            ))
+    ))
+
     loadGame$ = createEffect(() => this.actions$.pipe(
         ofType('[App Component] Load Game'),
-        exhaustMap(() => this.configService.GetGame("")
+        switchMap(() => this.configService.GetGame("")
             .pipe(
                 map(game => {
                     return ({type: '[App Component] Load Game Succes', game})}),
-                catchError(() => {
-                    console.log('error load game')
-                    return EMPTY
+                catchError((error, source) => {
+                    console.log(error, 'error load game')
+                    return of({type: '[App Component] Load Game Failure'})
                 })
             ))
         )
@@ -44,6 +57,20 @@ export class BeerpongEffects {
                 }),
                 catchError(() => {
                     console.log('error update teams')
+                    return EMPTY
+                })
+            ))
+    ))
+
+    finishGame$ = createEffect(() => this.actions$.pipe(
+        ofType('[Admin-space Component] Finish Game'),
+        exhaustMap((gameId: any) => this.configService.FinishGame(gameId.gameId)
+            .pipe(
+                map(() => {
+                    return ({type: '[Admin-space Component] Finish Game Success'})
+                }),
+                catchError(() => {
+                    console.log('error finish game')
                     return EMPTY
                 })
             ))

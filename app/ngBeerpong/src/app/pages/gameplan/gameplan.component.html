@@ -41,6 +41,17 @@
             </div>
         </div>
         <div class="mt-5 gap-1.5">
+            <p-fieldset legend="Achtelfinals">
+                <div class="flex flex-row gap-1.5">
+                    <ng-container *ngFor="let m of roundOfsixteen">
+                        <div class="flex-1">
+                            <app-gameplan-card [match]="m"></app-gameplan-card>
+                        </div>
+                    </ng-container>
+                </div>
+            </p-fieldset>
+        </div>
+        <div class="mt-5 gap-1.5">
             <p-fieldset legend="Viertelfinals">
                 <div class="flex flex-row gap-1.5">
                     <ng-container *ngFor="let m of quaterFinals">

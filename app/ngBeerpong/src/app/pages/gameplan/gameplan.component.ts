@@ -30,6 +30,7 @@ export class GameplanComponent implements OnInit {
   groups: Group[] = [];
   matches: Match[] = [];
   regularMatches: Match[][] = [];
+  roundOfsixteen: Match[] = [];
   quaterFinals: Match[] = [];
   semiFinals: Match[] = [];
   final: Match[] = [];
@@ -44,7 +45,8 @@ export class GameplanComponent implements OnInit {
       if(game.beerpong.groups && game.beerpong.groups.length > 0) {
         this.groups = game.beerpong.groups
         this.matches = game.beerpong.matches
-        this.regularMatches = this.configService.sortMatches(this.matches)
+        this.regularMatches = this.configService.sortMatches(this.matches);
+        this.roundOfsixteen = this.configService.filterMatches('round_of_16', this.matches)
         this.quaterFinals = this.configService.filterMatches('quaterfinal', this.matches)
         this.semiFinals = this.configService.filterMatches('semifinal', this.matches)
         this.final = this.configService.filterMatches('final', this.matches)      

@@ -1,5 +1,5 @@
 <p-toast />
-<ng-container *ngIf="!loading">
+<ng-container *ngIf="!loading && matches && matches.length > 0">
     <p-tabView>
         <p-tabPanel header="Gruppen A-C">
             <div class="flex">
@@ -44,6 +44,20 @@
         <p-button label="Gruppenphase abschliessen"></p-button>
     </div>
     <div>
+        <p-fieldset legend="Achtelfinals">
+            <div class="flex flex-row">
+                <ng-container *ngFor="let m of roundOfsixteen">
+                    <div class="flex-1">
+                        <app-game-card [match]="m"></app-game-card>
+                    </div>
+                </ng-container>
+            </div>
+        </p-fieldset>
+    </div>
+    <div class="flex flex-row-reverse mt-5">
+        <p-button label="Achtelfinals abschliessen"></p-button>
+    </div>
+    <div>
         <p-fieldset legend="Viertelfinals">
             <div class="flex flex-row">
                 <ng-container *ngFor="let m of quaterFinalMatches">
@@ -53,6 +67,9 @@
                 </ng-container>
             </div>
         </p-fieldset>
+    </div>
+    <div class="flex flex-row-reverse mt-5">
+        <p-button label="Viertelfinal abschliessen"></p-button>
     </div>
     <div class="mt-5">
         <p-fieldset legend="Halbfinals">
@@ -65,6 +82,9 @@
             </div>
         </p-fieldset>
     </div>
+    <div class="flex flex-row-reverse mt-5">
+        <p-button label="Halbfinals abschliessen"></p-button>
+    </div>
     <div class="mt-5">
         <p-fieldset legend="Finale">
             <div class="flex flex-row justify-around">
@@ -76,4 +96,10 @@
             </div>
         </p-fieldset>
     </div>
+    <div class="flex flex-row-reverse mt-5">
+        <p-button (onClick)="finishTournament()" label="Turnier abschliessen"></p-button>
+    </div>
+</ng-container>
+<ng-container *ngIf="!loading && matches && matches.length===0">
+    <app-beerpong-setup></app-beerpong-setup>
 </ng-container>

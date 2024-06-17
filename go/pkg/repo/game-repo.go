@@ -6,6 +6,7 @@ import (
 	"math/rand"
 	"net/http"
 	"sort"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -54,7 +55,7 @@ func (gr *Gamerepo) CreateGame(c *gin.Context) {
 	case 0:
 		err := gr.handleGameMode30Teams(&game)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, fmt.Errorf("failed to handle create game request err: %s", err))
+			c.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("failed to handle create game request err: %s", err)})
 			return
 		}
 	default:
@@ -116,7 +117,7 @@ func (gr *Gamerepo) UpdateMatches(c *gin.Context) {
 		return
 	}
 	m.UpdatedAt = time.Now()
-	if tx := gr.db.Where("game_id=? and away_team=? and home_team=?", m.GameID, m.AwayTeam, m.HomeTeam).Save(&m); tx.Error != nil {
+	if tx := gr.db.Where("game_id=? and away_team=? and home_team=? and match_id=?", m.GameID, m.AwayTeam, m.HomeTeam, m.MatchID).Save(&m); tx.Error != nil {
 		c.JSON(http.StatusConflict, gin.H{"error": tx.Error.Error()})
 		return
 	}
@@ -165,19 +166,33 @@ func (gr *Gamerepo) UpdateTeams(c *gin.Context) {
 //	@Failure	400 {object} map[string]any
 //	@Router		/finishGame/:id [put]
 func (gr *Gamerepo) FinishGame(c *gin.Context) {
-	// id := c.Param("id")
+	id := c.Param("id")
+	if id == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "missing game id"})
+		return
+	}
+	idValue := strings.Split(id, "=")
 
-	c.JSON(http.StatusOK, models.Game{})
+	var activeGame *models.Game
+	if tx := gr.db.Where("id=?", idValue[1]).First(&activeGame); tx.Error != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": tx.Error.Error()})
+		return
+	}
+	activeGame.IsFinished = true
+	if tx := gr.db.Save(&activeGame); tx.Error != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": tx.Error.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "game finished"})
 }
 
 func (gr *Gamerepo) handleGameMode30Teams(game *models.NewGame) error {
+	//save new game
 	if tx := gr.db.Create(&game.Game); tx.Error != nil {
 		return tx.Error
 	}
-	if tx := gr.db.Create(&game.Teams); tx.Error != nil {
-		return tx.Error
-	}
-	matches := gr.calculateMatchesPerGroup(game.Teams, game.Game.ID)
+	//calculate matches for game
+	matches := gr.calculateMatchesPerGroup(game.Game.Teams, game.Game.ID, game.Game.Referee)
 	if tx := gr.db.Create(&matches); tx.Error != nil {
 		return tx.Error
 	}
@@ -232,7 +247,7 @@ func (gr *Gamerepo) getGroups(teams []models.Team) []models.Group {
 	return retval
 }
 
-func (gr *Gamerepo) calculateMatchesPerGroup(teams []models.Team, gameId int) []models.Match {
+func (gr *Gamerepo) calculateMatchesPerGroup(teams []models.Team, gameId int, referees []models.Referee) []models.Match {
 	var matches []models.Match
 
 	//sort teams in groups
@@ -246,39 +261,72 @@ func (gr *Gamerepo) calculateMatchesPerGroup(teams []models.Team, gameId int) []
 		groups[t.GroupName] = append(groups[t.GroupName], t)
 	}
 
+	//split referees for every group (min 12 referees)
+
 	//generate goup games
 	for _, g := range groups {
-		newmatches := generateSchedule(g, gameId, g[0].GroupName)
+		refs := []models.Referee{}
+		switch g[0].GroupName {
+		case "A":
+			refs = referees[:2]
+		case "B":
+			refs = referees[2:4]
+		case "C":
+			refs = referees[4:6]
+		case "D":
+			refs = referees[6:8]
+		case "E":
+			refs = referees[8:10]
+		case "F":
+			refs = referees[10:]
+		default:
+			break
+		}
+		newmatches := generateSchedule(g, gameId, g[0].GroupName, refs)
 		matches = append(matches, newmatches...)
 	}
 
+	//add round of 16
+	matches = append(matches, models.Match{GameID: gameId, Type: "round_of_16", GroupNumber: "A", HomeTeam: "", AwayTeam: "", PointsHome: 0, PointsAway: 0})
+	matches = append(matches, models.Match{GameID: gameId, Type: "round_of_16", GroupNumber: "B", HomeTeam: "", AwayTeam: "", PointsHome: 0, PointsAway: 0})
+	matches = append(matches, models.Match{GameID: gameId, Type: "round_of_16", GroupNumber: "C", HomeTeam: "", AwayTeam: "", PointsHome: 0, PointsAway: 0})
+	matches = append(matches, models.Match{GameID: gameId, Type: "round_of_16", GroupNumber: "D", HomeTeam: "", AwayTeam: "", PointsHome: 0, PointsAway: 0})
+	matches = append(matches, models.Match{GameID: gameId, Type: "round_of_16", GroupNumber: "E", HomeTeam: "", AwayTeam: "", PointsHome: 0, PointsAway: 0})
+	matches = append(matches, models.Match{GameID: gameId, Type: "round_of_16", GroupNumber: "F", HomeTeam: "", AwayTeam: "", PointsHome: 0, PointsAway: 0})
+	matches = append(matches, models.Match{GameID: gameId, Type: "round_of_16", GroupNumber: "A", HomeTeam: "", AwayTeam: "", PointsHome: 0, PointsAway: 0})
+	matches = append(matches, models.Match{GameID: gameId, Type: "round_of_16", GroupNumber: "B", HomeTeam: "", AwayTeam: "", PointsHome: 0, PointsAway: 0})
+
 	//add quarterfinals
-	matches = append(matches, models.Match{GameID: gameId, Type: "quaterfinal", GroupNumber: "", HomeTeam: "", AwayTeam: "", PointsHome: 0, PointsAway: 0})
-	matches = append(matches, models.Match{GameID: gameId, Type: "quaterfinal", GroupNumber: "", HomeTeam: "", AwayTeam: "", PointsHome: 0, PointsAway: 0})
-	matches = append(matches, models.Match{GameID: gameId, Type: "quaterfinal", GroupNumber: "", HomeTeam: "", AwayTeam: "", PointsHome: 0, PointsAway: 0})
-	matches = append(matches, models.Match{GameID: gameId, Type: "quaterfinal", GroupNumber: "", HomeTeam: "", AwayTeam: "", PointsHome: 0, PointsAway: 0})
+	matches = append(matches, models.Match{GameID: gameId, Type: "quaterfinal", GroupNumber: "A", HomeTeam: "", AwayTeam: "", PointsHome: 0, PointsAway: 0})
+	matches = append(matches, models.Match{GameID: gameId, Type: "quaterfinal", GroupNumber: "B", HomeTeam: "", AwayTeam: "", PointsHome: 0, PointsAway: 0})
+	matches = append(matches, models.Match{GameID: gameId, Type: "quaterfinal", GroupNumber: "C", HomeTeam: "", AwayTeam: "", PointsHome: 0, PointsAway: 0})
+	matches = append(matches, models.Match{GameID: gameId, Type: "quaterfinal", GroupNumber: "D", HomeTeam: "", AwayTeam: "", PointsHome: 0, PointsAway: 0})
 
 	//add semifinals
-	matches = append(matches, models.Match{GameID: gameId, Type: "semifinal", GroupNumber: "", HomeTeam: "", AwayTeam: "", PointsHome: 0, PointsAway: 0})
-	matches = append(matches, models.Match{GameID: gameId, Type: "semifinal", GroupNumber: "", HomeTeam: "", AwayTeam: "", PointsHome: 0, PointsAway: 0})
+	matches = append(matches, models.Match{GameID: gameId, Type: "semifinal", GroupNumber: "A", HomeTeam: "", AwayTeam: "", PointsHome: 0, PointsAway: 0})
+	matches = append(matches, models.Match{GameID: gameId, Type: "semifinal", GroupNumber: "B", HomeTeam: "", AwayTeam: "", PointsHome: 0, PointsAway: 0})
 
 	//add final
-	matches = append(matches, models.Match{GameID: gameId, Type: "final", GroupNumber: "", HomeTeam: "", AwayTeam: "", PointsHome: 0, PointsAway: 0})
+	matches = append(matches, models.Match{GameID: gameId, Type: "final", GroupNumber: "A", HomeTeam: "", AwayTeam: "", PointsHome: 0, PointsAway: 0})
 
 	return matches
 }
 
-func generateSchedule(teams []models.Team, gameId int, group string) []models.Match {
+func generateSchedule(teams []models.Team, gameId int, group string, referees []models.Referee) []models.Match {
 	numTeams := len(teams)
 	// numMatches := numTeams * (numTeams - 1) / 2 // Anzahl der Spiele
 
 	// Erstellen eines leeren Spielplans
 	schedule := make([]models.Match, 0)
 
+	refereeCounter := 0
 	// Erstellen aller möglichen Spiele
 	allMatches := make([]models.Match, 0)
 	for i := 0; i < numTeams; i++ {
 		for j := i + 1; j < numTeams; j++ {
+			if refereeCounter == 3 {
+				refereeCounter = 0
+			}
 			match := models.Match{
 				GameID:      gameId,
 				Type:        "regular",
@@ -287,8 +335,10 @@ func generateSchedule(teams []models.Team, gameId int, group string) []models.Ma
 				AwayTeam:    teams[j].TeamName,
 				PointsHome:  0,
 				PointsAway:  0,
+				Referee:     referees[refereeCounter].Name,
 			}
 			allMatches = append(allMatches, match)
+			refereeCounter++
 		}
 	}
 
