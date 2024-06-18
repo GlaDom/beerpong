@@ -23,7 +23,7 @@
             <hr>
             <div class="flex flex-row justify-between mt-3">
                 <p-tag value="{{match?.referee}}" icon="pi pi-user"></p-tag>
-                <p-tag value="14:00 - 14:20" severity="secondary"></p-tag>
+                <p-tag value="{{match?.start_time | date: 'hh:mm'}}-{{match?.end_time | date: 'hh:mm'}}" severity="secondary"></p-tag>
             </div>
         </div>
     </p-card>

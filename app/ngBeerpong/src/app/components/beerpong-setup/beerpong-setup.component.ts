@@ -125,6 +125,7 @@ export class BeerpongSetupComponent implements OnInit {
         amount_of_teams: 30,
         is_finished: false,
         game_time: this.refereeFormGroup.get('gameTime')?.value,
+        start_time: this.refereeFormGroup.get('date')?.value,
         referee: referees,
         teams: this.getTeamsForGame()
       },

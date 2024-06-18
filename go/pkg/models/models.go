@@ -9,6 +9,7 @@ type Game struct {
 	AmountOfTeams int           `json:"amount_of_teams"`
 	IsFinished    bool          `json:"is_finished"`
 	GameTime      time.Duration `json:"game_time"`
+	StartTime     time.Time     `json:"start_time"`
 	Referee       []Referee     `json:"referee" gorm:"foreignKey:game_id;references:ID"`
 	Teams         []Team        `json:"teams" gorm:"foreignKey:game_id;references:ID"`
 	UpdatedAt     time.Time     `json:"updated_at" gorm:"<-:create"`

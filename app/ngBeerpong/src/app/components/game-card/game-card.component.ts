@@ -11,6 +11,7 @@ import { Store } from '@ngrx/store';
 import { updateMatch, updateTeams } from '../../store/beerpong.actions';
 import TeamUpdate from '../../api/team-update.interface';
 import { TagModule } from 'primeng/tag';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-game-card',
@@ -22,7 +23,8 @@ import { TagModule } from 'primeng/tag';
     ChipModule,
     ButtonModule,
     FormsModule,
-    TagModule
+    TagModule,
+    DatePipe
   ],
   templateUrl: './game-card.component.html',
   styleUrl: './game-card.component.css'

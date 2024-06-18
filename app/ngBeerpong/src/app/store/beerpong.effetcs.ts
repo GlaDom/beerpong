@@ -2,6 +2,8 @@ import { Injectable } from "@angular/core";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { ConfigurationService } from "../services/configuration.service";
 import { EMPTY, Observable, catchError, exhaustMap, map, of, startWith, switchMap } from "rxjs";
+import { BeerpongGame } from "./game.state";
+import { Store } from "@ngrx/store";
 
 @Injectable()
 export class BeerpongEffects {
@@ -19,6 +21,20 @@ export class BeerpongEffects {
                 })
             ))
     ))
+
+    createGameSuccess$ = createEffect(() => this.actions$.pipe(
+        ofType('[Admin-space Component] Create Game Success'),
+        switchMap(() => this.configService.GetGame("")
+            .pipe(
+                map(game => {
+                    return ({type: '[App Component] Load Game Succes', game})}),
+                catchError((error, source) => {
+                    console.log(error, 'error load game')
+                    return of({type: '[App Component] Load Game Failure'})
+                })
+            ))
+        )
+    )
 
     loadGame$ = createEffect(() => this.actions$.pipe(
         ofType('[App Component] Load Game'),
@@ -79,5 +95,6 @@ export class BeerpongEffects {
     constructor(
         private actions$: Actions,
         private configService: ConfigurationService,
+        private beerpongstore: Store<BeerpongGame>
     ) {}
 }
