@@ -21,6 +21,22 @@ export const updateGame = createAction('[TODO] Update Game')
 //UPDATE_MATCH
 export const updateMatch = createAction('[GamePlan Component] Update Match', props<{match: Match}>())
 export const updateMatchSuccess = createAction('[GamePlan Component] Update Match Success', props<{match: Match}>())
+
+export const updateMatchesRoundOfSixteen = createAction('[Admin-space Component] Update Matches Round Of Sixteen', props<{gameId: number}>())
+export const updateMatchesRoundOfSixteenSuccess = createAction('[Admin-space Component] Update Matches Round Of Sixteen Success')
+export const updateMatchesRoundOfSixteenFailure = createAction('[Admin-space Component] Update Matches Round Of Sixteen Failure')
+
+export const updateMatchesQuaterFinals = createAction('[Admin-space Component] Update Matches Quater Finals', props<{gameId: number}>())
+export const updateMatchesQuaterFinalsSuccess = createAction('[Admin-space Component] Update Matches Quater Finals Success')
+export const updateMatchesQuaterFinalsFailure = createAction('[Admin-space Component] Update Matches Quater Finals Failure')
+
+export const updateMatchesSemiFinals = createAction('[Admin-space Component] Update Matches Semi Finals', props<{gameId: number}>())
+export const updateMatchesSemiFinalsSuccess = createAction('[Admin-space Component] Update Matches Semi Finals Success')
+export const updateMatchesSemiFinalsFailure = createAction('[Admin-space Component] Update Matches Semi Finals Failure')
+
+export const updateMatchesFinal = createAction('[Admin-space Component] Update Matches Final', props<{gameId: number}>())
+export const updateMatchesFinalSuccess = createAction('[Admin-space Component] Update Matches Final Success')
+export const updateMatchesFinalFailure = createAction('[Admin-space Component] Update Matches Final Failure')
 //UPDATE_TEAMS
 export const updateTeams = createAction('[Admin-space Component] Update Teams', props<{teams: TeamUpdate[]}>())
 export const updateTeamsSuccess = createAction('[Admin-space Component] Update Teams Success', props<{teams: Team[]}>())

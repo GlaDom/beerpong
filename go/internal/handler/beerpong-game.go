@@ -174,7 +174,7 @@ func (h *beerpongGameHandler) UpdateGameRoundOf16(c *gin.Context) {
 
 	err = h.SixGFiveT_Mode.UpdateMatchesRoundOfSixteen(gameId)
 	if err != nil {
-		c.JSON(http.StatusConflict, gin.H{"error": err})
+		c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
 		return
 	}
 	c.JSON(http.StatusOK, nil)
@@ -203,7 +203,7 @@ func (h *beerpongGameHandler) UpdateGameQuaterFinals(c *gin.Context) {
 
 	err = h.SixGFiveT_Mode.UpdateMatchesQuaterFinals(gameId)
 	if err != nil {
-		c.JSON(http.StatusConflict, gin.H{"error": err})
+		c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
 		return
 	}
 	c.JSON(http.StatusOK, nil)
@@ -226,13 +226,13 @@ func (h *beerpongGameHandler) UpdateGameSemiFinals(c *gin.Context) {
 	idValue := strings.Split(id, "=")
 	gameId, err := strconv.Atoi(idValue[1])
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err})
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
 	err = h.SixGFiveT_Mode.UpdateMatchesSemiFinal(gameId)
 	if err != nil {
-		c.JSON(http.StatusConflict, gin.H{"error": err})
+		c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
 		return
 	}
 	c.JSON(http.StatusOK, nil)
@@ -255,13 +255,13 @@ func (h *beerpongGameHandler) UpdateGameFinal(c *gin.Context) {
 	idValue := strings.Split(id, "=")
 	gameId, err := strconv.Atoi(idValue[1])
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err})
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
 	err = h.SixGFiveT_Mode.UpdateMatchesFinal(gameId)
 	if err != nil {
-		c.JSON(http.StatusConflict, gin.H{"error": err})
+		c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
 		return
 	}
 	c.JSON(http.StatusOK, nil)
@@ -296,22 +296,4 @@ func (h *beerpongGameHandler) FinishGame(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "game finished"})
-}
-
-func (h *beerpongGameHandler) UpdateMatchesRoundOfSixteen(c *gin.Context) {
-	id := c.Param("id")
-	if id == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "missing game id"})
-		return
-	}
-	idValue := strings.Split(id, "=")
-	gameId, err := strconv.Atoi(idValue[1])
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err})
-	}
-
-	err = h.SixGFiveT_Mode.UpdateMatchesRoundOfSixteen(gameId)
-	if err != nil {
-		c.JSON(http.StatusConflict, gin.H{"error": err})
-	}
 }

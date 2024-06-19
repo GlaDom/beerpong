@@ -41,7 +41,7 @@
         </p-tabPanel>
     </p-tabView>
     <div class="flex flex-row-reverse mt-5">
-        <p-button label="Gruppenphase abschliessen"></p-button>
+        <p-button (onClick)="updateRoundOfSixteen()" label="Gruppenphase abschliessen"></p-button>
     </div>
     <div>
         <p-fieldset legend="Achtelfinals">
@@ -55,7 +55,7 @@
         </p-fieldset>
     </div>
     <div class="flex flex-row-reverse mt-5">
-        <p-button label="Achtelfinals abschliessen"></p-button>
+        <p-button (onClick)="updateQuaterFinals()" label="Achtelfinals abschliessen"></p-button>
     </div>
     <div>
         <p-fieldset legend="Viertelfinals">
@@ -69,7 +69,7 @@
         </p-fieldset>
     </div>
     <div class="flex flex-row-reverse mt-5">
-        <p-button label="Viertelfinal abschliessen"></p-button>
+        <p-button (onClick)="updateSemiFinals()" label="Viertelfinal abschliessen"></p-button>
     </div>
     <div class="mt-5">
         <p-fieldset legend="Halbfinals">
@@ -83,7 +83,7 @@
         </p-fieldset>
     </div>
     <div class="flex flex-row-reverse mt-5">
-        <p-button label="Halbfinals abschliessen"></p-button>
+        <p-button (onClick)="updateFinal()" label="Halbfinals abschliessen"></p-button>
     </div>
     <div class="mt-5">
         <p-fieldset legend="Finale">
@@ -97,7 +97,7 @@
         </p-fieldset>
     </div>
     <div class="flex flex-row-reverse mt-5">
-        <p-button (onClick)="finishTournament()" label="Turnier abschliessen"></p-button>
+        <p-button (onClick)="setTournamentFinished()" label="Zur Tabelle"></p-button>
     </div>
 </ng-container>
 <ng-container *ngIf="!loading && matches && matches.length===0">

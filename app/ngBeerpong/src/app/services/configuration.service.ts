@@ -26,6 +26,22 @@ export class ConfigurationService {
     return this.httpClient.put<Match>(this.url+"/updateMatches", match).pipe()
   }
 
+  UpdateMatchesRoundOfSixteen(gameId: number) {
+    return this.httpClient.put<string>(this.url+"/updateMatchesRoundOfSixteen/id="+gameId, null).pipe()
+  }
+
+  UpdateMatchesQuaterfinals(gameId: number) {
+    return this.httpClient.put<string>(this.url+"/updateMatchesQuaterfinals/id="+gameId, null).pipe()
+  }
+
+  UpdateMatchesSemifinals(gameId: number) {
+    return this.httpClient.put<string>(this.url+"/updateMatchesSemifinals/id="+gameId, null).pipe()
+  }
+
+  UpdateMatchesFinal(gameId: number) {
+    return this.httpClient.put<string>(this.url+"/updateMatchesFinals/id="+gameId, null).pipe()
+  }
+
   UpdateTeams(teams: TeamUpdate[]) {
     return this.httpClient.put<TeamUpdate[]>(this.url+"/updateTeams", {teams: teams}).pipe()
   }

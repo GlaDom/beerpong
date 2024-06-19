@@ -1,6 +1,6 @@
 import { createReducer, on } from "@ngrx/store";
 import { BeerpongGame, Status } from "./game.state";
-import { createGame, createGameSuccess, finishGame, finishGameSuccess, loadGame, loadGameFailure, loadGameSuccess, updateMatch, updateMatchSuccess, updateTeams, updateTeamsSuccess } from "./beerpong.actions";
+import { createGame, createGameSuccess, finishGame, finishGameSuccess, loadGame, loadGameFailure, loadGameSuccess, updateMatch, updateMatchSuccess, updateMatchesFinalFailure, updateMatchesQuaterFinalsFailure, updateMatchesRoundOfSixteenFailure, updateMatchesSemiFinalsFailure, updateTeams, updateTeamsSuccess } from "./beerpong.actions";
 import { group } from "console";
 
 export const initialState: BeerpongGame = {
@@ -54,7 +54,7 @@ export const beerpongReducer = createReducer(initialState,
                 m.points_away = match.points_away
             }
         })
-        let newToastState: Status = 'success'
+        let newToastState: Status = 'success match updated'
         return {
             ...state,
             matches: matches,
@@ -84,6 +84,34 @@ export const beerpongReducer = createReducer(initialState,
         return {
             ...state,
             groups: oldGroups,
+            toastStatus: newToastState
+        }
+    }),
+    on(updateMatchesRoundOfSixteenFailure, (state) => {
+        let newToastState: Status = 'failed update round of 16'
+        return {
+            ...state,
+            toastStatus: newToastState
+        }
+    }),
+    on(updateMatchesQuaterFinalsFailure, (state) => {
+        let newToastState: Status = 'failed update quater finals'
+        return {
+            ...state,
+            toastStatus: newToastState
+        }
+    }),
+    on(updateMatchesSemiFinalsFailure, (state) => {
+        let newToastState: Status = 'failed update semi finals'
+        return {
+            ...state,
+            toastStatus: newToastState
+        }
+    }),
+    on(updateMatchesFinalFailure, (state) => {
+        let newToastState: Status = 'failed update final'
+        return {
+            ...state,
             toastStatus: newToastState
         }
     }),

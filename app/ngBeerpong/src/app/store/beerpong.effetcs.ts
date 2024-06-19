@@ -64,6 +64,62 @@ export class BeerpongEffects {
             ))
     ))
 
+    updateMatchesRoundOfSixteen = createEffect(() => this.actions$.pipe(
+        ofType('[Admin-space Component] Update Matches Round Of Sixteen'),
+        switchMap((gameId: any) => this.configService.UpdateMatchesRoundOfSixteen(gameId.gameId)
+            .pipe(
+                map(() => {
+                    return ({type: '[Admin-space Component] Update Matches Round Of Sixteen Success'})
+                }),
+                catchError(() => {
+                    console.log('error updating round of sixteen')
+                    return of({type: '[Admin-space Component] Update Matches Round Of Sixteen Failure'})
+                })
+            ))
+    ))
+
+    updateMatchesQuaterfinals = createEffect(() => this.actions$.pipe(
+        ofType('[Admin-space Component] Update Matches Quater Finals'),
+        switchMap((gameId: any) => this.configService.UpdateMatchesQuaterfinals(gameId.gameId)
+            .pipe(
+                map(() => {
+                    return ({type: '[Admin-space Component] Update Matches Quater Finals Success'})
+                }),
+                catchError(() => {
+                    console.log('error updating round of sixteen')
+                    return of({type: '[Admin-space Component] Update Matches Quater Finals Failure'})
+                })
+            ))
+    ))
+
+    updateMatchesSemifinals = createEffect(() => this.actions$.pipe(
+        ofType('[Admin-space Component] Update Matches Semi Finals'),
+        switchMap((gameId: any) => this.configService.UpdateMatchesSemifinals(gameId.gameId)
+            .pipe(
+                map(() => {
+                    return ({type: '[Admin-space Component] Update Matches Semi Finals Success'})
+                }),
+                catchError(() => {
+                    console.log('error updating round of sixteen')
+                    return of({type: '[Admin-space Component] Update Matches Semi Finals Failure'})
+                })
+            ))
+    ))
+
+    updateMatchesFinal = createEffect(() => this.actions$.pipe(
+        ofType('[Admin-space Component] Update Matches Final'),
+        switchMap((gameId: any) => this.configService.UpdateMatchesFinal(gameId.gameId)
+            .pipe(
+                map(() => {
+                    return ({type: '[Admin-space Component] Update Matches Final Success'})
+                }),
+                catchError(() => {
+                    console.log('error updating round of sixteen')
+                    return of({type: '[Admin-space Component] Update Matches Final Failure'})
+                })
+            ))
+    ))
+
     updateTeams$ = createEffect(() => this.actions$.pipe(
         ofType('[Admin-space Component] Update Teams'),
         exhaustMap((teams: any) => this.configService.UpdateTeams(teams.teams)
