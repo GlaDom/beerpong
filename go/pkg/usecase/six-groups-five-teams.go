@@ -1,19 +1,34 @@
 package usecase
 
 import (
+	"fmt"
 	"math/rand"
 	"sort"
+	"strings"
 	"time"
 
 	"github.com/gladom/beerpong/pkg/models"
-	"github.com/gladom/beerpong/pkg/repo"
 )
 
-type SixGroupsFiveTeams struct {
-	GameRepo *repo.Gamerepo
+type IGamerepo interface {
+	GetGame() (*models.GameResponse, error)
+	GetGameByID(string) (*models.Game, error)
+	CreateGame(*models.NewGame) error
+	GetTeamsByGameID(int) ([]models.Team, error)
+	GetTeamByGameID(int, string) (models.Team, error)
+	GetMatchesByGameType(int, string) ([]models.Match, error)
+	GetMatchesByGameID(int) ([]models.Match, error)
+	CreateMatches([]models.Match) error
+	UpdateMatches(*models.Match) error
+	UpdateTeam(*models.Team) error
+	UpdateGame(*models.Game) error
 }
 
-func NewSixGroupsFiveTeams(gr *repo.Gamerepo) *SixGroupsFiveTeams {
+type SixGroupsFiveTeams struct {
+	GameRepo IGamerepo
+}
+
+func NewSixGroupsFiveTeams(gr IGamerepo) *SixGroupsFiveTeams {
 	return &SixGroupsFiveTeams{
 		GameRepo: gr,
 	}
@@ -31,6 +46,146 @@ func (s *SixGroupsFiveTeams) HandleGameMode30Teams(game *models.NewGame) error {
 	if err != nil {
 		return err
 	}
+	return nil
+}
+
+func (s *SixGroupsFiveTeams) UpdateMatchesRoundOfSixteen(gameId int) error {
+	if !s.matchesAreFinished(gameId, "regular") {
+		return fmt.Errorf("matches not finished yet")
+	}
+	//get teams of game
+	teams, err := s.GameRepo.GetTeamsByGameID(gameId)
+	if err != nil {
+		return err
+	}
+	//aufteilen in gruppen
+	groups := s.GetGroups(teams)
+	//gurppen sortieren nach Punkte
+	groups = s.SortGroupsByAlphabet(groups)
+	for i, g := range groups {
+		groups[i].Teams = s.SortTeamsByPoints(g.Teams)
+	}
+	//alle 3.-platzierten der gruppen filtern
+	bestThirdPlaces := s.filterForBestThirdPlaces(groups)
+	for i := range groups {
+		//ersten beiden je gruppe filtern
+		groups[i].Teams = groups[i].Teams[:2]
+	}
+	//alle round_of_16 matches holen
+	matches, err := s.GameRepo.GetMatchesByGameType(gameId, "round_of_16")
+	if err != nil {
+		return err
+	}
+
+	//spiele entsprechend updaten und speichern
+	updatedMatches := s.calculateRoundOf16(groups, bestThirdPlaces, matches)
+	// spiele speichern
+	for _, g := range updatedMatches {
+		err := s.GameRepo.UpdateMatches(&g)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (s *SixGroupsFiveTeams) UpdateMatchesQuaterFinals(gameId int) error {
+	if !s.matchesAreFinished(gameId, "round_of_16") {
+		return fmt.Errorf("matches not finished yet")
+	}
+	//get matches of round of 16
+	roundOfSixteen, err := s.GameRepo.GetMatchesByGameType(gameId, "round_of_16")
+	if err != nil {
+		return err
+	}
+	//get matches of quaterfinals
+	quaterfinals, err := s.GameRepo.GetMatchesByGameType(gameId, "quaterfinals")
+	if err != nil {
+		return err
+	}
+	for i := range quaterfinals {
+		switch i {
+		case 0:
+			quaterfinals[i].HomeTeam = s.getWinnerOfMatch(roundOfSixteen[0])
+			quaterfinals[i].AwayTeam = s.getWinnerOfMatch(roundOfSixteen[2])
+		case 1:
+			quaterfinals[i].HomeTeam = s.getWinnerOfMatch(roundOfSixteen[1])
+			quaterfinals[i].AwayTeam = s.getWinnerOfMatch(roundOfSixteen[5])
+		case 2:
+			quaterfinals[i].HomeTeam = s.getWinnerOfMatch(roundOfSixteen[4])
+			quaterfinals[i].AwayTeam = s.getWinnerOfMatch(roundOfSixteen[6])
+		case 3:
+			quaterfinals[i].HomeTeam = s.getWinnerOfMatch(roundOfSixteen[3])
+			quaterfinals[i].AwayTeam = s.getWinnerOfMatch(roundOfSixteen[7])
+		}
+	}
+	for _, m := range quaterfinals {
+		err := s.GameRepo.UpdateMatches(&m)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (s *SixGroupsFiveTeams) UpdateMatchesSemiFinal(gameId int) error {
+	if !s.matchesAreFinished(gameId, "quaterfinal") {
+		return fmt.Errorf("matches not finished yet")
+	}
+	//get quaterfinals
+	quaterFinals, err := s.GameRepo.GetMatchesByGameType(gameId, "quaterfinal")
+	if err != nil {
+		return err
+	}
+	//get semifinals
+	semiFinals, err := s.GameRepo.GetMatchesByGameType(gameId, "semifinal")
+	if err != nil {
+		return err
+	}
+
+	for i := range semiFinals {
+		switch i {
+		case 0:
+			semiFinals[i].HomeTeam = s.getWinnerOfMatch(quaterFinals[0])
+			semiFinals[i].AwayTeam = s.getWinnerOfMatch(quaterFinals[1])
+		case 1:
+			semiFinals[i].HomeTeam = s.getWinnerOfMatch(quaterFinals[2])
+			semiFinals[i].AwayTeam = s.getWinnerOfMatch(quaterFinals[3])
+		}
+	}
+
+	for _, m := range semiFinals {
+		err := s.UpdateMatches(m)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (s *SixGroupsFiveTeams) UpdateMatchesFinal(gameId int) error {
+	if !s.matchesAreFinished(gameId, "semifinal") {
+		return fmt.Errorf("matches not finished yet")
+	}
+	//get semifinals
+	semifinal, err := s.GameRepo.GetMatchesByGameType(gameId, "semifinal")
+	if err != nil {
+		return err
+	}
+	//get final
+	final, err := s.GameRepo.GetMatchesByGameType(gameId, "final")
+	if err != nil {
+		return err
+	}
+
+	final[0].HomeTeam = s.getWinnerOfMatch(semifinal[0])
+	final[0].AwayTeam = s.getWinnerOfMatch(semifinal[1])
+
+	err = s.UpdateMatches(final[0])
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -57,10 +212,9 @@ func (s *SixGroupsFiveTeams) SortGroupsByAlphabet(groups []models.Group) []model
 	return groups
 }
 
-func (s *SixGroupsFiveTeams) SortTeamsByPoints(teams []models.Team) []models.Team {
-	sort.Slice(teams, func(i, j int) bool {
-		return teams[i].Points > teams[j].Points
-	})
+func (s *SixGroupsFiveTeams) SortTeamsByPoints(teams models.Teams) []models.Team {
+
+	sort.Sort(teams)
 	return teams
 }
 
@@ -111,6 +265,40 @@ func (s *SixGroupsFiveTeams) GetGroups(teams []models.Team) []models.Group {
 	for _, k := range groupMap {
 		retval = append(retval, k)
 	}
+	return retval
+}
+
+func (s *SixGroupsFiveTeams) matchesAreFinished(gameId int, matchType string) bool {
+	//get matches
+	matches, err := s.GameRepo.GetMatchesByGameType(gameId, matchType)
+	if err != nil {
+		return false
+	}
+	for _, m := range matches {
+		if m.PointsHome != 0 || m.PointsAway != 0 {
+			continue
+		} else {
+			return false
+		}
+	}
+	return true
+}
+
+func (s *SixGroupsFiveTeams) getWinnerOfMatch(m models.Match) string {
+	retval := m.HomeTeam
+	if m.PointsAway > m.PointsHome {
+		retval = m.AwayTeam
+	}
+	return retval
+}
+
+func (s *SixGroupsFiveTeams) filterForBestThirdPlaces(groups []models.Group) []models.Team {
+	retval := []models.Team{}
+	for _, g := range groups {
+		retval = append(retval, g.Teams[2])
+	}
+	retval = s.SortTeamsByPoints(retval)
+	retval = retval[:4]
 	return retval
 }
 
@@ -245,15 +433,83 @@ func generateSchedule(teams []models.Team, gameId int, group string, referees []
 	return schedule
 }
 
-func (gr *SixGroupsFiveTeams) GetUpdatedTeam(currentTeam *models.Team, newTeam *models.TeamUpdate) *models.Team {
+func (s *SixGroupsFiveTeams) calculateRoundOf16(groups []models.Group, bestThirdPlaces []models.Team, matches []models.Match) []models.Match {
+	retval := []models.Match{}
+	for i, m := range matches {
+		m.UpdatedAt = time.Now()
+		switch i {
+		case 0:
+			m.HomeTeam = groups[0].Teams[1].TeamName
+			m.AwayTeam = groups[2].Teams[1].TeamName
+		case 1:
+			m.HomeTeam = groups[1].Teams[0].TeamName
+			updatedBestThirdPlaces, bestThirdFromGrouBEF := s.getBestThirdPlaceFromGroup("BEF", bestThirdPlaces)
+			bestThirdPlaces = updatedBestThirdPlaces
+			m.AwayTeam = bestThirdFromGrouBEF
+		case 2:
+			m.HomeTeam = groups[3].Teams[0].TeamName
+			updatedBestThirdPlaces, bestThirdFromGrouACD := s.getBestThirdPlaceFromGroup("ACD", bestThirdPlaces)
+			bestThirdPlaces = updatedBestThirdPlaces
+			m.AwayTeam = bestThirdFromGrouACD
+		case 3:
+			m.HomeTeam = groups[0].Teams[0].TeamName
+			updatedBestThirdPlaces, bestThirdFromGroupABF := s.getBestThirdPlaceFromGroup("ABF", bestThirdPlaces)
+			bestThirdPlaces = updatedBestThirdPlaces
+			m.AwayTeam = bestThirdFromGroupABF
+		case 4:
+			m.HomeTeam = groups[2].Teams[0].TeamName
+			updatedBestThirdPlaces, bestThirdFromGroupCDE := s.getBestThirdPlaceFromGroup("CDE", bestThirdPlaces)
+			bestThirdPlaces = updatedBestThirdPlaces
+			m.AwayTeam = bestThirdFromGroupCDE
+		case 5:
+			m.HomeTeam = groups[5].Teams[0].TeamName
+			m.AwayTeam = groups[4].Teams[1].TeamName
+		case 6:
+			m.HomeTeam = groups[4].Teams[0].TeamName
+			m.AwayTeam = groups[3].Teams[1].TeamName
+		case 7:
+			m.HomeTeam = groups[1].Teams[0].TeamName
+			m.AwayTeam = groups[5].Teams[1].TeamName
+		}
+		retval = append(retval, m)
+	}
+
+	for i, m := range retval {
+		if m.AwayTeam == "" && len(bestThirdPlaces) > 0 {
+			retval[i].AwayTeam = bestThirdPlaces[0].TeamName
+		}
+	}
+
+	return retval
+}
+
+func (s *SixGroupsFiveTeams) getBestThirdPlaceFromGroup(groupsString string, bestThirdPlaces []models.Team) ([]models.Team, string) {
+	teamName := ""
+	updatedBestThirdPlaces := []models.Team{}
+	for _, t := range bestThirdPlaces {
+		if strings.Contains(groupsString, t.GroupName) {
+			teamName = t.TeamName
+			break
+		}
+	}
+	for _, t := range bestThirdPlaces {
+		if t.TeamName != teamName {
+			updatedBestThirdPlaces = append(updatedBestThirdPlaces, t)
+		}
+	}
+	return updatedBestThirdPlaces, teamName
+}
+
+func (s *SixGroupsFiveTeams) GetUpdatedTeam(currentTeam *models.Team, newTeam *models.TeamUpdate) *models.Team {
 	retval := &models.Team{
-		ID:        currentTeam.ID,
-		GameID:    currentTeam.GameID,
-		GroupName: currentTeam.GroupName,
-		TeamName:  currentTeam.TeamName,
-		Points:    currentTeam.Points + newTeam.PointsToAdd,
-		CupsHit:   currentTeam.CupsHit + newTeam.CupsHitted,
-		CupsGet:   currentTeam.CupsGet + newTeam.CupsGot,
+		ID:            currentTeam.ID,
+		GameID:        currentTeam.GameID,
+		GroupName:     currentTeam.GroupName,
+		TeamName:      currentTeam.TeamName,
+		Points:        currentTeam.Points + newTeam.PointsToAdd,
+		CupsHit:       currentTeam.CupsHit + newTeam.CupsHitted,
+		CupsGet:       currentTeam.CupsGet + newTeam.CupsGot,
+		CupDifference: currentTeam.CupDifference + (newTeam.CupsHitted - newTeam.CupsGot),
 	}
 	return retval
 }

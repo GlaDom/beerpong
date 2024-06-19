@@ -26,15 +26,35 @@ type Referee struct {
 
 // Team repräsentiert die Teams-Tabelle
 type Team struct {
-	ID        uint      `json:"id" gorm:"<-:create;primaryKey;autoIncrement"`
-	GameID    int       `json:"game_id"`
-	TeamName  string    `json:"team_name"`
-	GroupName string    `json:"group_name"`
-	Points    int       `json:"points"`
-	Rank      int       `json:"rank"`
-	CupsHit   int       `json:"cups_hit"`
-	CupsGet   int       `json:"cups_get"`
-	CreatedAt time.Time `json:"created_at" gorm:"<-:create"`
+	ID            uint      `json:"id" gorm:"<-:create;primaryKey;autoIncrement"`
+	GameID        int       `json:"game_id"`
+	TeamName      string    `json:"team_name"`
+	GroupName     string    `json:"group_name"`
+	Points        int       `json:"points"`
+	Rank          int       `json:"rank"`
+	CupsHit       int       `json:"cups_hit"`
+	CupsGet       int       `json:"cups_get"`
+	CupDifference int       `json:"cup_difference"`
+	CreatedAt     time.Time `json:"created_at" gorm:"<-:create"`
+}
+
+type Teams []Team
+
+// Implement the sort.Interface for Teams
+func (t Teams) Len() int {
+	return len(t)
+}
+
+func (t Teams) Swap(i, j int) {
+	t[i], t[j] = t[j], t[i]
+}
+
+// Custom sort: primary by Points, secondary by CupsDifference
+func (t Teams) Less(i, j int) bool {
+	if t[i].Points == t[j].Points {
+		return t[i].CupDifference > t[j].CupDifference
+	}
+	return t[i].Points > t[j].Points
 }
 
 // Match repräsentiert die Matches-Tabelle

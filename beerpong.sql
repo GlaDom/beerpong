@@ -25,6 +25,7 @@ CREATE TABLE teams (
   rank INTEGER,
   cups_hit INTEGER,
   cups_get INTEGER,
+  cup_difference INTEGER,
   created_at TIMESTAMP,
   FOREIGN KEY (game_id) REFERENCES games(id)
 );

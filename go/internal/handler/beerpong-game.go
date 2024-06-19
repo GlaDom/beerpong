@@ -3,6 +3,7 @@ package handler
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 
@@ -144,9 +145,126 @@ func (h *beerpongGameHandler) UpdateTeams(c *gin.Context) {
 		err = h.SixGFiveT_Mode.UpdateTeam(newTeam)
 		if err != nil {
 			c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
+			return
 		}
 	}
 	c.JSON(http.StatusOK, retval)
+}
+
+// Update RoundOf16 godoc
+//
+//	@Summary	Update the round of 16 matches
+//	@Tags 		Match
+//	@Param 		id path string true "Game Id"
+//	@Success	200 {object} map[string]any
+//	@Failure	400 {object} map[string]any
+//	@Router		/updateMatchesRoundOfSixteen/:id [put]
+func (h *beerpongGameHandler) UpdateGameRoundOf16(c *gin.Context) {
+	id := c.Param("id")
+	if id == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "missing game id"})
+		return
+	}
+	idValue := strings.Split(id, "=")
+	gameId, err := strconv.Atoi(idValue[1])
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err})
+		return
+	}
+
+	err = h.SixGFiveT_Mode.UpdateMatchesRoundOfSixteen(gameId)
+	if err != nil {
+		c.JSON(http.StatusConflict, gin.H{"error": err})
+		return
+	}
+	c.JSON(http.StatusOK, nil)
+}
+
+// Update Quaterfinals godoc
+//
+//	@Summary	Update the quaterfinal matches
+//	@Tags 		Match
+//	@Param 		id path string true "Game Id"
+//	@Success	200 {object} map[string]any
+//	@Failure	400 {object} map[string]any
+//	@Router		/updateMatchesQuaterfinals/:id [put]
+func (h *beerpongGameHandler) UpdateGameQuaterFinals(c *gin.Context) {
+	id := c.Param("id")
+	if id == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "missing game id"})
+		return
+	}
+	idValue := strings.Split(id, "=")
+	gameId, err := strconv.Atoi(idValue[1])
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err})
+		return
+	}
+
+	err = h.SixGFiveT_Mode.UpdateMatchesQuaterFinals(gameId)
+	if err != nil {
+		c.JSON(http.StatusConflict, gin.H{"error": err})
+		return
+	}
+	c.JSON(http.StatusOK, nil)
+}
+
+// Update SemiFinal godoc
+//
+//	@Summary	Update the semifinals
+//	@Tags 		Match
+//	@Param 		id path string true "Game Id"
+//	@Success	200 {object} map[string]any
+//	@Failure	400 {object} map[string]any
+//	@Router		/updateMatchesSemifinals/:id [put]
+func (h *beerpongGameHandler) UpdateGameSemiFinals(c *gin.Context) {
+	id := c.Param("id")
+	if id == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "missing game id"})
+		return
+	}
+	idValue := strings.Split(id, "=")
+	gameId, err := strconv.Atoi(idValue[1])
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err})
+		return
+	}
+
+	err = h.SixGFiveT_Mode.UpdateMatchesSemiFinal(gameId)
+	if err != nil {
+		c.JSON(http.StatusConflict, gin.H{"error": err})
+		return
+	}
+	c.JSON(http.StatusOK, nil)
+}
+
+// Update SemiFinal godoc
+//
+//	@Summary	Update the semifinals
+//	@Tags 		Match
+//	@Param 		id path string true "Game Id"
+//	@Success	200 {object} map[string]any
+//	@Failure	400 {object} map[string]any
+//	@Router		/updateMatchesFinal/:id [put]
+func (h *beerpongGameHandler) UpdateGameFinal(c *gin.Context) {
+	id := c.Param("id")
+	if id == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "missing game id"})
+		return
+	}
+	idValue := strings.Split(id, "=")
+	gameId, err := strconv.Atoi(idValue[1])
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err})
+		return
+	}
+
+	err = h.SixGFiveT_Mode.UpdateMatchesFinal(gameId)
+	if err != nil {
+		c.JSON(http.StatusConflict, gin.H{"error": err})
+		return
+	}
+	c.JSON(http.StatusOK, nil)
 }
 
 // Finish Game
@@ -178,4 +296,22 @@ func (h *beerpongGameHandler) FinishGame(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "game finished"})
+}
+
+func (h *beerpongGameHandler) UpdateMatchesRoundOfSixteen(c *gin.Context) {
+	id := c.Param("id")
+	if id == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "missing game id"})
+		return
+	}
+	idValue := strings.Split(id, "=")
+	gameId, err := strconv.Atoi(idValue[1])
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err})
+	}
+
+	err = h.SixGFiveT_Mode.UpdateMatchesRoundOfSixteen(gameId)
+	if err != nil {
+		c.JSON(http.StatusConflict, gin.H{"error": err})
+	}
 }
