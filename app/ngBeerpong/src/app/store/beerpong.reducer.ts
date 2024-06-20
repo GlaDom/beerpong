@@ -1,9 +1,9 @@
 import { createReducer, on } from "@ngrx/store";
-import { BeerpongGame, Status } from "./game.state";
+import { BeerpongState, Status } from "./game.state";
 import { createGame, createGameSuccess, finishGame, finishGameSuccess, loadGame, loadGameFailure, loadGameSuccess, updateMatch, updateMatchSuccess, updateMatchesFinalFailure, updateMatchesQuaterFinalsFailure, updateMatchesRoundOfSixteenFailure, updateMatchesSemiFinalsFailure, updateTeams, updateTeamsSuccess } from "./beerpong.actions";
 import { group } from "console";
 
-export const initialState: BeerpongGame = {
+export const initialState: BeerpongState = {
     groups: [],
     matches: [],
     toastStatus: 'notset'
@@ -32,7 +32,7 @@ export const beerpongReducer = createReducer(initialState,
         }
     }),
     on(loadGameFailure, (state) => {
-        let initalGameState: BeerpongGame = {
+        let initalGameState: BeerpongState = {
             matches: [],
             groups: [],
             toastStatus: 'notset'
@@ -119,7 +119,7 @@ export const beerpongReducer = createReducer(initialState,
         return state
     }),
     on(finishGameSuccess, (state) => {
-        let initalGameState: BeerpongGame = {
+        let initalGameState: BeerpongState = {
             matches: [],
             groups: [],
             toastStatus: 'notset'

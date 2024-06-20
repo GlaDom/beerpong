@@ -8,7 +8,7 @@ import { GameplanComponent } from './app/pages/gameplan/gameplan.component';
 import { BeerpongSetupComponent } from './app/components/beerpong-setup/beerpong-setup.component';
 import { HttpClientModule } from '@angular/common/http';
 import { provideEffects } from '@ngrx/effects';
-import { StoreModule, provideStore } from '@ngrx/store';
+import { StoreModule, provideState, provideStore } from '@ngrx/store';
 import { beerpongReducer } from './app/store/beerpong.reducer';
 import { BeerpongEffects } from './app/store/beerpong.effetcs';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
@@ -34,9 +34,8 @@ bootstrapApplication(AppComponent, {
     importProvidersFrom(HttpClientModule),
     provideAnimations(),
     provideEffects(BeerpongEffects),
-    provideStore({
-        beerpong: beerpongReducer,
-    }),
+    provideStore(),
+    provideState({ name: 'beerpongState', reducer: beerpongReducer}),
     provideRouterStore(),
     provideStoreDevtools({
         maxAge: 25, // Retains last 25 states

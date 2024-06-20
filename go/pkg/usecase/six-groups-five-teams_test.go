@@ -53,7 +53,7 @@ func (mr *MockGameRepo) GetGameByID(string) (*models.Game, error) {
 func (mr *MockGameRepo) CreateGame(*models.NewGame) error {
 	return nil
 }
-func (mr *MockGameRepo) GetTeamByGameID(int, string) (models.Team, error) {
+func (mr *MockGameRepo) GetTeamByGameID(int, string, string) (models.Team, error) {
 	return models.Team{}, nil
 }
 func (mr *MockGameRepo) GetMatchesByGameID(int) ([]models.Match, error) {

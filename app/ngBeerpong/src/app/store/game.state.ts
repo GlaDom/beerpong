@@ -14,7 +14,9 @@ export type Status = 'notset' |
                     "failed update final" |
                     undefined
 
-export interface BeerpongGame {
+
+
+export interface BeerpongState {
     groups: Group[],
     matches: Match[],
     toastStatus: Status,

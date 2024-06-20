@@ -1,7 +1,7 @@
 //Actions needed
 
 import { createAction, props } from "@ngrx/store";
-import { BeerpongGame } from "./game.state";
+import { BeerpongState } from "./game.state";
 import Match from "../api/match.interface";
 import Team from "../api/team.interface";
 import TeamUpdate from "../api/team-update.interface";
@@ -11,10 +11,10 @@ import { GameRequest } from "../api/game-request";
 
 //CREATE_GAME
 export const createGame = createAction('[Admin-space Component] Create Game', props<{game: GameRequest}>())
-export const createGameSuccess = createAction('[Admin-space Component] Create Game Success', props<{game: BeerpongGame}>())
+export const createGameSuccess = createAction('[Admin-space Component] Create Game Success', props<{game: BeerpongState}>())
 //LOAD_GAME
 export const loadGame = createAction('[App Component] Load Game')
-export const loadGameSuccess = createAction('[App Component] Load Game Succes', props<{game: BeerpongGame}>())
+export const loadGameSuccess = createAction('[App Component] Load Game Succes', props<{game: BeerpongState}>())
 export const loadGameFailure = createAction('[App Component] Load Game Failure')
 //UPDATE_GAME (FINISH_GAME)
 export const updateGame = createAction('[TODO] Update Game')

@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { ConfigurationService } from "../services/configuration.service";
 import { EMPTY, Observable, catchError, exhaustMap, map, of, startWith, switchMap } from "rxjs";
-import { BeerpongGame } from "./game.state";
+import { BeerpongState } from "./game.state";
 import { Store } from "@ngrx/store";
 
 @Injectable()
@@ -151,6 +151,6 @@ export class BeerpongEffects {
     constructor(
         private actions$: Actions,
         private configService: ConfigurationService,
-        private beerpongstore: Store<BeerpongGame>
+        private beerpongstore: Store<BeerpongState>
     ) {}
 }

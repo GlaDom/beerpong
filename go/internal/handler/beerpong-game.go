@@ -134,7 +134,7 @@ func (h *beerpongGameHandler) UpdateTeams(c *gin.Context) {
 	}
 	for _, t := range updateRequest.Teams {
 		//get current team entry
-		currentTeam, err := h.SixGFiveT_Mode.GetTeamByGameID(t.GameID, t.TeamName)
+		currentTeam, err := h.SixGFiveT_Mode.GetTeamByGameID(t.GameID, t.TeamName, t.GroupName)
 		if err != nil {
 			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		}

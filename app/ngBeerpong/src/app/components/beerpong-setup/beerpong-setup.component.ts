@@ -17,7 +17,7 @@ import { GameRequest } from '../../api/game-request';
 import Team from '../../api/team.interface';
 import Group from '../../api/group.interface';
 import { DemoTeams } from './demo-teams';
-import { BeerpongGame } from '../../store/game.state';
+import { BeerpongState } from '../../store/game.state';
 import { Store } from '@ngrx/store';
 import { createGame } from '../../store/beerpong.actions';
 import { Referee } from '../../api/referee';
@@ -63,7 +63,7 @@ export class BeerpongSetupComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private beerpongstore: Store<BeerpongGame>
+    private beerpongstore: Store<BeerpongState>
   ) {
     this.gameForm = this.fb.group({
       groups: this.fb.array([])

@@ -7,7 +7,7 @@ import { DividerModule } from 'primeng/divider';
 import { Router, RouterOutlet } from '@angular/router';
 import { ConfigurationService } from './services/configuration.service';
 import { Observable, Observer } from 'rxjs';
-import { BeerpongGame } from './store/game.state';
+import { BeerpongState } from './store/game.state';
 import { Store } from '@ngrx/store';
 import { loadGame } from './store/beerpong.actions';
 import { selectGame } from './store/beerpong.selectors';
@@ -33,7 +33,7 @@ import { NgIf } from '@angular/common';
 export class AppComponent implements OnInit {
   items: MenuItem[] | undefined = []
   title = 'SKBeerpong';
-  game$: Observable<BeerpongGame>;
+  game$: Observable<BeerpongState>;
 
   gameObserver: Observer<any> = {
     next: (game) => {
@@ -52,10 +52,10 @@ export class AppComponent implements OnInit {
 
   constructor(
     private configService: ConfigurationService,
-    private beerpongStore: Store<BeerpongGame>,
+    private beerpongStore: Store<BeerpongState>,
     private router: Router
   ) {
-    this.game$ = new Observable<BeerpongGame>();
+    this.game$ = new Observable<BeerpongState>();
   }
 
   ngOnInit(): void {

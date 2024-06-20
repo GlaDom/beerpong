@@ -73,9 +73,9 @@ func (gr *Gamerepo) GetMatchesByGameType(gameId int, gameMode string) ([]models.
 	return retval, nil
 }
 
-func (gr *Gamerepo) GetTeamByGameID(gameId int, teamName string) (models.Team, error) {
+func (gr *Gamerepo) GetTeamByGameID(gameId int, teamName string, groupName string) (models.Team, error) {
 	var retval models.Team
-	if tx := gr.db.Where("game_id=? and team_name=?", gameId, teamName).First(&retval); tx.Error != nil {
+	if tx := gr.db.Where("game_id=? and team_name=? and group_name=?", gameId, teamName, groupName).First(&retval); tx.Error != nil {
 		return retval, tx.Error
 	}
 	return retval, nil

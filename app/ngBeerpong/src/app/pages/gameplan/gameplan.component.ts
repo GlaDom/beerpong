@@ -2,14 +2,15 @@ import { Component, OnInit } from '@angular/core';
 import { DividerModule } from 'primeng/divider';
 import { GameplanCardComponent } from '../../components/gameplan-card/gameplan-card.component';
 import { GroupCardComponent } from '../../components/group-card/group-card.component';
-import { BeerpongGame } from '../../store/game.state';
+import { BeerpongState } from '../../store/game.state';
 import { Store } from '@ngrx/store';
 import Match from '../../api/match.interface';
-import { selectGame } from '../../store/beerpong.selectors';
+import { selectBeerpongState, selectGame } from '../../store/beerpong.selectors';
 import { ConfigurationService } from '../../services/configuration.service';
 import { NgFor, NgIf } from '@angular/common';
 import Group from '../../api/group.interface';
 import { FieldsetModule } from 'primeng/fieldset';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-gameplan',
@@ -27,6 +28,7 @@ import { FieldsetModule } from 'primeng/fieldset';
 })
 export class GameplanComponent implements OnInit {
 
+  game$: Observable<BeerpongState>;
   groups: Group[] = [];
   matches: Match[] = [];
   regularMatches: Match[][] = [];
@@ -37,14 +39,17 @@ export class GameplanComponent implements OnInit {
 
   constructor(
     private configService: ConfigurationService,
-    private beerpongstore: Store<BeerpongGame>
-  ){}
+    private beerpongstore: Store<BeerpongState>
+  ){
+    this.game$ = this.beerpongstore.select(selectBeerpongState)
+  }
 
   ngOnInit(): void {
-    this.beerpongstore.select(selectGame).subscribe((game: any) => {
-      if(game.beerpong.groups && game.beerpong.groups.length > 0) {
-        this.groups = game.beerpong.groups
-        this.matches = game.beerpong.matches
+    this.game$.subscribe((game) => {
+      console.log(game)
+      if(game.groups && game.groups.length > 0) {
+        this.groups = game.groups
+        this.matches = game.matches
         this.regularMatches = this.configService.sortMatches(this.matches);
         this.roundOfsixteen = this.configService.filterMatches('round_of_16', this.matches)
         this.quaterFinals = this.configService.filterMatches('quaterfinal', this.matches)

@@ -15,7 +15,7 @@ type IGamerepo interface {
 	GetGameByID(string) (*models.Game, error)
 	CreateGame(*models.NewGame) error
 	GetTeamsByGameID(int) ([]models.Team, error)
-	GetTeamByGameID(int, string) (models.Team, error)
+	GetTeamByGameID(int, string, string) (models.Team, error)
 	GetMatchesByGameType(int, string) ([]models.Match, error)
 	GetMatchesByGameID(int) ([]models.Match, error)
 	CreateMatches([]models.Match) error
@@ -201,8 +201,8 @@ func (s *SixGroupsFiveTeams) GetMatchesByGameID(gameID int) ([]models.Match, err
 	return s.GameRepo.GetMatchesByGameID(gameID)
 }
 
-func (s *SixGroupsFiveTeams) GetTeamByGameID(gameID int, teamName string) (models.Team, error) {
-	return s.GameRepo.GetTeamByGameID(gameID, teamName)
+func (s *SixGroupsFiveTeams) GetTeamByGameID(gameID int, teamName string, groupName string) (models.Team, error) {
+	return s.GameRepo.GetTeamByGameID(gameID, teamName, groupName)
 }
 
 func (s *SixGroupsFiveTeams) SortGroupsByAlphabet(groups []models.Group) []models.Group {
