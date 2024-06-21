@@ -1,5 +1,6 @@
 <p-toast />
-<ng-container *ngIf="!loading">
+<p-confirmDialog />
+<ng-container *ngIf="!isLoading && matches && matches.length > 0 && !showRanking">
     <p-tabView>
         <p-tabPanel header="Gruppen A-C">
             <div class="flex">
@@ -41,7 +42,21 @@
         </p-tabPanel>
     </p-tabView>
     <div class="flex flex-row-reverse mt-5">
-        <p-button label="Gruppenphase abschliessen"></p-button>
+        <p-button (onClick)="updateRoundOfSixteen()" label="Gruppenphase abschliessen"></p-button>
+    </div>
+    <div>
+        <p-fieldset legend="Achtelfinals">
+            <div class="flex flex-row">
+                <ng-container *ngFor="let m of roundOfsixteen">
+                    <div class="flex-1">
+                        <app-game-card [match]="m"></app-game-card>
+                    </div>
+                </ng-container>
+            </div>
+        </p-fieldset>
+    </div>
+    <div class="flex flex-row-reverse mt-5">
+        <p-button (onClick)="updateQuaterFinals()" label="Achtelfinals abschliessen"></p-button>
     </div>
     <div>
         <p-fieldset legend="Viertelfinals">
@@ -54,6 +69,9 @@
             </div>
         </p-fieldset>
     </div>
+    <div class="flex flex-row-reverse mt-5">
+        <p-button (onClick)="updateSemiFinals()" label="Viertelfinal abschliessen"></p-button>
+    </div>
     <div class="mt-5">
         <p-fieldset legend="Halbfinals">
             <div class="flex flex-row">
@@ -64,6 +82,9 @@
                 </ng-container>
             </div>
         </p-fieldset>
+    </div>
+    <div class="flex flex-row-reverse mt-5">
+        <p-button (onClick)="updateFinal()" label="Halbfinals abschliessen"></p-button>
     </div>
     <div class="mt-5">
         <p-fieldset legend="Finale">
@@ -76,4 +97,18 @@
             </div>
         </p-fieldset>
     </div>
+    <div class="flex flex-row-reverse mt-5">
+        <p-button (onClick)="setTournamentFinished()" label="Zur Tabelle"></p-button>
+    </div>
+</ng-container>
+<ng-container *ngIf="!isLoading && matches && matches.length===0 && !showRanking">
+    <app-beerpong-setup></app-beerpong-setup>
+</ng-container>
+<ng-container *ngIf="showRanking">
+    <app-ranking [teams]="getBestEightTeams()">
+        <div class="flex gap-3 mt-1">
+            <p-button label="Zurueck" (onClick)="backToAdminSpace()"></p-button>
+            <p-button label="Spiel beenden" (onClick)="confirmGameFinish($event)"></p-button>
+        </div>
+    </app-ranking>
 </ng-container>

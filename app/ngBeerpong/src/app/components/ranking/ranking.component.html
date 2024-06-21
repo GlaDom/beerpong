@@ -1,0 +1,25 @@
+<p-card header="Platzierung">
+    <p-table [value]="teams">
+        <ng-template pTemplate="header">
+            <tr>
+                <th>Team-Name</th>
+                <th>Becher getroffen</th>
+                <th>Becher bekommen</th>
+                <th>Differenz</th>
+                <th>Punkte</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-teams>
+            <tr>
+                <td>{{ teams.team_name }}</td>
+                <td>{{ teams.cups_hit }}</td>
+                <td>{{ teams.cups_get }}</td>
+                <td>{{ teams.cup_difference }}</td>
+                <td>{{ teams.points }}</td>
+            </tr>
+        </ng-template>
+    </p-table>
+    <ng-template pTemplate="footer">
+        <ng-content></ng-content>
+    </ng-template>
+</p-card>

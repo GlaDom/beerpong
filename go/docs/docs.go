@@ -160,6 +160,138 @@ const docTemplate = `{
                 }
             }
         },
+        "/updateMatchesFinal/:id": {
+            "put": {
+                "tags": [
+                    "Match"
+                ],
+                "summary": "Update the semifinals",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Game Id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/updateMatchesQuaterfinals/:id": {
+            "put": {
+                "tags": [
+                    "Match"
+                ],
+                "summary": "Update the quaterfinal matches",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Game Id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/updateMatchesRoundOfSixteen/:id": {
+            "put": {
+                "tags": [
+                    "Match"
+                ],
+                "summary": "Update the round of 16 matches",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Game Id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/updateMatchesSemifinals/:id": {
+            "put": {
+                "tags": [
+                    "Match"
+                ],
+                "summary": "Update the semifinals",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Game Id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
         "/updateTeams": {
             "put": {
                 "tags": [
@@ -206,6 +338,9 @@ const docTemplate = `{
                 "created_at": {
                     "type": "string"
                 },
+                "game_time": {
+                    "$ref": "#/definitions/time.Duration"
+                },
                 "id": {
                     "type": "integer"
                 },
@@ -214,6 +349,21 @@ const docTemplate = `{
                 },
                 "mode": {
                     "type": "integer"
+                },
+                "referee": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_gladom_beerpong_pkg_models.Referee"
+                    }
+                },
+                "start_time": {
+                    "type": "string"
+                },
+                "teams": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_gladom_beerpong_pkg_models.Team"
+                    }
                 },
                 "updated_at": {
                     "type": "string"
@@ -226,11 +376,25 @@ const docTemplate = `{
                 "game": {
                     "$ref": "#/definitions/github_com_gladom_beerpong_pkg_models.Game"
                 },
+                "groups": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_gladom_beerpong_pkg_models.Group"
+                    }
+                },
                 "matches": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/github_com_gladom_beerpong_pkg_models.Match"
                     }
+                }
+            }
+        },
+        "github_com_gladom_beerpong_pkg_models.Group": {
+            "type": "object",
+            "properties": {
+                "group_name": {
+                    "type": "string"
                 },
                 "teams": {
                     "type": "array",
@@ -249,6 +413,9 @@ const docTemplate = `{
                 "created_at": {
                     "type": "string"
                 },
+                "end_time": {
+                    "type": "string"
+                },
                 "game_id": {
                     "type": "integer"
                 },
@@ -258,11 +425,20 @@ const docTemplate = `{
                 "home_team": {
                     "type": "string"
                 },
+                "match_id": {
+                    "type": "integer"
+                },
                 "points_away": {
                     "type": "integer"
                 },
                 "points_home": {
                     "type": "integer"
+                },
+                "referee": {
+                    "type": "string"
+                },
+                "start_time": {
+                    "type": "string"
                 },
                 "type": {
                     "type": "string"
@@ -288,12 +464,23 @@ const docTemplate = `{
             "properties": {
                 "game": {
                     "$ref": "#/definitions/github_com_gladom_beerpong_pkg_models.Game"
+                }
+            }
+        },
+        "github_com_gladom_beerpong_pkg_models.Referee": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
                 },
-                "teams": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/github_com_gladom_beerpong_pkg_models.Team"
-                    }
+                "game_id": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
                 }
             }
         },
@@ -302,6 +489,15 @@ const docTemplate = `{
             "properties": {
                 "created_at": {
                     "type": "string"
+                },
+                "cup_difference": {
+                    "type": "integer"
+                },
+                "cups_get": {
+                    "type": "integer"
+                },
+                "cups_hit": {
+                    "type": "integer"
                 },
                 "game_id": {
                     "type": "integer"
@@ -323,16 +519,70 @@ const docTemplate = `{
                 }
             }
         },
+        "github_com_gladom_beerpong_pkg_models.TeamUpdate": {
+            "type": "object",
+            "properties": {
+                "cups_got": {
+                    "type": "integer"
+                },
+                "cups_hitted": {
+                    "type": "integer"
+                },
+                "game_id": {
+                    "type": "integer"
+                },
+                "group_name": {
+                    "type": "string"
+                },
+                "points_to_add": {
+                    "type": "integer"
+                },
+                "team_name": {
+                    "type": "string"
+                }
+            }
+        },
         "github_com_gladom_beerpong_pkg_models.TeamUpdateRequest": {
             "type": "object",
             "properties": {
                 "teams": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_gladom_beerpong_pkg_models.Team"
+                        "$ref": "#/definitions/github_com_gladom_beerpong_pkg_models.TeamUpdate"
                     }
                 }
             }
+        },
+        "time.Duration": {
+            "type": "integer",
+            "enum": [
+                -9223372036854775808,
+                9223372036854775807,
+                1,
+                1000,
+                1000000,
+                1000000000,
+                60000000000,
+                3600000000000,
+                1,
+                1000,
+                1000000,
+                1000000000
+            ],
+            "x-enum-varnames": [
+                "minDuration",
+                "maxDuration",
+                "Nanosecond",
+                "Microsecond",
+                "Millisecond",
+                "Second",
+                "Minute",
+                "Hour",
+                "Nanosecond",
+                "Microsecond",
+                "Millisecond",
+                "Second"
+            ]
         }
     }
 }`

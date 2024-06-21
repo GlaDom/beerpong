@@ -9,6 +9,9 @@ interface Match {
     away_team: string;
     points_home: number;
     points_away: number;
+    referee?: string;
+    start_time?: Date;
+    end_time?: Date;
     updated_at?: Date;
     created_at?: Date;
   }

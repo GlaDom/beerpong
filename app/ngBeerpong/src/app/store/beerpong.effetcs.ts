@@ -1,21 +1,50 @@
 import { Injectable } from "@angular/core";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { ConfigurationService } from "../services/configuration.service";
-import { EMPTY, catchError, exhaustMap, map } from "rxjs";
-import { BeerpongGame, Status } from "./game.state";
+import { EMPTY, Observable, catchError, exhaustMap, map, of, startWith, switchMap } from "rxjs";
+import { BeerpongState } from "./game.state";
+import { Store } from "@ngrx/store";
 
 @Injectable()
 export class BeerpongEffects {
 
-    loadGame$ = createEffect(() => this.actions$.pipe(
-        ofType('[App Component] Load Game'),
-        exhaustMap(() => this.configService.GetGame("")
+    createGame$ = createEffect(() => this.actions$.pipe(
+        ofType('[Admin-space Component] Create Game'),
+        switchMap((game: any) => this.configService.CreateGame(game.game)
+            .pipe(
+                map((game) => {
+                    return ({type: '[Admin-space Component] Create Game Success', game})
+                }),
+                catchError((error) => {
+                    console.log(error, "error create game")
+                    return EMPTY
+                })
+            ))
+    ))
+
+    createGameSuccess$ = createEffect(() => this.actions$.pipe(
+        ofType('[Admin-space Component] Create Game Success'),
+        switchMap(() => this.configService.GetGame("")
             .pipe(
                 map(game => {
                     return ({type: '[App Component] Load Game Succes', game})}),
-                catchError(() => {
-                    console.log('error load game')
-                    return EMPTY
+                catchError((error, source) => {
+                    console.log(error, 'error load game')
+                    return of({type: '[App Component] Load Game Failure'})
+                })
+            ))
+        )
+    )
+
+    loadGame$ = createEffect(() => this.actions$.pipe(
+        ofType('[App Component] Load Game'),
+        switchMap(() => this.configService.GetGame("")
+            .pipe(
+                map(game => {
+                    return ({type: '[App Component] Load Game Succes', game})}),
+                catchError((error, source) => {
+                    console.log(error, 'error load game')
+                    return of({type: '[App Component] Load Game Failure'})
                 })
             ))
         )
@@ -35,6 +64,62 @@ export class BeerpongEffects {
             ))
     ))
 
+    updateMatchesRoundOfSixteen = createEffect(() => this.actions$.pipe(
+        ofType('[Admin-space Component] Update Matches Round Of Sixteen'),
+        switchMap((gameId: any) => this.configService.UpdateMatchesRoundOfSixteen(gameId.gameId)
+            .pipe(
+                map(() => {
+                    return ({type: '[Admin-space Component] Update Matches Round Of Sixteen Success'})
+                }),
+                catchError(() => {
+                    console.log('error updating round of sixteen')
+                    return of({type: '[Admin-space Component] Update Matches Round Of Sixteen Failure'})
+                })
+            ))
+    ))
+
+    updateMatchesQuaterfinals = createEffect(() => this.actions$.pipe(
+        ofType('[Admin-space Component] Update Matches Quater Finals'),
+        switchMap((gameId: any) => this.configService.UpdateMatchesQuaterfinals(gameId.gameId)
+            .pipe(
+                map(() => {
+                    return ({type: '[Admin-space Component] Update Matches Quater Finals Success'})
+                }),
+                catchError(() => {
+                    console.log('error updating round of sixteen')
+                    return of({type: '[Admin-space Component] Update Matches Quater Finals Failure'})
+                })
+            ))
+    ))
+
+    updateMatchesSemifinals = createEffect(() => this.actions$.pipe(
+        ofType('[Admin-space Component] Update Matches Semi Finals'),
+        switchMap((gameId: any) => this.configService.UpdateMatchesSemifinals(gameId.gameId)
+            .pipe(
+                map(() => {
+                    return ({type: '[Admin-space Component] Update Matches Semi Finals Success'})
+                }),
+                catchError(() => {
+                    console.log('error updating round of sixteen')
+                    return of({type: '[Admin-space Component] Update Matches Semi Finals Failure'})
+                })
+            ))
+    ))
+
+    updateMatchesFinal = createEffect(() => this.actions$.pipe(
+        ofType('[Admin-space Component] Update Matches Final'),
+        switchMap((gameId: any) => this.configService.UpdateMatchesFinal(gameId.gameId)
+            .pipe(
+                map(() => {
+                    return ({type: '[Admin-space Component] Update Matches Final Success'})
+                }),
+                catchError(() => {
+                    console.log('error updating round of sixteen')
+                    return of({type: '[Admin-space Component] Update Matches Final Failure'})
+                })
+            ))
+    ))
+
     updateTeams$ = createEffect(() => this.actions$.pipe(
         ofType('[Admin-space Component] Update Teams'),
         exhaustMap((teams: any) => this.configService.UpdateTeams(teams.teams)
@@ -49,8 +134,23 @@ export class BeerpongEffects {
             ))
     ))
 
+    finishGame$ = createEffect(() => this.actions$.pipe(
+        ofType('[Admin-space Component] Finish Game'),
+        exhaustMap((gameId: any) => this.configService.FinishGame(gameId.gameId)
+            .pipe(
+                map(() => {
+                    return ({type: '[Admin-space Component] Finish Game Success'})
+                }),
+                catchError(() => {
+                    console.log('error finish game')
+                    return EMPTY
+                })
+            ))
+    ))
+
     constructor(
         private actions$: Actions,
         private configService: ConfigurationService,
+        private beerpongstore: Store<BeerpongState>
     ) {}
 }

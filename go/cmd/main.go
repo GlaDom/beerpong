@@ -6,7 +6,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/gladom/beerpong/docs"
+	"github.com/gladom/beerpong/internal/handler"
 	"github.com/gladom/beerpong/pkg/repo"
+	"github.com/gladom/beerpong/pkg/usecase"
 	_ "github.com/lib/pq"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -60,15 +62,22 @@ func main() {
 		host, port, user, password, dbname)
 
 	gameRepo := repo.NewGameRepo(psqlInfo)
+	beerpongGameHandler := handler.NewBeerpongGameHandler(
+		*usecase.NewSixGroupsFiveTeams(gameRepo),
+	)
 
 	v1 := router.Group("/api/v1")
 	{
-		v1.POST("/createGame", gameRepo.CreateGame)
-		v1.GET("/getGame", gameRepo.GetGame)
-		v1.PUT("/finishGame/:id", gameRepo.FinishGame)
+		v1.POST("/createGame", beerpongGameHandler.CreateGame)
+		v1.GET("/getGame", beerpongGameHandler.GetGame)
+		v1.PUT("/finishGame/:id", beerpongGameHandler.FinishGame)
 		// router.DELETE(apiPrefix+"/games/:id", gameRepo.DeleteGame)
-		v1.PUT("/updateMatches", gameRepo.UpdateMatches)
-		v1.PUT("/updateTeams", gameRepo.UpdateTeams)
+		v1.PUT("/updateMatches", beerpongGameHandler.UpdateMatches)
+		v1.PUT("/updateMatchesRoundOfSixteen/:id", beerpongGameHandler.UpdateGameRoundOf16)
+		v1.PUT("/updateMatchesQuaterfinals/:id", beerpongGameHandler.UpdateGameQuaterFinals)
+		v1.PUT("/updateMatchesSemifinals/:id", beerpongGameHandler.UpdateGameSemiFinals)
+		v1.PUT("/updateMatchesFinal/:id", beerpongGameHandler.UpdateGameSemiFinals)
+		v1.PUT("/updateTeams", beerpongGameHandler.UpdateTeams)
 	}
 	router.Run(":8080")
 

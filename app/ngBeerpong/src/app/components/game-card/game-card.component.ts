@@ -6,11 +6,12 @@ import { ChipModule } from 'primeng/chip';
 import { ButtonModule } from 'primeng/button';
 import Match from '../../api/match.interface';
 import { FormsModule, NgModel } from '@angular/forms';
-import { BeerpongGame } from '../../store/game.state';
+import { BeerpongState } from '../../store/game.state';
 import { Store } from '@ngrx/store';
 import { updateMatch, updateTeams } from '../../store/beerpong.actions';
-import { EventEmitter } from 'stream';
 import TeamUpdate from '../../api/team-update.interface';
+import { TagModule } from 'primeng/tag';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-game-card',
@@ -21,7 +22,9 @@ import TeamUpdate from '../../api/team-update.interface';
     InputNumberModule,
     ChipModule,
     ButtonModule,
-    FormsModule
+    FormsModule,
+    TagModule,
+    DatePipe
   ],
   templateUrl: './game-card.component.html',
   styleUrl: './game-card.component.css'
@@ -46,7 +49,7 @@ export class GameCardComponent implements OnInit {
   label: 'success' | 'info' | 'warning' | 'danger' | 'help' | 'primary' | 'secondary' | 'contrast' | null | undefined = "primary";
 
   constructor(
-    private beerpongstore: Store<BeerpongGame>,
+    private beerpongstore: Store<BeerpongState>,
   ) {}
 
   ngOnInit(): void {
@@ -78,6 +81,7 @@ export class GameCardComponent implements OnInit {
   getCopyOfMatch(m: Match): Match{
     let newMatch: Match = {
       game_id: m.game_id,
+      match_id: m.match_id,
       type: m.type,
       group_number: m.group_number,
       home_team: m.home_team,

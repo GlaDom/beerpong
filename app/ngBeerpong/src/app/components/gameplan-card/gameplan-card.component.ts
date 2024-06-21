@@ -3,6 +3,8 @@ import { CardModule } from 'primeng/card';
 import { ChipModule } from 'primeng/chip';
 import { DividerModule } from 'primeng/divider';
 import Match from '../../api/match.interface';
+import { TagModule } from 'primeng/tag';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-gameplan-card',
@@ -10,7 +12,9 @@ import Match from '../../api/match.interface';
   imports: [
     CardModule,
     ChipModule,
-    DividerModule
+    DividerModule,
+    TagModule,
+    DatePipe
   ],
   templateUrl: './gameplan-card.component.html',
   styleUrl: './gameplan-card.component.css'

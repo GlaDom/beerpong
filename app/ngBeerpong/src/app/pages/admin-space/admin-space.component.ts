@@ -4,14 +4,22 @@ import { ConfigurationService } from '../../services/configuration.service';
 import Match from '../../api/match.interface';
 import { NgFor, NgIf } from '@angular/common';
 import { Store } from '@ngrx/store';
-import { BeerpongGame, Status } from '../../store/game.state';
-import { selectGame } from '../../store/beerpong.selectors';
+import { BeerpongState, Status } from '../../store/game.state';
+import { selectBeerpongState, selectGame } from '../../store/beerpong.selectors';
 import { TabViewModule } from 'primeng/tabview';
 import { ButtonModule } from 'primeng/button';
 import { PanelModule } from 'primeng/panel';
 import { FieldsetModule } from 'primeng/fieldset';
 import { ToastModule } from 'primeng/toast';
+import { ConfirmationService } from 'primeng/api';
+import { ConfirmDialogModule } from 'primeng/confirmdialog'
 import { MessageService } from 'primeng/api';
+import { finishGame, setShowRanking, updateMatchesFinal, updateMatchesQuaterFinals, updateMatchesRoundOfSixteen, updateMatchesSemiFinals } from '../../store/beerpong.actions';
+import { BeerpongSetupComponent } from '../../components/beerpong-setup/beerpong-setup.component';
+import { Observable } from 'rxjs';
+import { RankingComponent } from '../../components/ranking/ranking.component';
+import Group from '../../api/group.interface';
+import Team from '../../api/team.interface';
 
 @Component({
   selector: 'app-game-plan',
@@ -24,49 +32,161 @@ import { MessageService } from 'primeng/api';
     ButtonModule,
     PanelModule,
     FieldsetModule,
-    ToastModule
+    ToastModule,
+    BeerpongSetupComponent,
+    RankingComponent,
+    ConfirmDialogModule
   ],
   providers: [
-    MessageService
+    MessageService,
+    ConfirmationService
   ],
   templateUrl: './admin-space.component.html',
   styleUrl: './admin-space.component.css'
 })
 export class AdminSpaceComponent implements OnInit {
 
-    //$game: Observable<BeerpongGame>
+    game$: Observable<BeerpongState>
+    gameId: number | undefined;
+    groups: Group[] = [];
     matches: Match[] = [];
     sortedMatches: Match[][] = [];
+    roundOfsixteen: Match[] = [];
     quaterFinalMatches: Match[] = [];
     semiFinalMatches: Match[] = [];
-    finalMatch: Match[] = [] ;
-    loading: boolean = true;
+    finalMatch: Match[] = [];
+
+    //booleans
+    isLoading: boolean = true;
+    showRanking: boolean = false;
 
     constructor(
       private configService: ConfigurationService,
-      private beerpongStore: Store<BeerpongGame>,
+      private beerpongStore: Store<BeerpongState>,
       private messageService: MessageService,
-    ) {}
+      private confirmationService: ConfirmationService,
+    ) {
+      this.game$ = this.beerpongStore.select(selectBeerpongState)
+    }
 
     ngOnInit(): void {
-      this.beerpongStore.select(selectGame).subscribe((game: any) => {
-        if(game.beerpong.matches.length>0) {
-          console.log(game.beerpong.toastStatus)
-          this.matches = game.beerpong.matches
+      this.game$.subscribe((game) => {
+        if(game.matches.length>0) {
+          this.gameId = game.groups[0].teams[0].game_id
+          this.matches = game.matches
+          this.groups = game.groups
+          this.showRanking = game.showRanking
           this.sortedMatches = this.configService.sortMatches(this.matches)
+          this.roundOfsixteen = this.configService.filterMatches('round_of_16', this.matches)
           this.quaterFinalMatches = this.configService.filterMatches('quaterfinal', this.matches)
           this.semiFinalMatches = this.configService.filterMatches('semifinal', this.matches)
           this.finalMatch = this.configService.filterMatches('final', this.matches)
-          this.loading = false
-
-          if(game.beerpong.toastStatus==='success') {
-            this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Match successfully updated!' })
-          } else if(game.beerpong.toastStatus==='failed') {
-            this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to update Match!' })
-          }
+          
+          this.checkForToastMessage(game.toastStatus)
         }
+        this.isLoading = game.isLoading
       })
     }
 
-    
+    updateRoundOfSixteen(): void {
+      if(this.gameId) {
+        this.beerpongStore.dispatch(updateMatchesRoundOfSixteen({gameId: this.gameId}))
+      }
+    }
+
+    updateQuaterFinals(): void {
+      if(this.gameId) {
+        this.beerpongStore.dispatch(updateMatchesQuaterFinals({gameId: this.gameId}))
+      }
+    }
+
+    updateSemiFinals(): void {
+      if(this.gameId) {
+        this.beerpongStore.dispatch(updateMatchesSemiFinals({gameId: this.gameId}))
+      }
+    }
+
+    updateFinal(): void {
+      if(this.gameId) {
+        this.beerpongStore.dispatch(updateMatchesFinal({gameId: this.gameId}))
+      }
+    }
+
+    setTournamentFinished(): void {
+      this.beerpongStore.dispatch(setShowRanking({showRanking: true}))
+    }
+
+    finishTournament(): void {
+      console.log(this.gameId)
+      if(this.gameId) {
+        this.beerpongStore.dispatch(finishGame({gameId: this.gameId}))
+      }
+    }
+
+    checkForToastMessage(state: any): void {
+      switch(state) {
+        case "success match updated": {
+          this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Match successfully updated!' })
+          break
+        }
+        case "failed match updated": {
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to update Match!' })
+          break
+        }
+        case "failed update round of 16": {
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to calculate round of 16! All matches played?' })
+          break
+        }
+        case "failed update quater finals": {
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to calculate quater finals! All matches played?' })
+          break;
+        }
+        case "failed update semi finals": {
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to calculate semi finals! All matches played?' })
+          break;
+        }
+        case "failed update final": {
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to calculate final! All matches played?' })
+          break;
+        }
+        case "success game finished": {
+          this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Game successfully finished!' })
+          break;
+        }
+        case "failed game finished": {
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to finish game!' })
+          break;
+        }
+      }
+    }
+
+    getBestEightTeams(): Team[] {
+      let retval: Team[] = this.configService.sortTeamsbyPointsAndDifferenze(this.groups);
+      return retval
+    }
+
+    backToAdminSpace(): void {
+      this.beerpongStore.dispatch(setShowRanking({showRanking: false}))
+    }
+
+    confirmGameFinish(event: Event): void {
+      this.confirmationService.confirm({
+        target: event.target as EventTarget,
+        message: 'Bist du sicher dass du das Spiel beenden willst?',
+        header: 'Confirmation',
+        icon: 'pi pi-exclamation-triangle',
+        acceptIcon:"none",
+        rejectIcon:"none",
+        rejectButtonStyleClass:"p-button-text",
+        accept: () => {
+            this.messageService.add({ severity: 'info', summary: 'Bestaetigt', detail: 'Spiel wird beendet' });
+            if(this.gameId) {
+              this.beerpongStore.dispatch(finishGame({gameId: this.gameId}))
+            }
+        },
+        reject: () => {
+            this.messageService.add({ severity: 'error', summary: 'Rejected', detail: 'Spiel nicht beendet', life: 3000 });
+        }
+    });
+    }
 }

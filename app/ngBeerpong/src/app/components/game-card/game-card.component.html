@@ -1,5 +1,16 @@
 <div class="m-1">
-    <p-card subheader="Gruppe {{match.group_number}}, Tisch 1">
+    <p-card>
+        <ng-template pTemplate="header">
+            <div class="flex flex-row justify-between">
+                <div class="flex flex-row gap-2 m-2">
+                    <p-tag value="Gruppe {{match.group_number}}"></p-tag>
+                    <p-tag value="Tisch {{match.group_number}}" severity="secondary"></p-tag>
+                </div>
+                <div class="mt-2 mr-4">
+                    <p-tag value="{{match.start_time | date: 'hh:mm'}}-{{match.end_time | date: 'hh:mm'}}" severity="secondary"></p-tag>
+                </div>
+            </div>
+        </ng-template>
         <ng-template pTemplate="content">
             <div>
                 <div class="flex justify-between mb-1 max-h-7">
@@ -18,7 +29,7 @@
         <ng-template pTemplate="footer">
             <div class="flex justify-between">
                 <div class="content-center">
-                    <p-chip label="Schiedsrichter" icon="pi pi-user"></p-chip>
+                    <p-tag value="{{match.referee}}" icon="pi pi-user"></p-tag>
                 </div>
                 <p-button [severity]="label" icon="pi pi-lock" (onClick)="setLocked()"/>
             </div>

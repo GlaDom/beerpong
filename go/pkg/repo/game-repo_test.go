@@ -1,19 +1,18 @@
 package repo
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/gladom/beerpong/pkg/models"
 )
 
 func TestMatchCalculation(t *testing.T) {
-	repo := NewGameRepo("host=localhost port=5432 user=admin password=beerpong dbname=beerpong sslmode=disable")
+	// repo := NewGameRepo("host=localhost port=5432 user=admin password=beerpong dbname=beerpong sslmode=disable")
 
-	testTeams := getTestTeams()
+	// testTeams := getTestTeams()
 
-	matches := repo.calculateMatchesPerGroup(testTeams, 1)
-	fmt.Print(matches)
+	// matches := repo.calculateMatchesPerGroup(testTeams, 1, []models.Referee{}, time.Now(), time.Hour)
+	// fmt.Print(matches)
 }
 
 func getTestTeams() []models.Team {

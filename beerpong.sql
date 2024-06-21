@@ -3,9 +3,18 @@ CREATE TABLE games (
   mode INTEGER,
   amount_of_teams INTEGER,
   is_finished BOOLEAN,
+  game_time INTEGER,
   updated_at TIMESTAMP,
   created_at TIMESTAMP
 );
+
+CREATE TABLE referees (
+  id SERIAL PRIMARY KEY,
+  game_id INTEGER,
+  name VARCHAR(255),
+  created_at TIMESTAMP,
+  FOREIGN KEY (game_id) REFERENCES games(id)
+)
 
 CREATE TABLE teams (
   id SERIAL PRIMARY KEY,
@@ -16,6 +25,7 @@ CREATE TABLE teams (
   rank INTEGER,
   cups_hit INTEGER,
   cups_get INTEGER,
+  cup_difference INTEGER,
   created_at TIMESTAMP,
   FOREIGN KEY (game_id) REFERENCES games(id)
 );
@@ -31,6 +41,7 @@ CREATE TABLE matches (
   points_away INTEGER,
   start_time TIMESTAMP,
   end_time TIMESTAMP,
+  referee VARCHAR(255),
   created_at TIMESTAMP,
   updated_at TIMESTAMP,
   FOREIGN KEY (game_id) REFERENCES games(id)

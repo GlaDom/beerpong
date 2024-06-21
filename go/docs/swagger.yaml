@@ -6,12 +6,24 @@ definitions:
         type: integer
       created_at:
         type: string
+      game_time:
+        $ref: '#/definitions/time.Duration'
       id:
         type: integer
       is_finished:
         type: boolean
       mode:
         type: integer
+      referee:
+        items:
+          $ref: '#/definitions/github_com_gladom_beerpong_pkg_models.Referee'
+        type: array
+      start_time:
+        type: string
+      teams:
+        items:
+          $ref: '#/definitions/github_com_gladom_beerpong_pkg_models.Team'
+        type: array
       updated_at:
         type: string
     type: object
@@ -19,10 +31,19 @@ definitions:
     properties:
       game:
         $ref: '#/definitions/github_com_gladom_beerpong_pkg_models.Game'
+      groups:
+        items:
+          $ref: '#/definitions/github_com_gladom_beerpong_pkg_models.Group'
+        type: array
       matches:
         items:
           $ref: '#/definitions/github_com_gladom_beerpong_pkg_models.Match'
         type: array
+    type: object
+  github_com_gladom_beerpong_pkg_models.Group:
+    properties:
+      group_name:
+        type: string
       teams:
         items:
           $ref: '#/definitions/github_com_gladom_beerpong_pkg_models.Team'
@@ -34,16 +55,24 @@ definitions:
         type: string
       created_at:
         type: string
+      end_time:
+        type: string
       game_id:
         type: integer
       group_number:
         type: string
       home_team:
         type: string
+      match_id:
+        type: integer
       points_away:
         type: integer
       points_home:
         type: integer
+      referee:
+        type: string
+      start_time:
+        type: string
       type:
         type: string
       updated_at:
@@ -60,15 +89,28 @@ definitions:
     properties:
       game:
         $ref: '#/definitions/github_com_gladom_beerpong_pkg_models.Game'
-      teams:
-        items:
-          $ref: '#/definitions/github_com_gladom_beerpong_pkg_models.Team'
-        type: array
+    type: object
+  github_com_gladom_beerpong_pkg_models.Referee:
+    properties:
+      createdAt:
+        type: string
+      game_id:
+        type: integer
+      id:
+        type: integer
+      name:
+        type: string
     type: object
   github_com_gladom_beerpong_pkg_models.Team:
     properties:
       created_at:
         type: string
+      cup_difference:
+        type: integer
+      cups_get:
+        type: integer
+      cups_hit:
+        type: integer
       game_id:
         type: integer
       group_name:
@@ -82,13 +124,56 @@ definitions:
       team_name:
         type: string
     type: object
+  github_com_gladom_beerpong_pkg_models.TeamUpdate:
+    properties:
+      cups_got:
+        type: integer
+      cups_hitted:
+        type: integer
+      game_id:
+        type: integer
+      group_name:
+        type: string
+      points_to_add:
+        type: integer
+      team_name:
+        type: string
+    type: object
   github_com_gladom_beerpong_pkg_models.TeamUpdateRequest:
     properties:
       teams:
         items:
-          $ref: '#/definitions/github_com_gladom_beerpong_pkg_models.Team'
+          $ref: '#/definitions/github_com_gladom_beerpong_pkg_models.TeamUpdate'
         type: array
     type: object
+  time.Duration:
+    enum:
+    - -9223372036854775808
+    - 9223372036854775807
+    - 1
+    - 1000
+    - 1000000
+    - 1000000000
+    - 60000000000
+    - 3600000000000
+    - 1
+    - 1000
+    - 1000000
+    - 1000000000
+    type: integer
+    x-enum-varnames:
+    - minDuration
+    - maxDuration
+    - Nanosecond
+    - Microsecond
+    - Millisecond
+    - Second
+    - Minute
+    - Hour
+    - Nanosecond
+    - Microsecond
+    - Millisecond
+    - Second
 host: localhost:8080
 info:
   contact:
@@ -191,6 +276,94 @@ paths:
             additionalProperties: true
             type: object
       summary: Update the matches from a specific game
+      tags:
+      - Match
+  /updateMatchesFinal/:id:
+    put:
+      parameters:
+      - description: Game Id
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Update the semifinals
+      tags:
+      - Match
+  /updateMatchesQuaterfinals/:id:
+    put:
+      parameters:
+      - description: Game Id
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Update the quaterfinal matches
+      tags:
+      - Match
+  /updateMatchesRoundOfSixteen/:id:
+    put:
+      parameters:
+      - description: Game Id
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Update the round of 16 matches
+      tags:
+      - Match
+  /updateMatchesSemifinals/:id:
+    put:
+      parameters:
+      - description: Game Id
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Update the semifinals
       tags:
       - Match
   /updateTeams:
