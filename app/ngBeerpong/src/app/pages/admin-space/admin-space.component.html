@@ -1,5 +1,6 @@
 <p-toast />
-<ng-container *ngIf="!loading && matches && matches.length > 0">
+<p-confirmDialog />
+<ng-container *ngIf="!isLoading && matches && matches.length > 0 && !showRanking">
     <p-tabView>
         <p-tabPanel header="Gruppen A-C">
             <div class="flex">
@@ -100,6 +101,14 @@
         <p-button (onClick)="setTournamentFinished()" label="Zur Tabelle"></p-button>
     </div>
 </ng-container>
-<ng-container *ngIf="!loading && matches && matches.length===0">
+<ng-container *ngIf="!isLoading && matches && matches.length===0 && !showRanking">
     <app-beerpong-setup></app-beerpong-setup>
+</ng-container>
+<ng-container *ngIf="showRanking">
+    <app-ranking [teams]="getBestEightTeams()">
+        <div class="flex gap-3 mt-1">
+            <p-button label="Zurueck" (onClick)="backToAdminSpace()"></p-button>
+            <p-button label="Spiel beenden" (onClick)="confirmGameFinish($event)"></p-button>
+        </div>
+    </app-ranking>
 </ng-container>

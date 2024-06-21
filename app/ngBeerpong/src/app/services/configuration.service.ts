@@ -4,6 +4,8 @@ import { BeerpongState } from '../store/game.state';
 import Match from '../api/match.interface';
 import TeamUpdate from '../api/team-update.interface';
 import { GameRequest } from '../api/game-request';
+import Group from '../api/group.interface';
+import Team from '../api/team.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -95,5 +97,19 @@ export class ConfigurationService {
   filterMatches(filter: string, matches: Match[]): Match[] {
     let retval: Match[] = matches.filter(m => m.type==filter)
     return retval
+  }
+
+  sortTeamsbyPointsAndDifferenze(groups: Group[]): Team[] {
+    let retval: Team[] = []
+    groups.map(g => retval.push(...g.teams))
+    retval.sort((a, b) => {
+      if (a.points === b.points) {
+        if(b.cup_difference && a.cup_difference){
+          return b.cup_difference - a.cup_difference;
+        }
+      }
+      return b.points - a.points;
+  });
+    return retval.slice(0,8)
   }
 }

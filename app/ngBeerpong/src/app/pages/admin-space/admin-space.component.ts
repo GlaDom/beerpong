@@ -11,10 +11,15 @@ import { ButtonModule } from 'primeng/button';
 import { PanelModule } from 'primeng/panel';
 import { FieldsetModule } from 'primeng/fieldset';
 import { ToastModule } from 'primeng/toast';
+import { ConfirmationService } from 'primeng/api';
+import { ConfirmDialogModule } from 'primeng/confirmdialog'
 import { MessageService } from 'primeng/api';
-import { finishGame, updateMatchesFinal, updateMatchesQuaterFinals, updateMatchesRoundOfSixteen, updateMatchesSemiFinals } from '../../store/beerpong.actions';
+import { finishGame, setShowRanking, updateMatchesFinal, updateMatchesQuaterFinals, updateMatchesRoundOfSixteen, updateMatchesSemiFinals } from '../../store/beerpong.actions';
 import { BeerpongSetupComponent } from '../../components/beerpong-setup/beerpong-setup.component';
 import { Observable } from 'rxjs';
+import { RankingComponent } from '../../components/ranking/ranking.component';
+import Group from '../../api/group.interface';
+import Team from '../../api/team.interface';
 
 @Component({
   selector: 'app-game-plan',
@@ -28,10 +33,13 @@ import { Observable } from 'rxjs';
     PanelModule,
     FieldsetModule,
     ToastModule,
-    BeerpongSetupComponent
+    BeerpongSetupComponent,
+    RankingComponent,
+    ConfirmDialogModule
   ],
   providers: [
-    MessageService
+    MessageService,
+    ConfirmationService
   ],
   templateUrl: './admin-space.component.html',
   styleUrl: './admin-space.component.css'
@@ -40,18 +48,23 @@ export class AdminSpaceComponent implements OnInit {
 
     game$: Observable<BeerpongState>
     gameId: number | undefined;
+    groups: Group[] = [];
     matches: Match[] = [];
     sortedMatches: Match[][] = [];
     roundOfsixteen: Match[] = [];
     quaterFinalMatches: Match[] = [];
     semiFinalMatches: Match[] = [];
-    finalMatch: Match[] = [] ;
-    loading: boolean = true;
+    finalMatch: Match[] = [];
+
+    //booleans
+    isLoading: boolean = true;
+    showRanking: boolean = false;
 
     constructor(
       private configService: ConfigurationService,
       private beerpongStore: Store<BeerpongState>,
       private messageService: MessageService,
+      private confirmationService: ConfirmationService,
     ) {
       this.game$ = this.beerpongStore.select(selectBeerpongState)
     }
@@ -61,6 +74,8 @@ export class AdminSpaceComponent implements OnInit {
         if(game.matches.length>0) {
           this.gameId = game.groups[0].teams[0].game_id
           this.matches = game.matches
+          this.groups = game.groups
+          this.showRanking = game.showRanking
           this.sortedMatches = this.configService.sortMatches(this.matches)
           this.roundOfsixteen = this.configService.filterMatches('round_of_16', this.matches)
           this.quaterFinalMatches = this.configService.filterMatches('quaterfinal', this.matches)
@@ -68,9 +83,8 @@ export class AdminSpaceComponent implements OnInit {
           this.finalMatch = this.configService.filterMatches('final', this.matches)
           
           this.checkForToastMessage(game.toastStatus)
-          
         }
-        this.loading = false
+        this.isLoading = game.isLoading
       })
     }
 
@@ -98,7 +112,9 @@ export class AdminSpaceComponent implements OnInit {
       }
     }
 
-    setTournamentFinished(): void {}
+    setTournamentFinished(): void {
+      this.beerpongStore.dispatch(setShowRanking({showRanking: true}))
+    }
 
     finishTournament(): void {
       console.log(this.gameId)
@@ -133,6 +149,44 @@ export class AdminSpaceComponent implements OnInit {
           this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to calculate final! All matches played?' })
           break;
         }
+        case "success game finished": {
+          this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Game successfully finished!' })
+          break;
+        }
+        case "failed game finished": {
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to finish game!' })
+          break;
+        }
       }
+    }
+
+    getBestEightTeams(): Team[] {
+      let retval: Team[] = this.configService.sortTeamsbyPointsAndDifferenze(this.groups);
+      return retval
+    }
+
+    backToAdminSpace(): void {
+      this.beerpongStore.dispatch(setShowRanking({showRanking: false}))
+    }
+
+    confirmGameFinish(event: Event): void {
+      this.confirmationService.confirm({
+        target: event.target as EventTarget,
+        message: 'Bist du sicher dass du das Spiel beenden willst?',
+        header: 'Confirmation',
+        icon: 'pi pi-exclamation-triangle',
+        acceptIcon:"none",
+        rejectIcon:"none",
+        rejectButtonStyleClass:"p-button-text",
+        accept: () => {
+            this.messageService.add({ severity: 'info', summary: 'Bestaetigt', detail: 'Spiel wird beendet' });
+            if(this.gameId) {
+              this.beerpongStore.dispatch(finishGame({gameId: this.gameId}))
+            }
+        },
+        reject: () => {
+            this.messageService.add({ severity: 'error', summary: 'Rejected', detail: 'Spiel nicht beendet', life: 3000 });
+        }
+    });
     }
 }

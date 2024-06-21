@@ -11,6 +11,8 @@ import { NgFor, NgIf } from '@angular/common';
 import Group from '../../api/group.interface';
 import { FieldsetModule } from 'primeng/fieldset';
 import { Observable } from 'rxjs';
+import { RankingComponent } from '../../components/ranking/ranking.component';
+import Team from '../../api/team.interface';
 
 @Component({
   selector: 'app-gameplan',
@@ -21,7 +23,8 @@ import { Observable } from 'rxjs';
     DividerModule,
     NgFor,
     NgIf,
-    FieldsetModule
+    FieldsetModule,
+    RankingComponent
   ],
   templateUrl: './gameplan.component.html',
   styleUrl: './gameplan.component.css'
@@ -37,6 +40,9 @@ export class GameplanComponent implements OnInit {
   semiFinals: Match[] = [];
   final: Match[] = [];
 
+  isLoading: boolean = true;
+  showRanking: boolean = false;
+
   constructor(
     private configService: ConfigurationService,
     private beerpongstore: Store<BeerpongState>
@@ -50,13 +56,19 @@ export class GameplanComponent implements OnInit {
       if(game.groups && game.groups.length > 0) {
         this.groups = game.groups
         this.matches = game.matches
+        this.showRanking = game.showRanking
         this.regularMatches = this.configService.sortMatches(this.matches);
         this.roundOfsixteen = this.configService.filterMatches('round_of_16', this.matches)
         this.quaterFinals = this.configService.filterMatches('quaterfinal', this.matches)
         this.semiFinals = this.configService.filterMatches('semifinal', this.matches)
         this.final = this.configService.filterMatches('final', this.matches)      
       }
+      this.isLoading = game.isLoading
     })
   }
 
+  getBestEightTeams(): Team[] {
+    let retval: Team[] = this.configService.sortTeamsbyPointsAndDifferenze(this.groups);
+    return retval
+  }
 }

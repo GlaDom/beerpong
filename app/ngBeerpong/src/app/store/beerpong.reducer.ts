@@ -1,12 +1,14 @@
 import { createReducer, on } from "@ngrx/store";
 import { BeerpongState, Status } from "./game.state";
-import { createGame, createGameSuccess, finishGame, finishGameSuccess, loadGame, loadGameFailure, loadGameSuccess, updateMatch, updateMatchSuccess, updateMatchesFinalFailure, updateMatchesQuaterFinalsFailure, updateMatchesRoundOfSixteenFailure, updateMatchesSemiFinalsFailure, updateTeams, updateTeamsSuccess } from "./beerpong.actions";
+import { createGame, createGameSuccess, finishGame, finishGameFailure, finishGameSuccess, loadGame, loadGameFailure, loadGameSuccess, setShowRanking, updateMatch, updateMatchSuccess, updateMatchesFinalFailure, updateMatchesQuaterFinalsFailure, updateMatchesRoundOfSixteenFailure, updateMatchesSemiFinalsFailure, updateTeams, updateTeamsSuccess } from "./beerpong.actions";
 import { group } from "console";
 
 export const initialState: BeerpongState = {
     groups: [],
     matches: [],
-    toastStatus: 'notset'
+    toastStatus: 'notset',
+    isLoading: false,
+    showRanking: false
 }
 
 export const beerpongReducer = createReducer(initialState,
@@ -29,13 +31,17 @@ export const beerpongReducer = createReducer(initialState,
             groups: game.groups,
             matches: game.matches,
             toastStatus: newToastState,
+            isLoading: false,
+            showRanking: false
         }
     }),
     on(loadGameFailure, (state) => {
         let initalGameState: BeerpongState = {
             matches: [],
             groups: [],
-            toastStatus: 'notset'
+            toastStatus: 'notset',
+            isLoading: false,
+            showRanking: false
         }
         state = initalGameState
         console.log('reducer called')
@@ -65,12 +71,10 @@ export const beerpongReducer = createReducer(initialState,
         return state
     }),
     on(updateTeamsSuccess, (state, {teams}) => {
-        console.log(teams)
         let groups = state.groups.map(m => Object.assign({}, m))
         //search for correct group
         let group = groups.filter(g => g.group_name==teams[0].group_name)
         //exclude old teams form group
-        console.log(teams[0], group[0])
         let oldTeams = group[0].teams.filter(t => t.id!=teams[0].id && t.id!=teams[1].id)
         //add new teams
         oldTeams.push(...teams)
@@ -79,6 +83,15 @@ export const beerpongReducer = createReducer(initialState,
         //add updated group to groups
         let oldGroups = groups.filter(g => g.group_name!=teams[0].group_name)
         oldGroups.push(group[0])
+        oldGroups.sort((a, b) => {
+            if (a.group_name < b.group_name) {
+                return -1;
+            }
+            if (a.group_name > b.group_name) {
+                return 1;
+            }
+            return 0;
+        });
         //reset toastState because otherwise there would be two successfull toasts on admin-space component
         let newToastState: Status = 'notset'
         return {
@@ -122,9 +135,24 @@ export const beerpongReducer = createReducer(initialState,
         let initalGameState: BeerpongState = {
             matches: [],
             groups: [],
-            toastStatus: 'notset'
+            toastStatus: "success game finished",
+            isLoading: false,
+            showRanking: false
         }
         state = initalGameState
         return state
+    }),
+    on(finishGameFailure, (state) => {
+        let newToastState: Status = "failed game finished"
+        return {
+            ...state,
+            toastStatus: newToastState
+        }
+    }),
+    on(setShowRanking, (state, {showRanking}) => {
+        return {
+            ...state,
+            showRanking: showRanking
+        }
     })
 );

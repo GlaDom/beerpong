@@ -8,6 +8,7 @@ interface Team {
   points: number;
   cups_hit: number;
   cups_get: number;
+  cup_difference?: number;
   rank: number;
   created_at?: Date;
 }

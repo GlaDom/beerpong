@@ -43,3 +43,7 @@ export const updateTeamsSuccess = createAction('[Admin-space Component] Update T
 //FINISH_GAME
 export const finishGame = createAction('[Admin-space Component] Finish Game', props<{gameId: number}>())
 export const finishGameSuccess = createAction('[Admin-space Component] Finish Game Success')
+export const finishGameFailure = createAction('[Admin-space Component] Finish Game Failure')
+
+//SET_SHOWRANKING
+export const setShowRanking = createAction('[Admin-space Component] Set Show Ranking', props<{showRanking: boolean}>())

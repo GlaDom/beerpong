@@ -12,6 +12,8 @@ export type Status = 'notset' |
                     "failed update semi finals"|
                     "success update final" |
                     "failed update final" |
+                    "success game finished" |
+                    "failed game finished" |
                     undefined
 
 
@@ -20,4 +22,6 @@ export interface BeerpongState {
     groups: Group[],
     matches: Match[],
     toastStatus: Status,
+    isLoading: boolean,
+    showRanking: boolean
 }
