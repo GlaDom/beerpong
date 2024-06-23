@@ -1,4 +1,4 @@
-<ng-container *ngIf="!showRanking && !isLoading">
+<ng-container *ngIf="!showRanking && !isLoading && false">
     <div class="flex flex-row mb-2 gap-1.5">
         <ng-container *ngIf="groups.length>0">
             <ng-container *ngFor="let g of groups">
@@ -86,6 +86,9 @@
                 </p-fieldset>
             </div>
     </div>
+</ng-container>
+<ng-container>
+    <app-gameplan-o-gf-t [regularMatches]="regularMatches[0]" [finalMatches]="final" [groups]="groups"></app-gameplan-o-gf-t>
 </ng-container>
 <ng-container *ngIf="showRanking">
     <app-ranking [teams]="getBestEightTeams()"></app-ranking>

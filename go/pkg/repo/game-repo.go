@@ -33,7 +33,7 @@ func (gr *Gamerepo) CreateGame(game *models.NewGame) error {
 	return nil
 }
 
-func (gr *Gamerepo) CreateMatches(matches []models.Match) error {
+func (gr *Gamerepo) CreateMatches(matches []*models.Match) error {
 	if tx := gr.db.Create(&matches); tx.Error != nil {
 		return tx.Error
 	}

@@ -7,7 +7,7 @@
                     <form [formGroup]="gameMode">
                         <div class="flex flex-row gap-2">
                             <p-toggleButton (onChange)="toggleEnableButton(0)" formControlName="mode" onLabel="{{GAMEMODE_30_TEAMS}}" offLabel="{{GAMEMODE_30_TEAMS}}"></p-toggleButton>
-                            <p-toggleButton [disabled]="true" (onChange)="toggleEnableButton(1)" onLabel="{{GAMEMODE_10_TEAMS}}" offLabel="{{GAMEMODE_10_TEAMS}}"></p-toggleButton>
+                            <p-toggleButton (onChange)="toggleEnableButton(1)" onLabel="{{GAMEMODE_10_TEAMS}}" offLabel="{{GAMEMODE_10_TEAMS}}"></p-toggleButton>
                         </div>
                     </form>
                 </div>

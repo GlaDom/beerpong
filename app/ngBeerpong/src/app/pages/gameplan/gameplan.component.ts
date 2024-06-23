@@ -13,6 +13,7 @@ import { FieldsetModule } from 'primeng/fieldset';
 import { Observable } from 'rxjs';
 import { RankingComponent } from '../../components/ranking/ranking.component';
 import Team from '../../api/team.interface';
+import { GameplanOGfTComponent } from '../../components/gameplan-components/gameplan-o-gf-t/gameplan-o-gf-t.component';
 
 @Component({
   selector: 'app-gameplan',
@@ -24,7 +25,8 @@ import Team from '../../api/team.interface';
     NgFor,
     NgIf,
     FieldsetModule,
-    RankingComponent
+    RankingComponent,
+    GameplanOGfTComponent
   ],
   templateUrl: './gameplan.component.html',
   styleUrl: './gameplan.component.css'

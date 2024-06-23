@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { GameCardComponent } from '../../components/game-card/game-card.component';
+import { ModeOGfTComponent } from '../../components/admin-space-components/mode-o-gf-t/mode-o-gf-t.component';
 import { ConfigurationService } from '../../services/configuration.service';
 import Match from '../../api/match.interface';
 import { NgFor, NgIf } from '@angular/common';
@@ -35,7 +36,8 @@ import Team from '../../api/team.interface';
     ToastModule,
     BeerpongSetupComponent,
     RankingComponent,
-    ConfirmDialogModule
+    ConfirmDialogModule,
+    ModeOGfTComponent
   ],
   providers: [
     MessageService,

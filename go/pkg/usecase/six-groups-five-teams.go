@@ -3,7 +3,6 @@ package usecase
 import (
 	"fmt"
 	"math/rand"
-	"sort"
 	"strings"
 	"time"
 
@@ -18,23 +17,25 @@ type IGamerepo interface {
 	GetTeamByGameID(int, string, string) (models.Team, error)
 	GetMatchesByGameType(int, string) ([]models.Match, error)
 	GetMatchesByGameID(int) ([]models.Match, error)
-	CreateMatches([]models.Match) error
+	CreateMatches([]*models.Match) error
 	UpdateMatches(*models.Match) error
 	UpdateTeam(*models.Team) error
 	UpdateGame(*models.Game) error
 }
 
 type SixGroupsFiveTeams struct {
+	General  General
 	GameRepo IGamerepo
 }
 
-func NewSixGroupsFiveTeams(gr IGamerepo) *SixGroupsFiveTeams {
+func NewSixGroupsFiveTeams(gr IGamerepo, g General) *SixGroupsFiveTeams {
 	return &SixGroupsFiveTeams{
 		GameRepo: gr,
+		General:  g,
 	}
 }
 
-func (s *SixGroupsFiveTeams) HandleGameMode30Teams(game *models.NewGame) error {
+func (s *SixGroupsFiveTeams) GenerateGamePlan(game *models.NewGame) error {
 	//save new game
 	err := s.GameRepo.CreateGame(game)
 	if err != nil {
@@ -59,11 +60,11 @@ func (s *SixGroupsFiveTeams) UpdateMatchesRoundOfSixteen(gameId int) error {
 		return err
 	}
 	//aufteilen in gruppen
-	groups := s.GetGroups(teams)
+	groups := s.General.GetGroups(teams)
 	//gurppen sortieren nach Punkte
-	groups = s.SortGroupsByAlphabet(groups)
+	groups = s.General.SortGroupsByAlphabet(groups)
 	for i, g := range groups {
-		groups[i].Teams = s.SortTeamsByPoints(g.Teams)
+		groups[i].Teams = s.General.SortTeamsByPoints(g.Teams)
 	}
 	//alle 3.-platzierten der gruppen filtern
 	bestThirdPlaces := s.filterForBestThirdPlaces(groups)
@@ -155,7 +156,7 @@ func (s *SixGroupsFiveTeams) UpdateMatchesSemiFinal(gameId int) error {
 	}
 
 	for _, m := range semiFinals {
-		err := s.UpdateMatches(m)
+		err := s.General.UpdateMatches(m)
 		if err != nil {
 			return err
 		}
@@ -181,91 +182,12 @@ func (s *SixGroupsFiveTeams) UpdateMatchesFinal(gameId int) error {
 	final[0].HomeTeam = s.getWinnerOfMatch(semifinal[0])
 	final[0].AwayTeam = s.getWinnerOfMatch(semifinal[1])
 
-	err = s.UpdateMatches(final[0])
+	err = s.General.UpdateMatches(final[0])
 	if err != nil {
 		return err
 	}
 
 	return nil
-}
-
-func (s *SixGroupsFiveTeams) GetGame() (*models.GameResponse, error) {
-	return s.GameRepo.GetGame()
-}
-
-func (s *SixGroupsFiveTeams) GetTeamsByGameID(gameID int) ([]models.Team, error) {
-	return s.GameRepo.GetTeamsByGameID(gameID)
-}
-
-func (s *SixGroupsFiveTeams) GetMatchesByGameID(gameID int) ([]models.Match, error) {
-	return s.GameRepo.GetMatchesByGameID(gameID)
-}
-
-func (s *SixGroupsFiveTeams) GetTeamByGameID(gameID int, teamName string, groupName string) (models.Team, error) {
-	return s.GameRepo.GetTeamByGameID(gameID, teamName, groupName)
-}
-
-func (s *SixGroupsFiveTeams) SortGroupsByAlphabet(groups []models.Group) []models.Group {
-	sort.Slice(groups, func(i, j int) bool {
-		return groups[i].GroupName < groups[j].GroupName
-	})
-	return groups
-}
-
-func (s *SixGroupsFiveTeams) SortTeamsByPoints(teams models.Teams) []models.Team {
-
-	sort.Sort(teams)
-	return teams
-}
-
-func (s *SixGroupsFiveTeams) SortMatchesById(matches []models.Match) []models.Match {
-	sort.Slice(matches, func(i, j int) bool {
-		return matches[i].MatchID < matches[j].MatchID
-	})
-	return matches
-}
-
-func (s *SixGroupsFiveTeams) UpdateTeam(team *models.Team) error {
-	return s.GameRepo.UpdateTeam(team)
-}
-
-func (s *SixGroupsFiveTeams) UpdateMatches(match models.Match) error {
-	return s.GameRepo.UpdateMatches(&match)
-}
-
-func (s *SixGroupsFiveTeams) GetGameByID(gameID string) (*models.Game, error) {
-	return s.GameRepo.GetGameByID(gameID)
-}
-
-func (s *SixGroupsFiveTeams) UpdateGame(g *models.Game) error {
-	return s.GameRepo.UpdateGame(g)
-}
-
-func (s *SixGroupsFiveTeams) GetGroups(teams []models.Team) []models.Group {
-	retval := []models.Group{}
-	groupMap := map[string]models.Group{}
-
-	for _, t := range teams {
-		if _, ok := groupMap[t.GroupName]; ok {
-			tmpTeams := groupMap[t.GroupName].Teams
-			tmpTeams = append(tmpTeams, t)
-			mapEntry := models.Group{
-				GroupName: t.GroupName,
-				Teams:     tmpTeams,
-			}
-			groupMap[t.GroupName] = mapEntry
-		} else {
-			groupMap[t.GroupName] = models.Group{
-				GroupName: t.GroupName,
-				Teams:     []models.Team{t},
-			}
-		}
-	}
-
-	for _, k := range groupMap {
-		retval = append(retval, k)
-	}
-	return retval
 }
 
 func (s *SixGroupsFiveTeams) matchesAreFinished(gameId int, matchType string) bool {
@@ -297,13 +219,13 @@ func (s *SixGroupsFiveTeams) filterForBestThirdPlaces(groups []models.Group) []m
 	for _, g := range groups {
 		retval = append(retval, g.Teams[2])
 	}
-	retval = s.SortTeamsByPoints(retval)
+	retval = s.General.SortTeamsByPoints(retval)
 	retval = retval[:4]
 	return retval
 }
 
-func (s *SixGroupsFiveTeams) calculateMatchesPerGroup(teams []models.Team, gameId int, referees []models.Referee, startTime time.Time, playTime time.Duration) []models.Match {
-	var matches []models.Match
+func (s *SixGroupsFiveTeams) calculateMatchesPerGroup(teams []models.Team, gameId int, referees []models.Referee, startTime time.Time, playTime time.Duration) []*models.Match {
+	var matches []*models.Match
 
 	//sort teams in groups
 	groups := map[string][]models.Team{}
@@ -347,45 +269,45 @@ func (s *SixGroupsFiveTeams) calculateMatchesPerGroup(teams []models.Team, gameI
 	startOfRoundOf16 := startTime.Add(playTime * 10)
 
 	//add round of 16
-	matches = append(matches, models.Match{GameID: gameId, Type: "round_of_16", GroupNumber: "A", HomeTeam: "2. Gruppe A", AwayTeam: "2. Gruppe C", PointsHome: 0, PointsAway: 0, StartTime: startOfRoundOf16, EndTime: startOfRoundOf16.Add(playTime)})
-	matches = append(matches, models.Match{GameID: gameId, Type: "round_of_16", GroupNumber: "B", HomeTeam: "1. Gruppe B", AwayTeam: "3. Gruppe B/E/F", PointsHome: 0, PointsAway: 0, StartTime: startOfRoundOf16, EndTime: startOfRoundOf16.Add(playTime)})
-	matches = append(matches, models.Match{GameID: gameId, Type: "round_of_16", GroupNumber: "C", HomeTeam: "1. Gruppe D", AwayTeam: "3. Gruppe A/C/D", PointsHome: 0, PointsAway: 0, StartTime: startOfRoundOf16, EndTime: startOfRoundOf16.Add(playTime)})
-	matches = append(matches, models.Match{GameID: gameId, Type: "round_of_16", GroupNumber: "D", HomeTeam: "1. Gruppe A", AwayTeam: "3. Gruppe A/B/F", PointsHome: 0, PointsAway: 0, StartTime: startOfRoundOf16, EndTime: startOfRoundOf16.Add(playTime)})
-	matches = append(matches, models.Match{GameID: gameId, Type: "round_of_16", GroupNumber: "E", HomeTeam: "1. Gruppe C", AwayTeam: "3. Gruppe C/D/E", PointsHome: 0, PointsAway: 0, StartTime: startOfRoundOf16, EndTime: startOfRoundOf16.Add(playTime)})
-	matches = append(matches, models.Match{GameID: gameId, Type: "round_of_16", GroupNumber: "F", HomeTeam: "1. Gruppe F", AwayTeam: "2. Gruppe E", PointsHome: 0, PointsAway: 0, StartTime: startOfRoundOf16, EndTime: startOfRoundOf16.Add(playTime)})
-	matches = append(matches, models.Match{GameID: gameId, Type: "round_of_16", GroupNumber: "A", HomeTeam: "1. Gruppe E", AwayTeam: "2. Gruppe D", PointsHome: 0, PointsAway: 0, StartTime: startOfRoundOf16.Add(playTime), EndTime: startOfRoundOf16.Add(playTime * 2)})
-	matches = append(matches, models.Match{GameID: gameId, Type: "round_of_16", GroupNumber: "B", HomeTeam: "1. Gruppe B", AwayTeam: "2. Gruppe F", PointsHome: 0, PointsAway: 0, StartTime: startOfRoundOf16.Add(playTime), EndTime: startOfRoundOf16.Add(playTime * 2)})
+	matches = append(matches, &models.Match{GameID: gameId, Type: "round_of_16", GroupNumber: "A", HomeTeam: "2. Gruppe A", AwayTeam: "2. Gruppe C", PointsHome: 0, PointsAway: 0, StartTime: startOfRoundOf16, EndTime: startOfRoundOf16.Add(playTime)})
+	matches = append(matches, &models.Match{GameID: gameId, Type: "round_of_16", GroupNumber: "B", HomeTeam: "1. Gruppe B", AwayTeam: "3. Gruppe B/E/F", PointsHome: 0, PointsAway: 0, StartTime: startOfRoundOf16, EndTime: startOfRoundOf16.Add(playTime)})
+	matches = append(matches, &models.Match{GameID: gameId, Type: "round_of_16", GroupNumber: "C", HomeTeam: "1. Gruppe D", AwayTeam: "3. Gruppe A/C/D", PointsHome: 0, PointsAway: 0, StartTime: startOfRoundOf16, EndTime: startOfRoundOf16.Add(playTime)})
+	matches = append(matches, &models.Match{GameID: gameId, Type: "round_of_16", GroupNumber: "D", HomeTeam: "1. Gruppe A", AwayTeam: "3. Gruppe A/B/F", PointsHome: 0, PointsAway: 0, StartTime: startOfRoundOf16, EndTime: startOfRoundOf16.Add(playTime)})
+	matches = append(matches, &models.Match{GameID: gameId, Type: "round_of_16", GroupNumber: "E", HomeTeam: "1. Gruppe C", AwayTeam: "3. Gruppe C/D/E", PointsHome: 0, PointsAway: 0, StartTime: startOfRoundOf16, EndTime: startOfRoundOf16.Add(playTime)})
+	matches = append(matches, &models.Match{GameID: gameId, Type: "round_of_16", GroupNumber: "F", HomeTeam: "1. Gruppe F", AwayTeam: "2. Gruppe E", PointsHome: 0, PointsAway: 0, StartTime: startOfRoundOf16, EndTime: startOfRoundOf16.Add(playTime)})
+	matches = append(matches, &models.Match{GameID: gameId, Type: "round_of_16", GroupNumber: "A", HomeTeam: "1. Gruppe E", AwayTeam: "2. Gruppe D", PointsHome: 0, PointsAway: 0, StartTime: startOfRoundOf16.Add(playTime), EndTime: startOfRoundOf16.Add(playTime * 2)})
+	matches = append(matches, &models.Match{GameID: gameId, Type: "round_of_16", GroupNumber: "B", HomeTeam: "1. Gruppe B", AwayTeam: "2. Gruppe F", PointsHome: 0, PointsAway: 0, StartTime: startOfRoundOf16.Add(playTime), EndTime: startOfRoundOf16.Add(playTime * 2)})
 
 	startOfQuaterFinals := startOfRoundOf16.Add(playTime * 2)
 	//add quarterfinals
-	matches = append(matches, models.Match{GameID: gameId, Type: "quaterfinal", GroupNumber: "A", HomeTeam: "Sieger 1. Achtelfinale", AwayTeam: "Sieger 3. Achtelfinale", PointsHome: 0, PointsAway: 0, StartTime: startOfQuaterFinals, EndTime: startOfQuaterFinals.Add((playTime))})
-	matches = append(matches, models.Match{GameID: gameId, Type: "quaterfinal", GroupNumber: "B", HomeTeam: "Sieger 2. Achtelfinale", AwayTeam: "Sieger 6. Achtelfinale", PointsHome: 0, PointsAway: 0, StartTime: startOfQuaterFinals, EndTime: startOfQuaterFinals.Add((playTime))})
-	matches = append(matches, models.Match{GameID: gameId, Type: "quaterfinal", GroupNumber: "C", HomeTeam: "Sieger 5. Achtelfinale", AwayTeam: "Sieger 7. Achtelfinale", PointsHome: 0, PointsAway: 0, StartTime: startOfQuaterFinals, EndTime: startOfQuaterFinals.Add((playTime))})
-	matches = append(matches, models.Match{GameID: gameId, Type: "quaterfinal", GroupNumber: "D", HomeTeam: "Sieger 4. Achtelfinale", AwayTeam: "Sieger 8. Achtelfinale", PointsHome: 0, PointsAway: 0, StartTime: startOfQuaterFinals, EndTime: startOfQuaterFinals.Add((playTime))})
+	matches = append(matches, &models.Match{GameID: gameId, Type: "quaterfinal", GroupNumber: "A", HomeTeam: "Sieger 1. Achtelfinale", AwayTeam: "Sieger 3. Achtelfinale", PointsHome: 0, PointsAway: 0, StartTime: startOfQuaterFinals, EndTime: startOfQuaterFinals.Add((playTime))})
+	matches = append(matches, &models.Match{GameID: gameId, Type: "quaterfinal", GroupNumber: "B", HomeTeam: "Sieger 2. Achtelfinale", AwayTeam: "Sieger 6. Achtelfinale", PointsHome: 0, PointsAway: 0, StartTime: startOfQuaterFinals, EndTime: startOfQuaterFinals.Add((playTime))})
+	matches = append(matches, &models.Match{GameID: gameId, Type: "quaterfinal", GroupNumber: "C", HomeTeam: "Sieger 5. Achtelfinale", AwayTeam: "Sieger 7. Achtelfinale", PointsHome: 0, PointsAway: 0, StartTime: startOfQuaterFinals, EndTime: startOfQuaterFinals.Add((playTime))})
+	matches = append(matches, &models.Match{GameID: gameId, Type: "quaterfinal", GroupNumber: "D", HomeTeam: "Sieger 4. Achtelfinale", AwayTeam: "Sieger 8. Achtelfinale", PointsHome: 0, PointsAway: 0, StartTime: startOfQuaterFinals, EndTime: startOfQuaterFinals.Add((playTime))})
 
 	startOfSemiFinals := startOfQuaterFinals.Add(playTime)
 	//add semifinals
-	matches = append(matches, models.Match{GameID: gameId, Type: "semifinal", GroupNumber: "A", HomeTeam: "Sieger 1. Viertelfinale", AwayTeam: "Sieger 2. Viertelfinale", PointsHome: 0, PointsAway: 0, StartTime: startOfSemiFinals, EndTime: startOfSemiFinals.Add(playTime)})
-	matches = append(matches, models.Match{GameID: gameId, Type: "semifinal", GroupNumber: "B", HomeTeam: "Sieger 3. Viertelfinale", AwayTeam: "Sieger 4. Viertelfinale", PointsHome: 0, PointsAway: 0, StartTime: startOfSemiFinals, EndTime: startOfSemiFinals.Add(playTime)})
+	matches = append(matches, &models.Match{GameID: gameId, Type: "semifinal", GroupNumber: "A", HomeTeam: "Sieger 1. Viertelfinale", AwayTeam: "Sieger 2. Viertelfinale", PointsHome: 0, PointsAway: 0, StartTime: startOfSemiFinals, EndTime: startOfSemiFinals.Add(playTime)})
+	matches = append(matches, &models.Match{GameID: gameId, Type: "semifinal", GroupNumber: "B", HomeTeam: "Sieger 3. Viertelfinale", AwayTeam: "Sieger 4. Viertelfinale", PointsHome: 0, PointsAway: 0, StartTime: startOfSemiFinals, EndTime: startOfSemiFinals.Add(playTime)})
 
 	//add final
-	matches = append(matches, models.Match{GameID: gameId, Type: "final", GroupNumber: "A", HomeTeam: "Sieger 1. Halbfinale", AwayTeam: "Sieger 2. Halbfinale", PointsHome: 0, PointsAway: 0, StartTime: startOfSemiFinals.Add(playTime), EndTime: startOfSemiFinals.Add((playTime * 2))})
+	matches = append(matches, &models.Match{GameID: gameId, Type: "final", GroupNumber: "A", HomeTeam: "Sieger 1. Halbfinale", AwayTeam: "Sieger 2. Halbfinale", PointsHome: 0, PointsAway: 0, StartTime: startOfSemiFinals.Add(playTime), EndTime: startOfSemiFinals.Add((playTime * 2))})
 
 	return matches
 }
 
-func generateSchedule(teams []models.Team, gameId int, group string, referees []models.Referee, startTime time.Time, playTime time.Duration) []models.Match {
+func generateSchedule(teams []models.Team, gameId int, group string, referees []models.Referee, startTime time.Time, playTime time.Duration) []*models.Match {
 	numTeams := len(teams)
 	// numMatches := numTeams * (numTeams - 1) / 2 // Anzahl der Spiele
 
 	// Erstellen eines leeren Spielplans
-	schedule := make([]models.Match, 0)
+	schedule := make([]*models.Match, 0)
 
 	// Erstellen aller möglichen Spiele
-	allMatches := make([]models.Match, 0)
+	allMatches := make([]*models.Match, 0)
 	for i := 0; i < numTeams; i++ {
 		for j := i + 1; j < numTeams; j++ {
-			match := models.Match{
+			match := &models.Match{
 				GameID:      gameId,
 				Type:        "regular",
 				GroupNumber: group,
@@ -498,18 +420,4 @@ func (s *SixGroupsFiveTeams) getBestThirdPlaceFromGroup(groupsString string, bes
 		}
 	}
 	return updatedBestThirdPlaces, teamName
-}
-
-func (s *SixGroupsFiveTeams) GetUpdatedTeam(currentTeam *models.Team, newTeam *models.TeamUpdate) *models.Team {
-	retval := &models.Team{
-		ID:            currentTeam.ID,
-		GameID:        currentTeam.GameID,
-		GroupName:     currentTeam.GroupName,
-		TeamName:      currentTeam.TeamName,
-		Points:        currentTeam.Points + newTeam.PointsToAdd,
-		CupsHit:       currentTeam.CupsHit + newTeam.CupsHitted,
-		CupsGet:       currentTeam.CupsGet + newTeam.CupsGot,
-		CupDifference: currentTeam.CupDifference + (newTeam.CupsHitted - newTeam.CupsGot),
-	}
-	return retval
 }

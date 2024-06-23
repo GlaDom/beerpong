@@ -1,0 +1,25 @@
+<p-tabView>
+    <p-tabPanel header="Gruppen A">
+        <div class="flex">
+            <div class="flex flex-row flex-wrap">
+                <ng-container *ngFor="let m of regularMatches">
+                    <app-game-card [match]="m"></app-game-card>
+                </ng-container>
+            </div>
+        </div>
+    </p-tabPanel>
+</p-tabView>
+<div class="flex flex-row-reverse mt-5">
+    <p-button (onClick)="updateFinal()" label="Gruppenphase abschliessen"></p-button>
+</div>
+<div class="mt-5">
+    <p-fieldset legend="Finale">
+        <div class="flex flex-row justify-around">
+            <ng-container *ngFor="let m of finalMatches">
+                <div class="w-1/2">
+                    <app-game-card [match]="m"></app-game-card>
+                </div>
+            </ng-container>
+        </div>
+    </p-fieldset>
+</div>

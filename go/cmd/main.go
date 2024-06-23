@@ -62,8 +62,11 @@ func main() {
 		host, port, user, password, dbname)
 
 	gameRepo := repo.NewGameRepo(psqlInfo)
+	general := usecase.NewGeneral(gameRepo)
 	beerpongGameHandler := handler.NewBeerpongGameHandler(
-		*usecase.NewSixGroupsFiveTeams(gameRepo),
+		*general,
+		*usecase.NewSixGroupsFiveTeams(gameRepo, *general),
+		*usecase.NewOneGroupFiveTeams(gameRepo),
 	)
 
 	v1 := router.Group("/api/v1")
