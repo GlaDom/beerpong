@@ -159,6 +159,7 @@ export class BeerpongSetupComponent implements OnInit {
       points: 0,
       cups_hit: 0,
       cups_get: 0,
+      cup_difference: 0,
       rank: 0
     }
     if(retval.team_name=='') {

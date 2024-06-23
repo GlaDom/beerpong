@@ -76,7 +76,7 @@ func main() {
 		v1.PUT("/updateMatchesRoundOfSixteen/:id", beerpongGameHandler.UpdateGameRoundOf16)
 		v1.PUT("/updateMatchesQuaterfinals/:id", beerpongGameHandler.UpdateGameQuaterFinals)
 		v1.PUT("/updateMatchesSemifinals/:id", beerpongGameHandler.UpdateGameSemiFinals)
-		v1.PUT("/updateMatchesFinal/:id", beerpongGameHandler.UpdateGameSemiFinals)
+		v1.PUT("/updateMatchesFinal/:id", beerpongGameHandler.UpdateGameFinal)
 		v1.PUT("/updateTeams", beerpongGameHandler.UpdateTeams)
 	}
 	router.Run(":8080")

@@ -78,6 +78,11 @@ export class BeerpongEffects {
             ))
     ))
 
+    updateMatchesRoundOfSixteenSuccess = createEffect(() => this.actions$.pipe(
+        ofType('[Admin-space Component] Update Matches Round of Sixteen'),
+        map(() => ({type: "[App Component] Load Game"}))
+    ))
+
     updateMatchesQuaterfinals = createEffect(() => this.actions$.pipe(
         ofType('[Admin-space Component] Update Matches Quater Finals'),
         switchMap((gameId: any) => this.configService.UpdateMatchesQuaterfinals(gameId.gameId)

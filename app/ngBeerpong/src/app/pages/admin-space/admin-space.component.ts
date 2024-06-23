@@ -161,7 +161,47 @@ export class AdminSpaceComponent implements OnInit {
     }
 
     getBestEightTeams(): Team[] {
-      let retval: Team[] = this.configService.sortTeamsbyPointsAndDifferenze(this.groups);
+      let retval: Team[] = [];
+      //get place from 5 to 8
+      let placeFiveToEigth: string[] = this.configService.getWinnersOfMatches(this.quaterFinalMatches);
+      let teamsPlaceFiveToEigth: Team[] = this.getTeamsByName(placeFiveToEigth)
+      retval.push(...this.configService.sortTeamsbyDifference(teamsPlaceFiveToEigth))
+      
+      //get place 3 and 4
+      let placeThreeToFour: string[] = this.configService.getWinnersOfMatches(this.semiFinalMatches);
+      let teamsPlaceThreeToFour: Team[] = this.getTeamsByName(placeThreeToFour)
+      retval.push(...this.configService.sortTeamsbyDifference(teamsPlaceThreeToFour))
+
+      //get place 1 and 2 
+      let placeOneAndTwo: string[] = [];
+      let winner: string = '';
+      let second: string = '';
+      if(this.finalMatch[0].points_away > this.finalMatch[0].points_home) {
+        winner = this.finalMatch[0].away_team
+        second = this.finalMatch[0].home_team
+      } else if(this.finalMatch[0].points_home > this.finalMatch[0].points_away) {
+        winner = this.finalMatch[0].home_team
+        second = this.finalMatch[0].away_team
+      }
+      placeOneAndTwo.push(second)
+      placeOneAndTwo.push(winner)
+      let teamsPlaceOneToTwo: Team[] = this.getTeamsByName(placeOneAndTwo)
+      retval.push(...teamsPlaceOneToTwo)
+
+      return retval.reverse()
+    }
+
+    getTeamsByName(teamNames: string[]): Team[] {
+      let retval: Team[] = []
+      teamNames.map(name => {
+        this.groups.map(g => {
+          g.teams.map(t => {
+            if(t.team_name == name){
+              retval.push(t);
+            }
+          })
+        })
+      })
       return retval
     }
 

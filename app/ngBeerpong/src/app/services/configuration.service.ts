@@ -41,7 +41,7 @@ export class ConfigurationService {
   }
 
   UpdateMatchesFinal(gameId: number) {
-    return this.httpClient.put<string>(this.url+"/updateMatchesFinals/id="+gameId, null).pipe()
+    return this.httpClient.put<string>(this.url+"/updateMatchesFinal/id="+gameId, null).pipe()
   }
 
   UpdateTeams(teams: TeamUpdate[]) {
@@ -109,7 +109,23 @@ export class ConfigurationService {
         }
       }
       return b.points - a.points;
-  });
+    });
     return retval.slice(0,8)
+  }
+
+  sortTeamsbyDifference(teams: Team[]): Team[] {
+    return teams.sort((a, b) => a.cup_difference - b.cup_difference)
+  }
+
+  getWinnersOfMatches(matches: Match[]): string[] {
+    let retval: string[] = [];
+    matches.map(m => {
+      if(m.points_away > m.points_home) {
+        retval.push(m.away_team)
+      } else if(m.points_home > m.points_away) {
+        retval.push(m.home_team)
+      }
+    })
+    return retval
   }
 }

@@ -87,7 +87,7 @@ func (gr *Gamerepo) UpdateTeam(t *models.Team) error {
 }
 
 func (gr *Gamerepo) UpdateMatches(m *models.Match) error {
-	tx := gr.db.Where("game_id=? and away_team=? and home_team=? and match_id=?", m.GameID, m.AwayTeam, m.HomeTeam, m.MatchID).Save(&m)
+	tx := gr.db.Save(&m)
 	return tx.Error
 }
 
