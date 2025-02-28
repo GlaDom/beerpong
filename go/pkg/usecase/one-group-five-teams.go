@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"fmt"
 	"math/rand"
 	"time"
 
@@ -8,12 +9,14 @@ import (
 )
 
 type OneGroupFiveTeams struct {
+	General  General
 	GameRepo IGamerepo
 }
 
-func NewOneGroupFiveTeams(gr IGamerepo) *OneGroupFiveTeams {
+func NewOneGroupFiveTeams(gr IGamerepo, ge General) *OneGroupFiveTeams {
 	return &OneGroupFiveTeams{
 		GameRepo: gr,
+		General:  ge,
 	}
 }
 
@@ -29,6 +32,33 @@ func (s *OneGroupFiveTeams) GenerateGamePlan(game *models.NewGame) error {
 	if err != nil {
 		return err
 	}
+	return nil
+}
+
+func (s *OneGroupFiveTeams) UpdateMatchesFinal(gameId int) error {
+	if !s.General.matchesAreFinished(gameId, "regular") {
+		return fmt.Errorf("matches not finished yet")
+	}
+	//get teams
+	teams, err := s.GameRepo.GetTeamsByGameID(gameId)
+	if err != nil {
+		return err
+	}
+	teams = s.General.SortTeamsByPoints(teams)
+	//get final
+	final, err := s.GameRepo.GetMatchesByGameType(gameId, "final")
+	if err != nil {
+		return err
+	}
+
+	final[0].HomeTeam = teams[0].TeamName
+	final[0].AwayTeam = teams[1].TeamName
+
+	err = s.General.UpdateMatches(final[0])
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 

@@ -51,7 +51,7 @@ func (s *SixGroupsFiveTeams) GenerateGamePlan(game *models.NewGame) error {
 }
 
 func (s *SixGroupsFiveTeams) UpdateMatchesRoundOfSixteen(gameId int) error {
-	if !s.matchesAreFinished(gameId, "regular") {
+	if !s.General.matchesAreFinished(gameId, "regular") {
 		return fmt.Errorf("matches not finished yet")
 	}
 	//get teams of game
@@ -91,7 +91,7 @@ func (s *SixGroupsFiveTeams) UpdateMatchesRoundOfSixteen(gameId int) error {
 }
 
 func (s *SixGroupsFiveTeams) UpdateMatchesQuaterFinals(gameId int) error {
-	if !s.matchesAreFinished(gameId, "round_of_16") {
+	if !s.General.matchesAreFinished(gameId, "round_of_16") {
 		return fmt.Errorf("matches not finished yet")
 	}
 	//get matches of round of 16
@@ -130,7 +130,7 @@ func (s *SixGroupsFiveTeams) UpdateMatchesQuaterFinals(gameId int) error {
 }
 
 func (s *SixGroupsFiveTeams) UpdateMatchesSemiFinal(gameId int) error {
-	if !s.matchesAreFinished(gameId, "quaterfinal") {
+	if !s.General.matchesAreFinished(gameId, "quaterfinal") {
 		return fmt.Errorf("matches not finished yet")
 	}
 	//get quaterfinals
@@ -165,7 +165,7 @@ func (s *SixGroupsFiveTeams) UpdateMatchesSemiFinal(gameId int) error {
 }
 
 func (s *SixGroupsFiveTeams) UpdateMatchesFinal(gameId int) error {
-	if !s.matchesAreFinished(gameId, "semifinal") {
+	if !s.General.matchesAreFinished(gameId, "semifinal") {
 		return fmt.Errorf("matches not finished yet")
 	}
 	//get semifinals
@@ -188,22 +188,6 @@ func (s *SixGroupsFiveTeams) UpdateMatchesFinal(gameId int) error {
 	}
 
 	return nil
-}
-
-func (s *SixGroupsFiveTeams) matchesAreFinished(gameId int, matchType string) bool {
-	//get matches
-	matches, err := s.GameRepo.GetMatchesByGameType(gameId, matchType)
-	if err != nil {
-		return false
-	}
-	for _, m := range matches {
-		if m.PointsHome != 0 || m.PointsAway != 0 {
-			continue
-		} else {
-			return false
-		}
-	}
-	return true
 }
 
 func (s *SixGroupsFiveTeams) getWinnerOfMatch(m models.Match) string {

@@ -274,11 +274,28 @@ func (h *beerpongGameHandler) UpdateGameFinal(c *gin.Context) {
 		return
 	}
 
-	err = h.SixGFiveT_Mode.UpdateMatchesFinal(gameId)
+	mode := c.Query("mode")
+	gameMode, err := strconv.Atoi(mode)
 	if err != nil {
-		c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+
+	switch gameMode {
+	case 0:
+		err = h.SixGFiveT_Mode.UpdateMatchesFinal(gameId)
+		if err != nil {
+			c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
+			return
+		}
+	case 1:
+		err = h.OneGFiveT_Mode.UpdateMatchesFinal(gameId)
+		if err != nil {
+			c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
+			return
+		}
+	}
+
 	c.JSON(http.StatusOK, nil)
 }
 

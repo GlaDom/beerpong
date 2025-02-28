@@ -107,3 +107,19 @@ func (g *General) GetGameByID(gameID string) (*models.Game, error) {
 func (ge *General) UpdateGame(g *models.Game) error {
 	return ge.GameRepo.UpdateGame(g)
 }
+
+func (g *General) matchesAreFinished(gameId int, matchType string) bool {
+	//get matches
+	matches, err := g.GameRepo.GetMatchesByGameType(gameId, matchType)
+	if err != nil {
+		return false
+	}
+	for _, m := range matches {
+		if m.PointsHome != 0 || m.PointsAway != 0 {
+			continue
+		} else {
+			return false
+		}
+	}
+	return true
+}
