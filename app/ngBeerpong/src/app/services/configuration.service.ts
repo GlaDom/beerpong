@@ -17,35 +17,35 @@ export class ConfigurationService {
   constructor(public httpClient: HttpClient) { }
 
   CreateGame(game: GameRequest) {
-    return this.httpClient.post<GameRequest>(this.url+"/createGame", game).pipe()
+    return this.httpClient.post<GameRequest>(this.url+"/game", game).pipe()
   }
 
   GetGame(url: string) {
-    return this.httpClient.get<BeerpongState>(this.url+"/getGame").pipe()
+    return this.httpClient.get<BeerpongState>(this.url+"/game").pipe()
   }
 
   UpdateMatch(match: Match) {
-    return this.httpClient.put<Match>(this.url+"/updateMatches", match).pipe()
+    return this.httpClient.put<Match>(this.url+"/game/matches", match).pipe()
   }
 
   UpdateMatchesRoundOfSixteen(gameId: number) {
-    return this.httpClient.put<string>(this.url+"/updateMatchesRoundOfSixteen/id="+gameId, null).pipe()
+    return this.httpClient.put<string>(this.url+"/game/matches/round-of-sixteen/id="+gameId, null).pipe()
   }
 
   UpdateMatchesQuaterfinals(gameId: number) {
-    return this.httpClient.put<string>(this.url+"/updateMatchesQuaterfinals/id="+gameId, null).pipe()
+    return this.httpClient.put<string>(this.url+"/game/matches/quaterfinals/id="+gameId, null).pipe()
   }
 
   UpdateMatchesSemifinals(gameId: number) {
-    return this.httpClient.put<string>(this.url+"/updateMatchesSemifinals/id="+gameId, null).pipe()
+    return this.httpClient.put<string>(this.url+"/game/matches/semifinals/id="+gameId, null).pipe()
   }
 
   UpdateMatchesFinal(gameId: number, gameMode: number) {
-    return this.httpClient.put<string>(this.url+"/updateMatchesFinal/id="+gameId+"?mode="+gameMode, null).pipe()
+    return this.httpClient.put<string>(this.url+"/game/matches/final/id="+gameId+"?mode="+gameMode, null).pipe()
   }
 
   UpdateTeams(teams: TeamUpdate[]) {
-    return this.httpClient.put<TeamUpdate[]>(this.url+"/updateTeams", {teams: teams}).pipe()
+    return this.httpClient.put<TeamUpdate[]>(this.url+"/game/teams", {teams: teams}).pipe()
   }
 
   FinishGame(gameId: number) {
