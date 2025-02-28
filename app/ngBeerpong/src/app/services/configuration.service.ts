@@ -50,7 +50,7 @@ export class ConfigurationService {
 
   FinishGame(gameId: number) {
     console.log(gameId)
-    return this.httpClient.put<string>(this.url+"/finishGame/id="+gameId, null).pipe()
+    return this.httpClient.put<string>(this.url+"/game/id="+gameId, null).pipe()
   }
 
   sortMatches(matches: Match[]): Match[][] {
