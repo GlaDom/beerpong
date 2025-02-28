@@ -5,7 +5,8 @@ CREATE TABLE games (
   is_finished BOOLEAN,
   game_time INTEGER,
   updated_at TIMESTAMP,
-  created_at TIMESTAMP
+  created_at TIMESTAMP,
+  start_time TIMESTAMP
 );
 
 CREATE TABLE referees (

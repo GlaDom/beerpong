@@ -4,6 +4,15 @@ import { createGame, createGameSuccess, finishGame, finishGameFailure, finishGam
 import { group } from "console";
 
 export const initialState: BeerpongState = {
+    game: {
+        mode: 0,
+        amount_of_teams: 0,
+        is_finished: false,
+        game_time: 0,
+        start_time: undefined,
+        referee: [],
+        teams: []
+    },
     groups: [],
     matches: [],
     toastStatus: 'notset',
@@ -28,6 +37,7 @@ export const beerpongReducer = createReducer(initialState,
     on(loadGameSuccess, (state, {game}) => {
         let newToastState: Status = 'notset'
         return {
+            game: game.game,
             groups: game.groups,
             matches: game.matches,
             toastStatus: newToastState,
@@ -41,11 +51,28 @@ export const beerpongReducer = createReducer(initialState,
             groups: [],
             toastStatus: 'notset',
             isLoading: false,
-            showRanking: false
+            showRanking: false,
+            game: {
+                mode: 0,
+                amount_of_teams: 0,
+                is_finished: false,
+                game_time: 0,
+                referee: [],
+                teams: []
+            }
         }
         state = initalGameState
+        console.log(state)
         console.log('reducer called')
-        return state
+        return {
+            ...state,
+            game: initalGameState.game,
+            groups: initalGameState.groups,
+            matches: initalGameState.matches,
+            showRanking: false,
+            toastStatus: initalGameState.toastStatus,
+            isLoading: false
+        }
     }),
     on(updateMatch, state => {
         console.log(state)
@@ -132,15 +159,12 @@ export const beerpongReducer = createReducer(initialState,
         return state
     }),
     on(finishGameSuccess, (state) => {
-        let initalGameState: BeerpongState = {
-            matches: [],
-            groups: [],
-            toastStatus: "success game finished",
-            isLoading: false,
-            showRanking: false
+        let newToastState: Status = "success game finished"
+        return {
+            ...state,
+            toastStatus: newToastState,
+            isLoading: false
         }
-        state = initalGameState
-        return state
     }),
     on(finishGameFailure, (state) => {
         let newToastState: Status = "failed game finished"

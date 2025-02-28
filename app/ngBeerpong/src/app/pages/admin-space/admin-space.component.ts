@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { GameCardComponent } from '../../components/game-card/game-card.component';
+import { ModeOGfTComponent } from '../../components/admin-space-components/mode-o-gf-t/mode-o-gf-t.component';
 import { ConfigurationService } from '../../services/configuration.service';
 import Match from '../../api/match.interface';
 import { NgFor, NgIf } from '@angular/common';
@@ -35,7 +36,8 @@ import Team from '../../api/team.interface';
     ToastModule,
     BeerpongSetupComponent,
     RankingComponent,
-    ConfirmDialogModule
+    ConfirmDialogModule,
+    ModeOGfTComponent
   ],
   providers: [
     MessageService,
@@ -47,9 +49,11 @@ import Team from '../../api/team.interface';
 export class AdminSpaceComponent implements OnInit {
 
     game$: Observable<BeerpongState>
+    gameMode: number = 3;
     gameId: number | undefined;
     groups: Group[] = [];
     matches: Match[] = [];
+    regularMatches: Match[] = [];
     sortedMatches: Match[][] = [];
     roundOfsixteen: Match[] = [];
     quaterFinalMatches: Match[] = [];
@@ -72,10 +76,12 @@ export class AdminSpaceComponent implements OnInit {
     ngOnInit(): void {
       this.game$.subscribe((game) => {
         if(game.matches.length>0) {
+          this.gameMode = game.game.mode
           this.gameId = game.groups[0].teams[0].game_id
           this.matches = game.matches
           this.groups = game.groups
           this.showRanking = game.showRanking
+          this.regularMatches = this.configService.filterMatches('regular', this.matches)
           this.sortedMatches = this.configService.sortMatches(this.matches)
           this.roundOfsixteen = this.configService.filterMatches('round_of_16', this.matches)
           this.quaterFinalMatches = this.configService.filterMatches('quaterfinal', this.matches)
@@ -83,6 +89,10 @@ export class AdminSpaceComponent implements OnInit {
           this.finalMatch = this.configService.filterMatches('final', this.matches)
           
           this.checkForToastMessage(game.toastStatus)
+        } else {
+          this.matches = game.matches
+          this.groups = game.groups
+          this.showRanking = game.showRanking
         }
         this.isLoading = game.isLoading
       })
@@ -107,13 +117,9 @@ export class AdminSpaceComponent implements OnInit {
     }
 
     updateFinal(): void {
-      if(this.gameId) {
-        this.beerpongStore.dispatch(updateMatchesFinal({gameId: this.gameId}))
+      if(this.gameId && this.gameMode) {
+        this.beerpongStore.dispatch(updateMatchesFinal({gameId: this.gameId, gameMode: this.gameMode}))
       }
-    }
-
-    setTournamentFinished(): void {
-      this.beerpongStore.dispatch(setShowRanking({showRanking: true}))
     }
 
     finishTournament(): void {
@@ -161,7 +167,47 @@ export class AdminSpaceComponent implements OnInit {
     }
 
     getBestEightTeams(): Team[] {
-      let retval: Team[] = this.configService.sortTeamsbyPointsAndDifferenze(this.groups);
+      let retval: Team[] = [];
+      //get place from 5 to 8
+      let placeFiveToEigth: string[] = this.configService.getWinnersOfMatches(this.quaterFinalMatches);
+      let teamsPlaceFiveToEigth: Team[] = this.getTeamsByName(placeFiveToEigth)
+      retval.push(...this.configService.sortTeamsbyDifference(teamsPlaceFiveToEigth))
+      
+      //get place 3 and 4
+      let placeThreeToFour: string[] = this.configService.getWinnersOfMatches(this.semiFinalMatches);
+      let teamsPlaceThreeToFour: Team[] = this.getTeamsByName(placeThreeToFour)
+      retval.push(...this.configService.sortTeamsbyDifference(teamsPlaceThreeToFour))
+
+      //get place 1 and 2 
+      let placeOneAndTwo: string[] = [];
+      let winner: string = '';
+      let second: string = '';
+      if(this.finalMatch[0].points_away > this.finalMatch[0].points_home) {
+        winner = this.finalMatch[0].away_team
+        second = this.finalMatch[0].home_team
+      } else if(this.finalMatch[0].points_home > this.finalMatch[0].points_away) {
+        winner = this.finalMatch[0].home_team
+        second = this.finalMatch[0].away_team
+      }
+      placeOneAndTwo.push(second)
+      placeOneAndTwo.push(winner)
+      let teamsPlaceOneToTwo: Team[] = this.getTeamsByName(placeOneAndTwo)
+      retval.push(...teamsPlaceOneToTwo)
+
+      return retval.reverse()
+    }
+
+    getTeamsByName(teamNames: string[]): Team[] {
+      let retval: Team[] = []
+      teamNames.map(name => {
+        this.groups.map(g => {
+          g.teams.map(t => {
+            if(t.team_name == name){
+              retval.push(t);
+            }
+          })
+        })
+      })
       return retval
     }
 

@@ -50,7 +50,7 @@ func main() {
 	// Verbindungsinformationen zur PostgreSQL-Datenbank
 	const (
 		host     = "localhost" // Der Name des PostgreSQL-Containers
-		port     = 5432        // Standard-PostgreSQL-Port
+		port     = 5433        // Standard-PostgreSQL-Port
 		user     = "admin"     // Ihr Benutzername
 		password = "beerpong"  // Ihr Passwort
 		dbname   = "beerpong"  // Der Name Ihrer Datenbank
@@ -62,8 +62,11 @@ func main() {
 		host, port, user, password, dbname)
 
 	gameRepo := repo.NewGameRepo(psqlInfo)
+	general := usecase.NewGeneral(gameRepo)
 	beerpongGameHandler := handler.NewBeerpongGameHandler(
-		*usecase.NewSixGroupsFiveTeams(gameRepo),
+		*general,
+		*usecase.NewSixGroupsFiveTeams(gameRepo, *general),
+		*usecase.NewOneGroupFiveTeams(gameRepo, *general),
 	)
 
 	v1 := router.Group("/api/v1")
@@ -76,9 +79,9 @@ func main() {
 		v1.PUT("/updateMatchesRoundOfSixteen/:id", beerpongGameHandler.UpdateGameRoundOf16)
 		v1.PUT("/updateMatchesQuaterfinals/:id", beerpongGameHandler.UpdateGameQuaterFinals)
 		v1.PUT("/updateMatchesSemifinals/:id", beerpongGameHandler.UpdateGameSemiFinals)
-		v1.PUT("/updateMatchesFinal/:id", beerpongGameHandler.UpdateGameSemiFinals)
+		v1.PUT("/updateMatchesFinal/:id", beerpongGameHandler.UpdateGameFinal)
 		v1.PUT("/updateTeams", beerpongGameHandler.UpdateTeams)
 	}
-	router.Run(":8080")
+	router.Run(":8082")
 
 }

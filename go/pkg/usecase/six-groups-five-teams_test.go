@@ -10,7 +10,8 @@ import (
 var updatedMatches = []models.Match{}
 
 func TestCalculateRoundOfSixteen(t *testing.T) {
-	sgft := NewSixGroupsFiveTeams(&MockGameRepo{})
+	g := NewGeneral(&MockGameRepo{})
+	sgft := NewSixGroupsFiveTeams(&MockGameRepo{}, *g)
 	sgft.UpdateMatchesRoundOfSixteen(1)
 
 	assert.Greater(t, len(updatedMatches), 0)
@@ -36,9 +37,9 @@ func TestSortTeamsById(t *testing.T) {
 		{ID: 1, GameID: 1, GroupName: "A", TeamName: "Team2", Points: 3, CupsHit: 19, CupsGet: 33, CupDifference: 14},
 	}
 
-	sgft := NewSixGroupsFiveTeams(&MockGameRepo{})
+	sgft := NewSixGroupsFiveTeams(&MockGameRepo{}, *NewGeneral(&MockGameRepo{}))
 
-	sortedTeams := sgft.SortTeamsByPoints(input)
+	sortedTeams := sgft.General.SortTeamsByPoints(input)
 	assert.Equal(t, expected, sortedTeams)
 }
 
@@ -59,7 +60,7 @@ func (mr *MockGameRepo) GetTeamByGameID(int, string, string) (models.Team, error
 func (mr *MockGameRepo) GetMatchesByGameID(int) ([]models.Match, error) {
 	return []models.Match{}, nil
 }
-func (mr *MockGameRepo) CreateMatches([]models.Match) error {
+func (mr *MockGameRepo) CreateMatches([]*models.Match) error {
 	return nil
 }
 func (mr *MockGameRepo) UpdateTeam(*models.Team) error {

@@ -76,18 +76,6 @@ export class BeerpongSetupComponent implements OnInit {
       gameTime: new FormControl<number | null>(null),
       date: new FormControl<Date | null>(null),
     })
-    for(let i=0;i<=5;i++) {
-      let groupForm = this.fb.group({
-        name: new FormControl(this.groupNames[i]),
-        team1: new FormControl('', [Validators.required, Validators.minLength(3)]),
-        team2: new FormControl('', [Validators.required, Validators.minLength(3)]),
-        team3: new FormControl('', [Validators.required, Validators.minLength(3)]),
-        team4: new FormControl('', [Validators.required, Validators.minLength(3)]),
-        team5: new FormControl('', [Validators.required, Validators.minLength(3)])
-      })
-
-      this.groups.push(groupForm)
-    }
   }
     
   ngOnInit(): void {
@@ -97,17 +85,43 @@ export class BeerpongSetupComponent implements OnInit {
   get groups() {
     return this.gameForm.controls["groups"] as FormArray;
   }
-
-  toggleGameModeSet(): void {
-    this.gameModeSet = !this.gameModeSet
-  }
   
   toggleEnableButton(mode: number): void {
     this.enableButton = !this.enableButton
     if(this.enableButton) {
       this.playMode = mode
     }
-    // this.gameMode.setValue({mode: mode})
+    switch(mode) {
+      case 0: {
+        this.groups.clear();
+        for(let i=0;i<=5;i++) {
+          let groupForm = this.fb.group({
+            name: new FormControl(this.groupNames[i]),
+            team1: new FormControl('', [Validators.required, Validators.minLength(3)]),
+            team2: new FormControl('', [Validators.required, Validators.minLength(3)]),
+            team3: new FormControl('', [Validators.required, Validators.minLength(3)]),
+            team4: new FormControl('', [Validators.required, Validators.minLength(3)]),
+            team5: new FormControl('', [Validators.required, Validators.minLength(3)])
+          })
+    
+          this.groups.push(groupForm)
+        }
+        break;
+      }
+      case 1: {
+        let groupForm = this.fb.group({
+          name: new FormControl(this.groupNames[0]),
+          team1: new FormControl('', [Validators.required, Validators.minLength(3)]),
+          team2: new FormControl('', [Validators.required, Validators.minLength(3)]),
+          team3: new FormControl('', [Validators.required, Validators.minLength(3)]),
+          team4: new FormControl('', [Validators.required, Validators.minLength(3)]),
+          team5: new FormControl('', [Validators.required, Validators.minLength(3)])
+        })
+  
+        this.groups.push(groupForm)
+        break;
+      }
+    }
   }
 
   startGame(): void {
@@ -115,14 +129,17 @@ export class BeerpongSetupComponent implements OnInit {
     console.log(this.refereeFormGroup)
     console.log(this.gameMode)
     let refs: string = this.refereeFormGroup.get('referees')?.value
-    console.log(refs.split(','))
     let refsArray = refs.trim().split(',')
     let referees: Referee[] = [];
     refsArray.map(r => referees.push({name: r}))
+    let amountOfTeams: number = 30
+    if(this.playMode == 1) {
+      amountOfTeams = 5
+    }
     let newGame: GameRequest = {
       game: {
         mode: this.playMode,
-        amount_of_teams: 30,
+        amount_of_teams: amountOfTeams,
         is_finished: false,
         game_time: this.refereeFormGroup.get('gameTime')?.value,
         start_time: this.refereeFormGroup.get('date')?.value,
@@ -159,6 +176,7 @@ export class BeerpongSetupComponent implements OnInit {
       points: 0,
       cups_hit: 0,
       cups_get: 0,
+      cup_difference: 0,
       rank: 0
     }
     if(retval.team_name=='') {

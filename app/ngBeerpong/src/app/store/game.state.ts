@@ -1,3 +1,4 @@
+import Game from "../api/game.interface";
 import Group from "../api/group.interface";
 import Match from "../api/match.interface";
 
@@ -19,6 +20,7 @@ export type Status = 'notset' |
 
 
 export interface BeerpongState {
+    game: Game,
     groups: Group[],
     matches: Match[],
     toastStatus: Status,

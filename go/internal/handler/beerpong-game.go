@@ -12,13 +12,21 @@ import (
 	"github.com/gladom/beerpong/pkg/usecase"
 )
 
-type beerpongGameHandler struct {
-	SixGFiveT_Mode usecase.SixGroupsFiveTeams
+type IGameService interface {
+	GenerateGamePlan(*models.NewGame) error
 }
 
-func NewBeerpongGameHandler(sixGfiveT usecase.SixGroupsFiveTeams) *beerpongGameHandler {
+type beerpongGameHandler struct {
+	General        usecase.General
+	SixGFiveT_Mode usecase.SixGroupsFiveTeams
+	OneGFiveT_Mode usecase.OneGroupFiveTeams
+}
+
+func NewBeerpongGameHandler(g usecase.General, sixGfiveT usecase.SixGroupsFiveTeams, oneGfiveT usecase.OneGroupFiveTeams) *beerpongGameHandler {
 	return &beerpongGameHandler{
 		SixGFiveT_Mode: sixGfiveT,
+		OneGFiveT_Mode: oneGfiveT,
+		General:        g,
 	}
 }
 
@@ -43,13 +51,20 @@ func (h *beerpongGameHandler) CreateGame(c *gin.Context) {
 	//handle different game modes
 	switch game.Game.Mode {
 	case 0:
-		err := h.SixGFiveT_Mode.HandleGameMode30Teams(&game)
+		err := h.SixGFiveT_Mode.GenerateGamePlan(&game)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("failed to handle create game request err: %s", err)})
+			return
+		}
+	case 1:
+		err := h.OneGFiveT_Mode.GenerateGamePlan(&game)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("failed to handle create game request err: %s", err)})
 			return
 		}
 	default:
-		c.JSON(http.StatusBadRequest, fmt.Errorf("failed to handle create game reqeust, err: not a valid mode"))
+		c.JSON(http.StatusBadRequest, gin.H{"error": "failed to handle create game reqeust, err: not a valid mode"})
+		return
 	}
 
 	c.JSON(http.StatusCreated, game)
@@ -67,28 +82,28 @@ func (h *beerpongGameHandler) CreateGame(c *gin.Context) {
 func (h *beerpongGameHandler) GetGame(c *gin.Context) {
 	// id := c.Param("id")
 
-	game, err := h.SixGFiveT_Mode.GetGame()
+	game, err := h.General.GetGame()
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		return
 	}
-	teams, err := h.SixGFiveT_Mode.GetTeamsByGameID(game.Game.ID)
+	teams, err := h.General.GetTeamsByGameID(game.Game.ID)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		return
 	}
-	game.Groups = h.SixGFiveT_Mode.GetGroups(teams)
-	game.Matches, err = h.SixGFiveT_Mode.GetMatchesByGameID(game.Game.ID)
+	game.Groups = h.General.GetGroups(teams)
+	game.Matches, err = h.General.GetMatchesByGameID(game.Game.ID)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		return
 	}
 
-	game.Matches = h.SixGFiveT_Mode.SortMatchesById(game.Matches)
+	game.Matches = h.General.SortMatchesById(game.Matches)
 
-	game.Groups = h.SixGFiveT_Mode.SortGroupsByAlphabet(game.Groups)
+	game.Groups = h.General.SortGroupsByAlphabet(game.Groups)
 	for _, g := range game.Groups {
-		g.Teams = h.SixGFiveT_Mode.SortTeamsByPoints(g.Teams)
+		g.Teams = h.General.SortTeamsByPoints(g.Teams)
 	}
 
 	c.JSON(http.StatusOK, game)
@@ -109,7 +124,7 @@ func (h *beerpongGameHandler) UpdateMatches(c *gin.Context) {
 		return
 	}
 	m.UpdatedAt = time.Now()
-	err := h.SixGFiveT_Mode.UpdateMatches(m)
+	err := h.General.UpdateMatches(m)
 	if err != nil {
 		c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
 		return
@@ -134,15 +149,15 @@ func (h *beerpongGameHandler) UpdateTeams(c *gin.Context) {
 	}
 	for _, t := range updateRequest.Teams {
 		//get current team entry
-		currentTeam, err := h.SixGFiveT_Mode.GetTeamByGameID(t.GameID, t.TeamName, t.GroupName)
+		currentTeam, err := h.General.GetTeamByGameID(t.GameID, t.TeamName, t.GroupName)
 		if err != nil {
 			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		}
 		//update properties of team
-		newTeam := h.SixGFiveT_Mode.GetUpdatedTeam(&currentTeam, &t)
+		newTeam := h.General.GetUpdatedTeam(&currentTeam, &t)
 		retval = append(retval, *newTeam)
 		//save new team entry
-		err = h.SixGFiveT_Mode.UpdateTeam(newTeam)
+		err = h.General.UpdateTeam(newTeam)
 		if err != nil {
 			c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
 			return
@@ -259,11 +274,28 @@ func (h *beerpongGameHandler) UpdateGameFinal(c *gin.Context) {
 		return
 	}
 
-	err = h.SixGFiveT_Mode.UpdateMatchesFinal(gameId)
+	mode := c.Query("mode")
+	gameMode, err := strconv.Atoi(mode)
 	if err != nil {
-		c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+
+	switch gameMode {
+	case 0:
+		err = h.SixGFiveT_Mode.UpdateMatchesFinal(gameId)
+		if err != nil {
+			c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
+			return
+		}
+	case 1:
+		err = h.OneGFiveT_Mode.UpdateMatchesFinal(gameId)
+		if err != nil {
+			c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
+			return
+		}
+	}
+
 	c.JSON(http.StatusOK, nil)
 }
 
@@ -283,14 +315,14 @@ func (h *beerpongGameHandler) FinishGame(c *gin.Context) {
 	}
 	idValue := strings.Split(id, "=")
 
-	activeGame, err := h.SixGFiveT_Mode.GetGameByID(idValue[1])
+	activeGame, err := h.General.GetGameByID(idValue[1])
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		return
 	}
 
 	activeGame.IsFinished = true
-	err = h.SixGFiveT_Mode.UpdateGame(activeGame)
+	err = h.General.UpdateGame(activeGame)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		return
