@@ -13,8 +13,12 @@ import { beerpongReducer } from './app/store/beerpong.reducer';
 import { BeerpongEffects } from './app/store/beerpong.effetcs';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { provideRouterStore } from '@ngrx/router-store';
+import { HomeComponent } from './app/pages/home/home.component';
 
 const routes: Routes = [
+  {
+    path: "home", component: HomeComponent
+  },
   {
     path: "adminspace", component: AdminSpaceComponent
   },
@@ -23,6 +27,9 @@ const routes: Routes = [
   },
   {
     path: "gameplan", component: GameplanComponent
+  },
+  {
+    path: "", redirectTo: "/home", pathMatch: "full"
   }
 ];
 
