@@ -121,7 +121,7 @@ func (h *beerpongGameHandler) GetGame(c *gin.Context) {
 //		@Param		MatchUpdateRequest body models.MatchUpdateRequest true "Update Matches"
 //		@Success	200 {object} map[string]any
 //	 	@Failure 	400 {object} map[string]any
-//		@Router		/updateMatches [put]
+//		@Router		/game/matches [put]
 func (h *beerpongGameHandler) UpdateMatches(c *gin.Context) {
 	var m models.Match
 	if err := c.ShouldBindJSON(&m); err != nil {
@@ -144,7 +144,7 @@ func (h *beerpongGameHandler) UpdateMatches(c *gin.Context) {
 //	@Success	200 {object} map[string]any
 //	@Failure 	400 {object} map[string]any
 //	@Tags 		Teams
-//	@Router		/updateTeams [put]
+//	@Router		/game/teams [put]
 func (h *beerpongGameHandler) UpdateTeams(c *gin.Context) {
 	var updateRequest models.TeamUpdateRequest
 	retval := []models.Team{}
@@ -178,7 +178,7 @@ func (h *beerpongGameHandler) UpdateTeams(c *gin.Context) {
 //	@Param 		id path string true "Game Id"
 //	@Success	200 {object} map[string]any
 //	@Failure	400 {object} map[string]any
-//	@Router		/updateMatchesRoundOfSixteen/:id [put]
+//	@Router		/game/matches/round-of-sixteen/:id [put]
 func (h *beerpongGameHandler) UpdateGameRoundOf16(c *gin.Context) {
 	id := c.Param("id")
 	if id == "" {
@@ -207,7 +207,7 @@ func (h *beerpongGameHandler) UpdateGameRoundOf16(c *gin.Context) {
 //	@Param 		id path string true "Game Id"
 //	@Success	200 {object} map[string]any
 //	@Failure	400 {object} map[string]any
-//	@Router		/updateMatchesQuaterfinals/:id [put]
+//	@Router		/game/matches/quaterfinals/:id [put]
 func (h *beerpongGameHandler) UpdateGameQuaterFinals(c *gin.Context) {
 	id := c.Param("id")
 	if id == "" {
@@ -236,7 +236,7 @@ func (h *beerpongGameHandler) UpdateGameQuaterFinals(c *gin.Context) {
 //	@Param 		id path string true "Game Id"
 //	@Success	200 {object} map[string]any
 //	@Failure	400 {object} map[string]any
-//	@Router		/updateMatchesSemifinals/:id [put]
+//	@Router		/game/matches/semifinals/:id [put]
 func (h *beerpongGameHandler) UpdateGameSemiFinals(c *gin.Context) {
 	id := c.Param("id")
 	if id == "" {
@@ -265,7 +265,7 @@ func (h *beerpongGameHandler) UpdateGameSemiFinals(c *gin.Context) {
 //	@Param 		id path string true "Game Id"
 //	@Success	200 {object} map[string]any
 //	@Failure	400 {object} map[string]any
-//	@Router		/updateMatchesFinal/:id [put]
+//	@Router		/game/matches/final/:id [put]
 func (h *beerpongGameHandler) UpdateGameFinal(c *gin.Context) {
 	id := c.Param("id")
 	if id == "" {
@@ -311,7 +311,7 @@ func (h *beerpongGameHandler) UpdateGameFinal(c *gin.Context) {
 //	@Param 		id path string true "Game Id"
 //	@Success	200 {object} map[string]any
 //	@Failure	400 {object} map[string]any
-//	@Router		/finishGame/:id [put]
+//	@Router		/game/:id [put]
 func (h *beerpongGameHandler) FinishGame(c *gin.Context) {
 	id := c.Param("id")
 	if id == "" {
