@@ -78,13 +78,18 @@ func (h *beerpongGameHandler) CreateGame(c *gin.Context) {
 //		@Produce		json
 //		@Success		200 {object} models.GameResponse
 //		@Failure 		404 {object} map[string]any
-//		@Router			/getGame [get]
+//		@Router			/game [get]
 func (h *beerpongGameHandler) GetGame(c *gin.Context) {
 	// id := c.Param("id")
 
 	game, err := h.General.GetGame()
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		// if no active game found return 404 otherwise 500
+		if strings.Contains(err.Error(), "no active game found") {
+			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+			return
+		}
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 	teams, err := h.General.GetTeamsByGameID(game.Game.ID)

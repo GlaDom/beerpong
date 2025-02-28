@@ -71,16 +71,17 @@ func main() {
 
 	v1 := router.Group("/api/v1")
 	{
-		v1.POST("/createGame", beerpongGameHandler.CreateGame)
-		v1.GET("/getGame", beerpongGameHandler.GetGame)
-		v1.PUT("/finishGame/:id", beerpongGameHandler.FinishGame)
+		v1.POST("/game", beerpongGameHandler.CreateGame)
+		v1.GET("/game", beerpongGameHandler.GetGame)
+		v1.PUT("/game/:id", beerpongGameHandler.FinishGame)
 		// router.DELETE(apiPrefix+"/games/:id", gameRepo.DeleteGame)
-		v1.PUT("/updateMatches", beerpongGameHandler.UpdateMatches)
-		v1.PUT("/updateMatchesRoundOfSixteen/:id", beerpongGameHandler.UpdateGameRoundOf16)
-		v1.PUT("/updateMatchesQuaterfinals/:id", beerpongGameHandler.UpdateGameQuaterFinals)
-		v1.PUT("/updateMatchesSemifinals/:id", beerpongGameHandler.UpdateGameSemiFinals)
-		v1.PUT("/updateMatchesFinal/:id", beerpongGameHandler.UpdateGameFinal)
-		v1.PUT("/updateTeams", beerpongGameHandler.UpdateTeams)
+
+		v1.PUT("/game/matches", beerpongGameHandler.UpdateMatches)
+		v1.PUT("/game/matches/round-of-sixteen/:id", beerpongGameHandler.UpdateGameRoundOf16)
+		v1.PUT("/game/matches/quaterfinals/:id", beerpongGameHandler.UpdateGameQuaterFinals)
+		v1.PUT("/game/matches/semifinals/:id", beerpongGameHandler.UpdateGameSemiFinals)
+		v1.PUT("/game/matches/final/:id", beerpongGameHandler.UpdateGameFinal)
+		v1.PUT("/game/teams", beerpongGameHandler.UpdateTeams)
 	}
 	router.Run(":8082")
 
