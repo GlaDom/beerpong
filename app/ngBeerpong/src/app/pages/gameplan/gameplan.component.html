@@ -1,6 +1,6 @@
 <div class="mx-2 grid h-[calc(100%-66px)] grid-cols-12 bg-gray-100"> 
     <div class="col-span-12">
-        <ng-container *ngIf="!showRanking && !isLoading && false">
+        <ng-container *ngIf="!showRanking && !isLoading && false; else noActiveGame">
             <div class="flex flex-row mb-2 gap-1.5">
                 <ng-container *ngIf="groups.length>0">
                     <ng-container *ngFor="let g of groups">
@@ -88,10 +88,15 @@
                         </p-fieldset>
                     </div>
             </div>
+            <ng-container>
+                <app-gameplan-o-gf-t [regularMatches]="regularMatches[0]" [finalMatches]="final" [groups]="groups"></app-gameplan-o-gf-t>
+            </ng-container>
         </ng-container>
-        <ng-container>
-            <app-gameplan-o-gf-t [regularMatches]="regularMatches[0]" [finalMatches]="final" [groups]="groups"></app-gameplan-o-gf-t>
-        </ng-container>
+        <ng-template #noActiveGame>
+            <div class="flex flex-col items-center justify-center h-full">
+                <p>Es ist derzeit kein Spiel aktiv</p>
+            </div>
+        </ng-template>
         <ng-container *ngIf="showRanking">
             <app-ranking [teams]="getBestEightTeams()"></app-ranking>
         </ng-container>
