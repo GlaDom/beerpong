@@ -1,25 +1,40 @@
-<p-tabView>
-    <p-tabPanel header="Gruppen A">
-        <div class="flex">
-            <div class="flex flex-row flex-wrap">
-                <ng-container *ngFor="let m of regularMatches">
-                    <app-game-card [match]="m"></app-game-card>
+<p-toast />
+<p-confirmDialog />
+<ng-container *ngIf="!showRanking">
+    <p-tabView>
+        <p-tabPanel header="Gruppen A">
+            <div class="flex">
+                <div class="flex flex-row flex-wrap">
+                    <ng-container *ngFor="let m of regularMatches">
+                        <app-game-card [match]="m"></app-game-card>
+                    </ng-container>
+                </div>
+            </div>
+        </p-tabPanel>
+    </p-tabView>
+    <div class="flex flex-row-reverse mt-5">
+        <p-button (onClick)="updateFinal()" label="Gruppenphase abschliessen"></p-button>
+    </div>
+    <div class="mt-5">
+        <p-fieldset legend="Finale">
+            <div class="flex flex-row justify-around">
+                <ng-container *ngFor="let m of finalMatches">
+                    <div class="w-1/2">
+                        <app-game-card [match]="m"></app-game-card>
+                    </div>
                 </ng-container>
             </div>
+        </p-fieldset>
+    </div>
+    <div class="flex flex-row-reverse mt-5">
+        <p-button (onClick)="setTournamentFinished()" label="Zur Tabelle"></p-button>
+    </div>
+</ng-container>
+<ng-container *ngIf="showRanking">
+    <app-ranking [teams]="getRanking()">
+        <div class="flex gap-3 mt-1">
+            <p-button label="Zurueck" (onClick)="backToAdminSpace()"></p-button>
+            <p-button label="Spiel beenden" (onClick)="confirmGameFinish($event)"></p-button>
         </div>
-    </p-tabPanel>
-</p-tabView>
-<div class="flex flex-row-reverse mt-5">
-    <p-button (onClick)="updateFinal()" label="Gruppenphase abschliessen"></p-button>
-</div>
-<div class="mt-5">
-    <p-fieldset legend="Finale">
-        <div class="flex flex-row justify-around">
-            <ng-container *ngFor="let m of finalMatches">
-                <div class="w-1/2">
-                    <app-game-card [match]="m"></app-game-card>
-                </div>
-            </ng-container>
-        </div>
-    </p-fieldset>
-</div>
+    </app-ranking>
+</ng-container>

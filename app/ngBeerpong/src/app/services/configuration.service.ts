@@ -12,7 +12,7 @@ import Team from '../api/team.interface';
 })
 export class ConfigurationService {
 
-  private url: string = "http://localhost:8080/api/v1";
+  private url: string = "http://localhost:8082/api/v1";
 
   constructor(public httpClient: HttpClient) { }
 
@@ -40,8 +40,8 @@ export class ConfigurationService {
     return this.httpClient.put<string>(this.url+"/updateMatchesSemifinals/id="+gameId, null).pipe()
   }
 
-  UpdateMatchesFinal(gameId: number) {
-    return this.httpClient.put<string>(this.url+"/updateMatchesFinal/id="+gameId, null).pipe()
+  UpdateMatchesFinal(gameId: number, gameMode: number) {
+    return this.httpClient.put<string>(this.url+"/updateMatchesFinal/id="+gameId+"?mode="+gameMode, null).pipe()
   }
 
   UpdateTeams(teams: TeamUpdate[]) {

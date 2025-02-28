@@ -49,9 +49,11 @@ import Team from '../../api/team.interface';
 export class AdminSpaceComponent implements OnInit {
 
     game$: Observable<BeerpongState>
+    gameMode: number = 3;
     gameId: number | undefined;
     groups: Group[] = [];
     matches: Match[] = [];
+    regularMatches: Match[] = [];
     sortedMatches: Match[][] = [];
     roundOfsixteen: Match[] = [];
     quaterFinalMatches: Match[] = [];
@@ -74,10 +76,12 @@ export class AdminSpaceComponent implements OnInit {
     ngOnInit(): void {
       this.game$.subscribe((game) => {
         if(game.matches.length>0) {
+          this.gameMode = game.game.mode
           this.gameId = game.groups[0].teams[0].game_id
           this.matches = game.matches
           this.groups = game.groups
           this.showRanking = game.showRanking
+          this.regularMatches = this.configService.filterMatches('regular', this.matches)
           this.sortedMatches = this.configService.sortMatches(this.matches)
           this.roundOfsixteen = this.configService.filterMatches('round_of_16', this.matches)
           this.quaterFinalMatches = this.configService.filterMatches('quaterfinal', this.matches)
@@ -85,6 +89,10 @@ export class AdminSpaceComponent implements OnInit {
           this.finalMatch = this.configService.filterMatches('final', this.matches)
           
           this.checkForToastMessage(game.toastStatus)
+        } else {
+          this.matches = game.matches
+          this.groups = game.groups
+          this.showRanking = game.showRanking
         }
         this.isLoading = game.isLoading
       })
@@ -109,13 +117,9 @@ export class AdminSpaceComponent implements OnInit {
     }
 
     updateFinal(): void {
-      if(this.gameId) {
-        this.beerpongStore.dispatch(updateMatchesFinal({gameId: this.gameId}))
+      if(this.gameId && this.gameMode) {
+        this.beerpongStore.dispatch(updateMatchesFinal({gameId: this.gameId, gameMode: this.gameMode}))
       }
-    }
-
-    setTournamentFinished(): void {
-      this.beerpongStore.dispatch(setShowRanking({showRanking: true}))
     }
 
     finishTournament(): void {

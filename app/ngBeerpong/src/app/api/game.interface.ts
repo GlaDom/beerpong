@@ -9,7 +9,7 @@ interface Game {
   amount_of_teams: number;
   is_finished: boolean;
   game_time: number;
-  start_time: Date;
+  start_time?: Date;
   referee: Referee[];
   teams: Team[];
   updatedAt?: Date;

@@ -79,7 +79,7 @@ export class BeerpongEffects {
     ))
 
     updateMatchesRoundOfSixteenSuccess = createEffect(() => this.actions$.pipe(
-        ofType('[Admin-space Component] Update Matches Round of Sixteen'),
+        ofType('[Admin-space Component] Update Matches Round of Sixteen Success'),
         map(() => ({type: "[App Component] Load Game"}))
     ))
 
@@ -113,7 +113,7 @@ export class BeerpongEffects {
 
     updateMatchesFinal = createEffect(() => this.actions$.pipe(
         ofType('[Admin-space Component] Update Matches Final'),
-        switchMap((gameId: any) => this.configService.UpdateMatchesFinal(gameId.gameId)
+        switchMap((payload: any) => this.configService.UpdateMatchesFinal(payload.gameId, payload.gameMode)
             .pipe(
                 map(() => {
                     return ({type: '[Admin-space Component] Update Matches Final Success'})
@@ -123,6 +123,11 @@ export class BeerpongEffects {
                     return of({type: '[Admin-space Component] Update Matches Final Failure'})
                 })
             ))
+    ))
+
+    updateMatchesFinalSuccess = createEffect(() => this.actions$.pipe(
+        ofType('[Admin-space Component] Update Matches Final Success'),
+        map(() => ({type: "[App Component] Load Game"}))
     ))
 
     updateTeams$ = createEffect(() => this.actions$.pipe(
@@ -151,6 +156,11 @@ export class BeerpongEffects {
                     return EMPTY
                 })
             ))
+    ))
+
+    finishGameSuccess$ = createEffect(() => this.actions$.pipe(
+        ofType('[Admin-space Component] Finish Game Success'),
+        map(() => ({type: "[App Component] Load Game"}))
     ))
 
     constructor(

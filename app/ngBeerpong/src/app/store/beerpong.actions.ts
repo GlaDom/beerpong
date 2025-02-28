@@ -34,7 +34,7 @@ export const updateMatchesSemiFinals = createAction('[Admin-space Component] Upd
 export const updateMatchesSemiFinalsSuccess = createAction('[Admin-space Component] Update Matches Semi Finals Success')
 export const updateMatchesSemiFinalsFailure = createAction('[Admin-space Component] Update Matches Semi Finals Failure')
 
-export const updateMatchesFinal = createAction('[Admin-space Component] Update Matches Final', props<{gameId: number}>())
+export const updateMatchesFinal = createAction('[Admin-space Component] Update Matches Final', props<{gameId: number, gameMode: number}>())
 export const updateMatchesFinalSuccess = createAction('[Admin-space Component] Update Matches Final Success')
 export const updateMatchesFinalFailure = createAction('[Admin-space Component] Update Matches Final Failure')
 //UPDATE_TEAMS
