@@ -48,6 +48,7 @@
                     icon="pi pi-arrow-left" 
                     (onClick)="prevCallback.emit()" />
                 <p-button 
+                    [disabled]="!gameForm.valid"
                     label="Next" 
                     icon="pi pi-arrow-right" 
                     iconPos="right" 
