@@ -4,17 +4,17 @@
             <div class="flex flex-column h-12rem">
                 <div class="flex flex-col gap-3">
                     <h1>Waehlen Sie einen Spielmodus</h1>
-                    <form [formGroup]="gameMode">
+                    <form [formGroup]="buttonsFormGroup">
                         <div class="flex flex-row gap-2">
-                            <p-toggleButton (onChange)="toggleEnableButton(0)" formControlName="mode" onLabel="{{GAMEMODE_30_TEAMS}}" offLabel="{{GAMEMODE_30_TEAMS}}"></p-toggleButton>
-                            <p-toggleButton (onChange)="toggleEnableButton(1)" onLabel="{{GAMEMODE_10_TEAMS}}" offLabel="{{GAMEMODE_10_TEAMS}}"></p-toggleButton>
+                            <p-toggleButton formControlName="buttonOne" (onChange)="toggleSelectButton(0)" onLabel="{{buttonLabelSixGroups}}" offLabel="{{buttonLabelSixGroups}}"></p-toggleButton>
+                            <p-toggleButton formControlName="buttonTwo" (onChange)="toggleSelectButton(1)" onLabel="{{buttonLabelOneGroup}}" offLabel="{{buttonLabelOneGroup}}"></p-toggleButton>
                         </div>
                     </form>
                 </div>
             </div>
             <div class="flex pt-4 justify-content-end">
                 <p-button 
-                    [disabled]="!enableButton"
+                    [disabled]="playMode === undefined"
                     label="Next" 
                     icon="pi pi-arrow-right" 
                     iconPos="right" 

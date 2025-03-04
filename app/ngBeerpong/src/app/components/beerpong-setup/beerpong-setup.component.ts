@@ -7,7 +7,7 @@ import { StepsModule } from 'primeng/steps';
 import { ToggleButtonModule } from 'primeng/togglebutton';
 import { InputTextModule } from 'primeng/inputtext';
 import { DividerModule } from 'primeng/divider';
-import { FormArray, FormBuilder, FormControl, FormGroup, RequiredValidator, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup, FormsModule, RequiredValidator, Validators } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { StepperModule } from 'primeng/stepper';
 import { InputNumberModule } from 'primeng/inputnumber';
@@ -22,10 +22,8 @@ import { Store } from '@ngrx/store';
 import { createGame } from '../../store/beerpong.actions';
 import { Referee } from '../../api/referee';
 
-enum GameMode {
-  GAMEMODE_30_TEAMS = 1,
-  GAMEMODE_10_TEAMS = 2 
-}
+const GAMEMODE_6_GROUPS = 0;
+const GAMEMODE_1_GROUP = 1;
 
 @Component({
   selector: 'app-beerpong-setup',
@@ -44,20 +42,27 @@ enum GameMode {
     ReactiveFormsModule,
     StepperModule,
     InputNumberModule,
-    CalendarModule
+    CalendarModule,
+    FormsModule,
   ]
 })
 export class BeerpongSetupComponent implements OnInit {
 
-  
-  GAMEMODE_30_TEAMS: string = '6 Gruppen je 5 Teams';
-  GAMEMODE_10_TEAMS: string = '1 Gruppe je 5 Teams';
-  gameForm: FormGroup;
-  refereeFormGroup: FormGroup;
-  gameMode: FormGroup;
-  playMode: number = 0;
+  public selectedMode: string = '';
+  public gameForm: FormGroup;
+  public refereeFormGroup: FormGroup;
+  public gameMode: FormGroup;
+
+  public buttonLabelSixGroups: string = "6 Gruppen je 5 Teams";
+  public buttonLabelOneGroup: string = "1 Gruppe je 5 Teams";
+
+  public buttonsFormGroup: FormGroup = new FormGroup({
+    buttonOne: new FormControl<boolean>(false),
+    buttonTwo: new FormControl<boolean>(false)
+  });
+
+  public playMode: number;
   groupNames: string[] = ["A", "B", "C", "D", "E", "F"]
-  enableButton: boolean= false;
   gameModeSet: boolean = false;
   teamsSet: boolean = false;
 
@@ -65,6 +70,7 @@ export class BeerpongSetupComponent implements OnInit {
     private fb: FormBuilder,
     private beerpongstore: Store<BeerpongState>
   ) {
+    console.log(this.playMode)
     this.gameForm = this.fb.group({
       groups: this.fb.array([])
     })
@@ -86,11 +92,16 @@ export class BeerpongSetupComponent implements OnInit {
     return this.gameForm.controls["groups"] as FormArray;
   }
   
-  toggleEnableButton(mode: number): void {
-    this.enableButton = !this.enableButton
-    if(this.enableButton) {
-      this.playMode = mode
+  toggleSelectButton(mode: number): void {
+    if(mode==0) {
+      this.buttonsFormGroup.get('buttonOne')?.setValue(true)
+      this.buttonsFormGroup.get('buttonTwo')?.setValue(false)
+    } else if(mode==1) {
+      this.buttonsFormGroup.get('buttonOne')?.setValue(false)
+      this.buttonsFormGroup.get('buttonTwo')?.setValue(true)
     }
+    this.playMode = mode === 0 ? GAMEMODE_6_GROUPS : GAMEMODE_1_GROUP;
+    console.log(this.playMode)
     switch(mode) {
       case 0: {
         this.groups.clear();
@@ -109,6 +120,7 @@ export class BeerpongSetupComponent implements OnInit {
         break;
       }
       case 1: {
+        this.groups.clear();
         let groupForm = this.fb.group({
           name: new FormControl(this.groupNames[0]),
           team1: new FormControl('', [Validators.required, Validators.minLength(3)]),
