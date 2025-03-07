@@ -78,17 +78,15 @@ export class BeerpongSetupComponent implements OnInit {
       mode: new FormControl<string>('')
     })
     this.refereeFormGroup = new FormGroup({
-      referees: new FormControl<string>(''),
-      gameTime: new FormControl<number | null>(null),
-      date: new FormControl<Date | null>(null),
+      referees: new FormControl<string>('', [Validators.required]),
+      gameTime: new FormControl<number | null>(null, [Validators.required]),
+      date: new FormControl<Date | null>(null, [Validators.required]),
     })
   }
     
-  ngOnInit(): void {
+  ngOnInit(): void {}
 
-  }
-
-  get groups() {
+  get groups(): FormArray {
     return this.gameForm.controls["groups"] as FormArray;
   }
   
