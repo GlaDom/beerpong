@@ -71,7 +71,6 @@
                         </div>
                     </form>
                 </div>
-                
             </div>
             <div class="flex pt-4 justify-content-between gap-2">
                 <p-button 
@@ -79,6 +78,7 @@
                     icon="pi pi-arrow-left" 
                     (onClick)="prevCallback.emit()" />
                 <p-button 
+                    [disabled]="!refereeFormGroup.valid"
                     label="Next" 
                     icon="pi pi-arrow-right" 
                     iconPos="right" 
