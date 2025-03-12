@@ -42,7 +42,7 @@ func (gr *Gamerepo) CreateMatches(matches []*models.Match) error {
 
 func (gr *Gamerepo) GetGame() (*models.GameResponse, error) {
 	retval := &models.GameResponse{}
-	if tx := gr.db.Where("is_finished=false").First(&retval.Game); tx.Error != nil {
+	if tx := gr.db.Where("is_finished=false").Preload("Teams").First(&retval.Game); tx.Error != nil {
 		if tx.Error == gorm.ErrRecordNotFound {
 			return retval, fmt.Errorf("no active game found")
 		}

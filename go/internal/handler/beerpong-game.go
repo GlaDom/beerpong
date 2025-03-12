@@ -92,12 +92,7 @@ func (h *beerpongGameHandler) GetGame(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	teams, err := h.General.GetTeamsByGameID(game.Game.ID)
-	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
-		return
-	}
-	game.Groups = h.General.GetGroups(teams)
+	game.Groups = h.General.GetGroups(game.Game.Teams)
 	game.Matches, err = h.General.GetMatchesByGameID(game.Game.ID)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
