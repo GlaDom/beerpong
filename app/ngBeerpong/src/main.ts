@@ -63,10 +63,6 @@ bootstrapApplication(AppComponent, {
     provideAuth0({
       domain: 'dev-nduro5lf8x5ddjgj.eu.auth0.com',
       clientId: 'f5We2HLhj4JInznJZHZYY6eXDz6I3AEz',
-      authorizationParams: {
-        audience: 'https://dev-nduro5lf8x5ddjgj.eu.auth0.com/api/v2/',
-        redirect_uri: 'http://localhost:4200/callback'
-      }
     }),
     {
       provide: ENVIRONMENT,

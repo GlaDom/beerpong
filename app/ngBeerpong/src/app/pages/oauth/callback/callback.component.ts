@@ -11,6 +11,6 @@ export class CallbackComponent implements OnInit {
   constructor(private envService: EnvironmentService) {}
 
   ngOnInit(): void {
-    console.log(this.envService.getAuth());
+    // console.log(this.envService.getAuth());
   }
 }

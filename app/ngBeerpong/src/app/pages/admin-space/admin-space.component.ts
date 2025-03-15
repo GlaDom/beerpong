@@ -21,6 +21,7 @@ import { Observable } from 'rxjs';
 import { RankingComponent } from '../../components/ranking/ranking.component';
 import Group from '../../api/group.interface';
 import Team from '../../api/team.interface';
+import { AuthService } from '../../services/auth/auth.service';
 
 @Component({
   selector: 'app-game-plan',
