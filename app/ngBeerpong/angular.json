@@ -57,7 +57,21 @@
                   "maximumError": "4kb"
                 }
               ],
-              "outputHashing": "all"
+              "outputHashing": "all",
+              "fileReplacements":[
+                  {
+                     "replace":"ngBeerpong/src/environments/environment.ts",
+                     "with":"ngBeerpong/src/environments/environment.production.ts"
+                  }
+               ]
+            },
+            "staging": {
+              "fileReplacements":[
+                  {
+                     "replace":"ngBeerpong/src/environments/environment.ts",
+                     "with":"ngBeerpong/src/environments/environment.staging.ts"
+                  }
+               ]
             },
             "development": {
               "optimization": false,
@@ -72,6 +86,9 @@
           "configurations": {
             "production": {
               "buildTarget": "ngBeerpong:build:production"
+            },
+            "staging": {
+              "buildTarget": "ngBeerpong:build:staging"
             },
             "development": {
               "buildTarget": "ngBeerpong:build:development"
