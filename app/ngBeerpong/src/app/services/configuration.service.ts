@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from "@angular/common/http";
-import { BeerpongState } from '../store/game.state';
+import { BeerpongState } from '../store/beerpong/game.state';
 import Match from '../api/match.interface';
 import TeamUpdate from '../api/team-update.interface';
 import { GameRequest } from '../api/game-request';

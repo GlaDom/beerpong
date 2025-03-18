@@ -2,11 +2,11 @@
 
 import { createAction, props } from "@ngrx/store";
 import { BeerpongState } from "./game.state";
-import Match from "../api/match.interface";
-import Team from "../api/team.interface";
-import TeamUpdate from "../api/team-update.interface";
-import Game from "../api/game.interface";
-import { GameRequest } from "../api/game-request";
+import Match from "../../api/match.interface";
+import Team from "../../api/team.interface";
+import TeamUpdate from "../../api/team-update.interface";
+import Game from "../../api/game.interface";
+import { GameRequest } from "../../api/game-request";
 
 
 //CREATE_GAME

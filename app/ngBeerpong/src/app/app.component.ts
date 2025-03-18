@@ -7,10 +7,9 @@ import { DividerModule } from 'primeng/divider';
 import { Router, RouterOutlet } from '@angular/router';
 import { ConfigurationService } from './services/configuration.service';
 import { Observable, Observer } from 'rxjs';
-import { BeerpongState } from './store/game.state';
+import { BeerpongState } from './store/beerpong/game.state';
 import { Store } from '@ngrx/store';
-import { loadGame } from './store/beerpong.actions';
-import { selectGame } from './store/beerpong.selectors';
+import { loadGame } from './store/beerpong/beerpong.actions';
 import { TabMenuModule } from 'primeng/tabmenu';
 import { NgIf } from '@angular/common';
 
@@ -60,7 +59,6 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     this.beerpongStore.dispatch(loadGame())
-    // this.game$ = this.beerpongStore.select(selectGame)
     this.game$.subscribe(this.gameObserver)
     this.items = [
       {label: "Home", icon: "pi pi-home", route: "/home"},

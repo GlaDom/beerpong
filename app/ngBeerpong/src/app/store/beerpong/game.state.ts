@@ -1,6 +1,6 @@
-import Game from "../api/game.interface";
-import Group from "../api/group.interface";
-import Match from "../api/match.interface";
+import Game from "../../api/game.interface";
+import Group from "../../api/group.interface";
+import Match from "../../api/match.interface";
 
 export type Status = 'notset' | 
                     'success match updated' | 
