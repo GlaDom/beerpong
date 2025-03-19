@@ -14,7 +14,6 @@ import { Observable } from 'rxjs';
 import { RankingComponent } from '../../components/ranking/ranking.component';
 import Team from '../../api/team.interface';
 import { GameplanOGfTComponent } from '../../components/gameplan-components/gameplan-o-gf-t/gameplan-o-gf-t.component';
-import { AppState } from '../../store/app.state';
 
 @Component({
   selector: 'app-gameplan',

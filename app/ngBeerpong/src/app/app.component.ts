@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { BeerpongSetupComponent } from './components/beerpong-setup/beerpong-setup.component'
 import { MenuItem } from 'primeng/api';
 import { AvatarModule } from 'primeng/avatar';
 import { ButtonModule } from 'primeng/button';
@@ -7,7 +6,7 @@ import { DividerModule } from 'primeng/divider';
 import { MenubarModule } from 'primeng/menubar';
 import { TieredMenuModule } from 'primeng/tieredmenu';
 import { RouterOutlet } from '@angular/router';
-import { Observable, Observer } from 'rxjs';
+import { Observable } from 'rxjs';
 import { BeerpongState } from './store/beerpong/game.state';
 import { Store } from '@ngrx/store';
 import { loadGame } from './store/beerpong/beerpong.actions';
@@ -15,6 +14,7 @@ import { TabMenuModule } from 'primeng/tabmenu';
 import { NgIf } from '@angular/common';
 import { UserState } from './store/user/user.state';
 import { selectUserState } from './store/user/user.selectors';
+import { LandingPageComponent } from './pages/landing-page/landing-page.component';
 
 @Component({
   selector: 'app-root',
@@ -29,10 +29,10 @@ import { selectUserState } from './store/user/user.selectors';
     DividerModule,
     MenubarModule,
     TieredMenuModule,
-    BeerpongSetupComponent,
     RouterOutlet,
     TabMenuModule,
     NgIf,
+    LandingPageComponent,
   ]
 })
 export class AppComponent implements OnInit {
@@ -41,6 +41,7 @@ export class AppComponent implements OnInit {
   public title = 'SKBeerpong';
   public avatarUrl: string = '../assets/default-avatar.jpg';
   public user$: Observable<UserState> | undefined;
+  public isLoggedIn: boolean = false;
 
 
   constructor(
@@ -55,6 +56,9 @@ export class AppComponent implements OnInit {
     this.user$?.subscribe((user) => {
       if(user.userDetails) {
         this.avatarUrl = user.userDetails.picture!;
+      }
+      if(user.isLoggedIn) {
+        this.isLoggedIn = user.isLoggedIn
       }
     })
     this.items = [
