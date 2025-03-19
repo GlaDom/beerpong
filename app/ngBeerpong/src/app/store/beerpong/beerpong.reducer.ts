@@ -36,6 +36,7 @@ export const beerpongReducer = createReducer(initialState,
     }),
     on(loadGameSuccess, (state, {game}) => {
         let newToastState: Status = 'notset'
+        console.log(game)
         return {
             game: game.game,
             groups: game.groups,

@@ -8,7 +8,7 @@ import { GameplanComponent } from './app/pages/gameplan/gameplan.component';
 import { BeerpongSetupComponent } from './app/components/beerpong-setup/beerpong-setup.component';
 import { HttpClientModule, provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideEffects } from '@ngrx/effects';
-import { provideStore } from '@ngrx/store';
+import { provideState, provideStore } from '@ngrx/store';
 import { beerpongReducer } from './app/store/beerpong/beerpong.reducer';
 import { BeerpongEffects } from './app/store/beerpong/beerpong.effects';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
@@ -51,8 +51,8 @@ bootstrapApplication(AppComponent, {
     provideAnimations(),
     provideEffects(BeerpongEffects),
     provideStore({
-      user: userReducer,
-      beerpong: beerpongReducer
+      userState: userReducer,
+      beerpongState: beerpongReducer
     }),
     provideRouterStore(),
     provideStoreDevtools({
@@ -62,6 +62,7 @@ bootstrapApplication(AppComponent, {
         connectInZone: true, // If set to true, the connection is established within the Angular zone
         logOnly: false
     }),
+    provideState({name: 'beerpongState', reducer: beerpongReducer}),
     provideHttpClient(withInterceptors([authHttpInterceptorFn])),
     provideAuth0({
       domain: 'dev-nduro5lf8x5ddjgj.eu.auth0.com',

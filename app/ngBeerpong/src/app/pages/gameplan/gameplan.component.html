@@ -1,9 +1,9 @@
 <div class="mx-2 grid h-[calc(100%-66px)] grid-cols-12 bg-gray-100"> 
     <div class="col-span-12">
         <ng-container *ngIf="!showRanking && !isLoading">
-            <ng-container *ngIf="groups.length>1; else noActiveGame">
+            <ng-container *ngIf="groups.length>0; else noActiveGame">
                 <div class="flex flex-row mb-2 gap-1.5">
-                    <ng-container *ngIf="groups.length>0">
+                    <ng-container *ngIf="groups.length>1">
                         <ng-container *ngFor="let g of groups">
                             <div class="flex-1">
                                 <app-group-card [group]="g"></app-group-card>

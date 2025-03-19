@@ -9,10 +9,10 @@ export const initialUserState: UserState = {
 }
 
 export const userReducer = createReducer(initialUserState,
-    on(setUser, (state, {user}) => {
+    on(setUser, (state, {userState}) => {
         return {
             ...state,
-            userDetails: user,
+            userDetails: userState,
             bearerToken: 'test',
             isLoggedIn: true
         }

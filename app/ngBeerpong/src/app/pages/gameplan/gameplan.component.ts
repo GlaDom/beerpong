@@ -5,7 +5,7 @@ import { GroupCardComponent } from '../../components/group-card/group-card.compo
 import { BeerpongState } from '../../store/beerpong/game.state';
 import { Store } from '@ngrx/store';
 import Match from '../../api/match.interface';
-import { selectBeerpongState, selectGame } from '../../store/beerpong/beerpong.selectors';
+import { selectBeerpongState } from '../../store/beerpong/beerpong.selectors';
 import { ConfigurationService } from '../../services/configuration.service';
 import { NgFor, NgIf } from '@angular/common';
 import Group from '../../api/group.interface';
@@ -14,6 +14,7 @@ import { Observable } from 'rxjs';
 import { RankingComponent } from '../../components/ranking/ranking.component';
 import Team from '../../api/team.interface';
 import { GameplanOGfTComponent } from '../../components/gameplan-components/gameplan-o-gf-t/gameplan-o-gf-t.component';
+import { AppState } from '../../store/app.state';
 
 @Component({
   selector: 'app-gameplan',

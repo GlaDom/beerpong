@@ -1,17 +1,20 @@
 import { Component, OnInit } from '@angular/core';
 import { BeerpongSetupComponent } from './components/beerpong-setup/beerpong-setup.component'
 import { MenuItem } from 'primeng/api';
+import { AvatarModule } from 'primeng/avatar';
 import { ButtonModule } from 'primeng/button';
-import { StepsModule } from 'primeng/steps'
 import { DividerModule } from 'primeng/divider';
-import { Router, RouterOutlet } from '@angular/router';
-import { ConfigurationService } from './services/configuration.service';
+import { MenubarModule } from 'primeng/menubar';
+import { TieredMenuModule } from 'primeng/tieredmenu';
+import { RouterOutlet } from '@angular/router';
 import { Observable, Observer } from 'rxjs';
 import { BeerpongState } from './store/beerpong/game.state';
 import { Store } from '@ngrx/store';
 import { loadGame } from './store/beerpong/beerpong.actions';
 import { TabMenuModule } from 'primeng/tabmenu';
 import { NgIf } from '@angular/common';
+import { UserState } from './store/user/user.state';
+import { selectUserState } from './store/user/user.selectors';
 
 @Component({
   selector: 'app-root',
@@ -21,49 +24,48 @@ import { NgIf } from '@angular/common';
   providers: [
   ],
   imports: [
+    AvatarModule,
     ButtonModule,
     DividerModule,
+    MenubarModule,
+    TieredMenuModule,
     BeerpongSetupComponent,
     RouterOutlet,
     TabMenuModule,
-    NgIf
+    NgIf,
   ]
 })
 export class AppComponent implements OnInit {
-  items: MenuItem[] | undefined = []
-  title = 'SKBeerpong';
-  game$: Observable<BeerpongState>;
+  public tieredItems: MenuItem[] | undefined = []; 
+  public items: MenuItem[] | undefined = [];
+  public title = 'SKBeerpong';
+  public avatarUrl: string = '../assets/default-avatar.jpg';
+  public user$: Observable<UserState> | undefined;
 
-  gameObserver: Observer<any> = {
-    next: (game) => {
-      if(game && game.beerpong.matches?.length>0) {
-        console.log('game loaded')
-        // this.router.navigateByUrl("/gameplan")
-      }
-    },
-    error: function (err: any): void {
-      throw new Error('Function not implemented.');
-    },
-    complete: function (): void {
-      throw new Error('Function not implemented.');
-    }
-  }
 
   constructor(
-    private configService: ConfigurationService,
     private beerpongStore: Store<BeerpongState>,
-    private router: Router
+    private userStore: Store<UserState>,
   ) {
-    this.game$ = new Observable<BeerpongState>();
+    this.user$ = this.userStore.select(selectUserState)
   }
 
   ngOnInit(): void {
     this.beerpongStore.dispatch(loadGame())
-    this.game$.subscribe(this.gameObserver)
+    this.user$?.subscribe((user) => {
+      if(user.userDetails) {
+        this.avatarUrl = user.userDetails.picture!;
+      }
+    })
     this.items = [
       {label: "Home", icon: "pi pi-home", route: "/home"},
       {label: "Spielplan", icon: "pi pi-list", route: "/gameplan"},
       {label: "AdminBereich", icon: "pi pi-code", route: "/adminspace"}
+    ]
+    this.tieredItems = [
+      {label: "Logout", icon: "pi pi-sign-out", command: () => {
+        console.log('logout clicked')
+      }}
     ]
   }
 }

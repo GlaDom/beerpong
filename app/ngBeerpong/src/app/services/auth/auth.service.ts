@@ -16,7 +16,7 @@ export class AuthService implements OnInit {
     this.isAuthenticated$ = this.oauthService.isAuthenticated$;
     this.oauthService.user$.subscribe(user => {
       if(user) {
-        this.store.dispatch(setUser({user: user}));
+        this.store.dispatch(setUser({userState: user}));
       }
       console.log('user', user);
     });

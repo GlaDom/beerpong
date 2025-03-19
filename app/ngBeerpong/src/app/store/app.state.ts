@@ -8,10 +8,10 @@ export const initalAppState: AppState = {
         bearerToken: '',
         isLoggedIn: false
     },
-    beerpongState: initialState
+    beerpong: initialState
 }
 
 export interface AppState {
     user: UserState;
-    beerpongState: BeerpongState;
+    beerpong: BeerpongState;
 }
