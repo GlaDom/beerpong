@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { EnvironmentService } from '../../../services/env/environment.service';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-callback',
@@ -10,9 +11,11 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
   imports: [ProgressSpinnerModule]
 })
 export class CallbackComponent implements OnInit {
-  constructor(private envService: EnvironmentService) {}
+  constructor(
+    private router: Router) {}
 
   ngOnInit(): void {
-    // check nach url in storage um richtig weiter zu leiten
+    // TODO: check nach url in storage um richtig weiter zu leiten
+    this.router.navigate(['/home']);
   }
 }

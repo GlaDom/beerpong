@@ -1,6 +1,6 @@
 import { createReducer, on } from "@ngrx/store"
 import { UserState } from "./user.state"
-import { setUser } from "./user.actions"
+import { resetUser, setUser } from "./user.actions"
 
 export const initialUserState: UserState = {
     userDetails: {},
@@ -17,4 +17,12 @@ export const userReducer = createReducer(initialUserState,
             isLoggedIn: true
         }
     }),
+    on(resetUser, (state) => {
+        return {
+            ...state,
+            userDetails: {},
+            bearerToken: '',
+            isLoggedIn: false
+        }
+    })
 )

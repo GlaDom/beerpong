@@ -15,6 +15,7 @@ import { NgIf } from '@angular/common';
 import { UserState } from './store/user/user.state';
 import { selectUserState } from './store/user/user.selectors';
 import { LandingPageComponent } from './pages/landing-page/landing-page.component';
+import { AuthService } from './services/auth/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -47,6 +48,7 @@ export class AppComponent implements OnInit {
   constructor(
     private beerpongStore: Store<BeerpongState>,
     private userStore: Store<UserState>,
+    private authService: AuthService,
   ) {
     this.user$ = this.userStore.select(selectUserState)
   }
@@ -67,9 +69,7 @@ export class AppComponent implements OnInit {
       {label: "AdminBereich", icon: "pi pi-code", route: "/adminspace"}
     ]
     this.tieredItems = [
-      {label: "Logout", icon: "pi pi-sign-out", command: () => {
-        console.log('logout clicked')
-      }}
+      {label: "Logout", icon: "pi pi-sign-out", command: () => this.authService.logout()}
     ]
   }
 }

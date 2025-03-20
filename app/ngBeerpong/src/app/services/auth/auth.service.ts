@@ -1,18 +1,21 @@
 import { Injectable, OnInit } from '@angular/core';
 import { AuthService as OAuthService } from '@auth0/auth0-angular';
-import { Observable, tap } from 'rxjs';
+import { Observable } from 'rxjs';
 import { UserState } from '../../store/user/user.state';
 import { Store } from '@ngrx/store';
-import { setUser } from '../../store/user/user.actions';
+import { resetUser, setUser } from '../../store/user/user.actions';
 
 @Injectable({
   providedIn: 'root'
 })
-export class AuthService implements OnInit {
+export class AuthService {
   public isAuthenticated$: Observable<boolean>;
   
 
-  constructor(private oauthService: OAuthService, private store: Store<UserState>) {
+  constructor(
+    private oauthService: OAuthService, 
+    private store: Store<UserState>
+  ) {
     this.isAuthenticated$ = this.oauthService.isAuthenticated$;
     this.oauthService.user$.subscribe(user => {
       if(user) {
@@ -20,9 +23,6 @@ export class AuthService implements OnInit {
       }
       console.log('user', user);
     });
-  }
-
-  ngOnInit(): void {
   }
 
   login(): void {
@@ -33,5 +33,11 @@ export class AuthService implements OnInit {
         redirect_uri: 'http://localhost:4200/callback'
       }
     });
+  }
+
+  logout(): void {
+    console.log('logout');
+    this.store.dispatch(resetUser())
+    this.oauthService.logout({logoutParams: {returnTo: 'http://localhost:4200/logout'}});
   }
 }

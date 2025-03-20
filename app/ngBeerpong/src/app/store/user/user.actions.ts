@@ -3,3 +3,6 @@ import { createAction, props } from "@ngrx/store";
 
 //LOGIN_USER
 export const setUser = createAction('[Login Component] Set User', props<{userState: User}>())
+
+//LOGOUT_USER
+export const resetUser = createAction('[Header Component] Reset User')
