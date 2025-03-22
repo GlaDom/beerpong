@@ -26,13 +26,13 @@ const routes: Routes = [
     path: "home", component: HomeComponent, canActivate: [AuthGuardService]
   },
   {
-    path: "adminspace", component: AdminSpaceComponent
+    path: "adminspace", component: AdminSpaceComponent, canActivate: [AuthGuardService]
   },
   {
-    path: "gameconfiguration", component: BeerpongSetupComponent
+    path: "gameconfiguration", component: BeerpongSetupComponent, canActivate: [AuthGuardService]
   },
   {
-    path: "gameplan", component: GameplanComponent
+    path: "gameplan", component: GameplanComponent, canActivate: [AuthGuardService]
   },
   {
     path: 'callback', component: CallbackComponent

@@ -36,7 +36,6 @@ export const beerpongReducer = createReducer(initialState,
     }),
     on(loadGameSuccess, (state, {game}) => {
         let newToastState: Status = 'notset'
-        console.log(game)
         return {
             game: game.game,
             groups: game.groups,
@@ -63,8 +62,6 @@ export const beerpongReducer = createReducer(initialState,
             }
         }
         state = initalGameState
-        console.log(state)
-        console.log('reducer called')
         return {
             ...state,
             game: initalGameState.game,
@@ -76,11 +73,9 @@ export const beerpongReducer = createReducer(initialState,
         }
     }),
     on(updateMatch, state => {
-        console.log(state)
         return state
     }),
     on(updateMatchSuccess, (state, {match}) => {
-        console.log(match)
         let matches = state.matches.map(m => Object.assign({} , m))
         matches.map(m => {
             if(m.home_team==match.home_team && m.away_team == match.away_team) {
