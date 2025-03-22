@@ -4,6 +4,8 @@ import { ConfigurationService } from "../../services/configuration.service";
 import { EMPTY, Observable, catchError, exhaustMap, map, of, startWith, switchMap } from "rxjs";
 import { BeerpongState } from "./game.state";
 import { Store } from "@ngrx/store";
+import Match from "../../api/match.interface";
+import { MatchRequest } from "../../api/match-request";
 
 @Injectable()
 export class BeerpongEffects {
@@ -52,7 +54,7 @@ export class BeerpongEffects {
 
     updateMatch$ = createEffect(() => this.actions$.pipe(
         ofType('[GamePlan Component] Update Match'),
-        exhaustMap((match: any) => this.configService.UpdateMatch(match.match)
+        exhaustMap((req: MatchRequest) => this.configService.UpdateMatch(req.match)
             .pipe(
                 map(match => {
                     return ({type: '[GamePlan Component] Update Match Success', match})

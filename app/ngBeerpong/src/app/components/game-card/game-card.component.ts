@@ -61,16 +61,20 @@ export class GameCardComponent implements OnInit {
     }
   }
 
+  // method to lock the match points and send request to backend
   setLocked(): void {
     this.locked = !this.locked
     if(this.label == 'primary') {
       this.label = 'contrast'
+      // decide whether the team points must also be updated or the game status was already set once
+      // TODO: handle special case where the points where entered wrong and the other team has won 
+      let updateTeamPoints: boolean = this.points_home===0 || this.points_away===0
       if(this.match.group_number != '' && this.match.game_id != 0) {
         let m: Match = this.getCopyOfMatch(this.match)
         m.points_home = this.points_home
         m.points_away = this.points_away
         this.beerpongstore.dispatch(updateMatch({match: m}))
-        let teamsToUpdate = this.getTeamsToUpdate(m)
+        let teamsToUpdate = this.getTeamsToUpdate(m, updateTeamPoints)
         this.beerpongstore.dispatch(updateTeams({teams: teamsToUpdate}))
       }
     } else {
@@ -88,11 +92,14 @@ export class GameCardComponent implements OnInit {
       away_team: m.away_team,
       points_home: this.points_home,
       points_away: this.points_away,
+      referee: m.referee,
+      start_time: m.start_time,
+      end_time: m.end_time,
     }
     return newMatch
   }
 
-  getTeamsToUpdate(match: Match): TeamUpdate[] {
+  getTeamsToUpdate(match: Match, updatePoints: boolean): TeamUpdate[] {
     let retval: TeamUpdate[] = []
     let teamOne: TeamUpdate = {
       game_id: match.game_id,
@@ -110,7 +117,7 @@ export class GameCardComponent implements OnInit {
       cups_hitted: match.points_home,
       cups_got: match.points_away
     }
-    if(match.points_away>match.points_home) {
+    if(match.points_away>match.points_home && updatePoints) {
       teamOne.points_to_add=3;
     } else {
       teamTwo.points_to_add=3;
