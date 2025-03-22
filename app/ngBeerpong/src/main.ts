@@ -6,31 +6,37 @@ import { RouterModule, Routes } from '@angular/router';
 import { AdminSpaceComponent } from './app/pages/admin-space/admin-space.component';
 import { GameplanComponent } from './app/pages/gameplan/gameplan.component';
 import { BeerpongSetupComponent } from './app/components/beerpong-setup/beerpong-setup.component';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideEffects } from '@ngrx/effects';
-import { StoreModule, provideState, provideStore } from '@ngrx/store';
-import { beerpongReducer } from './app/store/beerpong.reducer';
-import { BeerpongEffects } from './app/store/beerpong.effetcs';
+import { provideState, provideStore } from '@ngrx/store';
+import { beerpongReducer } from './app/store/beerpong/beerpong.reducer';
+import { BeerpongEffects } from './app/store/beerpong/beerpong.effects';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { provideRouterStore } from '@ngrx/router-store';
 import { HomeComponent } from './app/pages/home/home.component';
+import { authHttpInterceptorFn, provideAuth0 } from '@auth0/auth0-angular';
+import { AuthGuardService } from './app/services/auth/auth-guard.service';
+import { CallbackComponent } from './app/pages/oauth/callback/callback.component';
+import { ENVIRONMENT } from './app/services/env/environment.service';
+import { environment } from './environments/environment';
+import { userReducer } from './app/store/user/user.reducer';
 
 const routes: Routes = [
   {
-    path: "home", component: HomeComponent
+    path: "home", component: HomeComponent, canActivate: [AuthGuardService]
   },
   {
-    path: "adminspace", component: AdminSpaceComponent
+    path: "adminspace", component: AdminSpaceComponent, canActivate: [AuthGuardService]
   },
   {
-    path: "gameconfiguration", component: BeerpongSetupComponent
+    path: "gameconfiguration", component: BeerpongSetupComponent, canActivate: [AuthGuardService]
   },
   {
-    path: "gameplan", component: GameplanComponent
+    path: "gameplan", component: GameplanComponent, canActivate: [AuthGuardService]
   },
   {
-    path: "", redirectTo: "/home", pathMatch: "full"
-  }
+    path: 'callback', component: CallbackComponent
+  },
 ];
 
 bootstrapApplication(AppComponent, {
@@ -41,8 +47,10 @@ bootstrapApplication(AppComponent, {
     importProvidersFrom(HttpClientModule),
     provideAnimations(),
     provideEffects(BeerpongEffects),
-    provideStore(),
-    provideState({ name: 'beerpongState', reducer: beerpongReducer}),
+    provideStore({
+      userState: userReducer,
+      beerpongState: beerpongReducer
+    }),
     provideRouterStore(),
     provideStoreDevtools({
         maxAge: 25, // Retains last 25 states
@@ -51,5 +59,15 @@ bootstrapApplication(AppComponent, {
         connectInZone: true, // If set to true, the connection is established within the Angular zone
         logOnly: false
     }),
+    provideState({name: 'beerpongState', reducer: beerpongReducer}),
+    provideHttpClient(withInterceptors([authHttpInterceptorFn])),
+    provideAuth0({
+      domain: 'dev-nduro5lf8x5ddjgj.eu.auth0.com',
+      clientId: 'f5We2HLhj4JInznJZHZYY6eXDz6I3AEz',
+    }),
+    {
+      provide: ENVIRONMENT,
+      useValue: environment
+    }
   ]
 })  .catch(err => console.error(err));

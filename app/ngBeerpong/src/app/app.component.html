@@ -1,22 +1,27 @@
-<p-tabMenu [model]="items">
-    <ng-template pTemplate="item" let-item>
-        <ng-container *ngIf="item.route; else elseBlock">
-            <a [routerLink]="item.route" class="p-menuitem-link">
-                <span [class]="item.icon"></span>
-                <span class="ml-2">
-                    {{ item.label }}
-                </span>
-            </a>
-        </ng-container>
-        <ng-template #elseBlock>
-            <a [href]="item.url" class="p-menuitem-link">
-                <span [class]="item.icon"></span>
-                <span class="ml-2">
-                    {{ item.label }}
-                </span>
-            </a>
+
+<ng-container *ngIf="isLoggedIn; else landingPage">
+    <p-menubar [model]="items">
+        <ng-template pTemplate="item" let-item>
+            <ng-container *ngIf="item.route">
+                <a [routerLink]="item.route" class="p-menuitem-link">
+                    <span [class]="item.icon"></span>
+                    <span class="ml-2">
+                        {{ item.label }}
+                    </span>
+                </a>
+            </ng-container>
         </ng-template>
-    </ng-template>
-</p-tabMenu>
-<!-- <p-divider></p-divider> -->
-<router-outlet></router-outlet>
+        <ng-template pTemplate="end">
+            <div class="flex align-items-center gap-2">
+                <p-avatar  [image]="avatarUrl" shape="circle" (click)="menu.toggle($event)" />
+                <p-tieredMenu #menu [model]="tieredItems" [popup]="true"></p-tieredMenu>
+            </div>
+        </ng-template>
+    </p-menubar>
+    <router-outlet></router-outlet>
+</ng-container>
+
+
+<ng-template #landingPage>
+    <app-landing-page></app-landing-page>
+</ng-template>

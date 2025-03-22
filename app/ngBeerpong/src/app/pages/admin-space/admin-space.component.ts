@@ -5,8 +5,8 @@ import { ConfigurationService } from '../../services/configuration.service';
 import Match from '../../api/match.interface';
 import { NgFor, NgIf } from '@angular/common';
 import { Store } from '@ngrx/store';
-import { BeerpongState, Status } from '../../store/game.state';
-import { selectBeerpongState, selectGame } from '../../store/beerpong.selectors';
+import { BeerpongState, Status } from '../../store/beerpong/game.state';
+import { selectBeerpongState, selectGame } from '../../store/beerpong/beerpong.selectors';
 import { TabViewModule } from 'primeng/tabview';
 import { ButtonModule } from 'primeng/button';
 import { PanelModule } from 'primeng/panel';
@@ -15,12 +15,13 @@ import { ToastModule } from 'primeng/toast';
 import { ConfirmationService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog'
 import { MessageService } from 'primeng/api';
-import { finishGame, setShowRanking, updateMatchesFinal, updateMatchesQuaterFinals, updateMatchesRoundOfSixteen, updateMatchesSemiFinals } from '../../store/beerpong.actions';
+import { finishGame, setShowRanking, updateMatchesFinal, updateMatchesQuaterFinals, updateMatchesRoundOfSixteen, updateMatchesSemiFinals } from '../../store/beerpong/beerpong.actions';
 import { BeerpongSetupComponent } from '../../components/beerpong-setup/beerpong-setup.component';
 import { Observable } from 'rxjs';
 import { RankingComponent } from '../../components/ranking/ranking.component';
 import Group from '../../api/group.interface';
 import Team from '../../api/team.interface';
+import { AuthService } from '../../services/auth/auth.service';
 
 @Component({
   selector: 'app-game-plan',

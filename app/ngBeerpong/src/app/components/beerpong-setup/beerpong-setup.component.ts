@@ -12,14 +12,12 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { StepperModule } from 'primeng/stepper';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { CalendarModule } from 'primeng/calendar';
-import Game from '../../api/game.interface';
 import { GameRequest } from '../../api/game-request';
 import Team from '../../api/team.interface';
-import Group from '../../api/group.interface';
 import { DemoTeams } from './demo-teams';
-import { BeerpongState } from '../../store/game.state';
+import { BeerpongState } from '../../store/beerpong/game.state';
 import { Store } from '@ngrx/store';
-import { createGame } from '../../store/beerpong.actions';
+import { createGame } from '../../store/beerpong/beerpong.actions';
 import { Referee } from '../../api/referee';
 
 const GAMEMODE_6_GROUPS = 0;
