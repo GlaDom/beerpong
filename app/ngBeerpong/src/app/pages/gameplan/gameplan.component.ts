@@ -14,6 +14,7 @@ import { Observable } from 'rxjs';
 import { RankingComponent } from '../../components/ranking/ranking.component';
 import Team from '../../api/team.interface';
 import { GameplanOGfTComponent } from '../../components/gameplan-components/gameplan-o-gf-t/gameplan-o-gf-t.component';
+import { GameplanSGfTComponent } from "../../components/gameplan-components/gameplan-s-gf-t/gameplan-s-gf-t.component";
 
 @Component({
   selector: 'app-gameplan',
@@ -26,8 +27,9 @@ import { GameplanOGfTComponent } from '../../components/gameplan-components/game
     NgIf,
     FieldsetModule,
     RankingComponent,
-    GameplanOGfTComponent
-  ],
+    GameplanOGfTComponent,
+    GameplanSGfTComponent
+],
   templateUrl: './gameplan.component.html',
   styleUrl: './gameplan.component.css'
 })
