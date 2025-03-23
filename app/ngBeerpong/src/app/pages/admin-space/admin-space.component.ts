@@ -164,6 +164,10 @@ export class AdminSpaceComponent implements OnInit {
           this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to finish game!' })
           break;
         }
+        case "invalid match result": {
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Invalid match result!' })
+          break;
+        }
       }
     }
 

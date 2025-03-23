@@ -1,6 +1,6 @@
 import { createReducer, on } from "@ngrx/store";
 import { BeerpongState, Status } from "./game.state";
-import { createGame, createGameSuccess, finishGame, finishGameFailure, finishGameSuccess, loadGame, loadGameFailure, loadGameSuccess, setShowRanking, updateMatch, updateMatchSuccess, updateMatchesFinalFailure, updateMatchesQuaterFinalsFailure, updateMatchesRoundOfSixteenFailure, updateMatchesSemiFinalsFailure, updateTeams, updateTeamsSuccess } from "./beerpong.actions";
+import { createGame, createGameSuccess, finishGame, finishGameFailure, finishGameSuccess, loadGame, loadGameFailure, loadGameSuccess, setShowRanking, setToastStatus, updateMatch, updateMatchSuccess, updateMatchesFinalFailure, updateMatchesQuaterFinalsFailure, updateMatchesRoundOfSixteenFailure, updateMatchesSemiFinalsFailure, updateTeams, updateTeamsSuccess } from "./beerpong.actions";
 import { group } from "console";
 
 export const initialState: BeerpongState = {
@@ -183,6 +183,12 @@ export const beerpongReducer = createReducer(initialState,
         return {
             ...state,
             showRanking: showRanking
+        }
+    }),
+    on(setToastStatus, (state, {toastStatus}) => {
+        return {
+            ...state,
+            toastStatus: toastStatus
         }
     })
 );

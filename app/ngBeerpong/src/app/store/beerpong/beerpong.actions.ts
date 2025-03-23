@@ -1,7 +1,7 @@
 //Actions needed
 
 import { createAction, props } from "@ngrx/store";
-import { BeerpongState } from "./game.state";
+import { BeerpongState, Status } from "./game.state";
 import Match from "../../api/match.interface";
 import Team from "../../api/team.interface";
 import TeamUpdate from "../../api/team-update.interface";
@@ -47,3 +47,6 @@ export const finishGameFailure = createAction('[Admin-space Component] Finish Ga
 
 //SET_SHOWRANKING
 export const setShowRanking = createAction('[Admin-space Component] Set Show Ranking', props<{showRanking: boolean}>())
+
+//SET_TOASTStatus
+export const setToastStatus = createAction('[Admin-space Component] Set Toast Status', props<{toastStatus: Status}>())
