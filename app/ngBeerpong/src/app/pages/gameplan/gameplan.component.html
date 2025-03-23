@@ -4,7 +4,7 @@
             <ng-container *ngIf="groups.length>1">
                 <app-gameplan-s-gf-t [regularMatches]="regularMatches" [roundOfSixteenMatches]="roundOfsixteen" [quarterFinalMatches]="quaterFinals" [semiFinalMatches]="semiFinals" [semiFinalMatches]="semiFinals" [finalMatches]="final"></app-gameplan-s-gf-t>
             </ng-container>
-            <ng-container>
+            <ng-container *ngIf="groups.length==1; else noActiveGame">
                 <app-gameplan-o-gf-t [regularMatches]="regularMatches[0]" [finalMatches]="final" [groups]="groups"></app-gameplan-o-gf-t>
             </ng-container>
         </ng-container>
