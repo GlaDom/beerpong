@@ -5,13 +5,14 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { ChipModule } from 'primeng/chip';
 import { ButtonModule } from 'primeng/button';
 import Match from '../../api/match.interface';
-import { FormsModule, NgModel } from '@angular/forms';
+import { FormControl, FormGroup, FormsModule, NgModel, ReactiveFormsModule, Validators } from '@angular/forms';
 import { BeerpongState } from '../../store/beerpong/game.state';
 import { Store } from '@ngrx/store';
-import { updateMatch, updateTeams } from '../../store/beerpong/beerpong.actions';
+import { setToastStatus, updateMatch, updateTeams } from '../../store/beerpong/beerpong.actions';
 import TeamUpdate from '../../api/team-update.interface';
 import { TagModule } from 'primeng/tag';
 import { DatePipe } from '@angular/common';
+import { numericValidator } from '../../shared/validators/numeric-validator';
 
 @Component({
   selector: 'app-game-card',
@@ -24,7 +25,8 @@ import { DatePipe } from '@angular/common';
     ButtonModule,
     FormsModule,
     TagModule,
-    DatePipe
+    DatePipe,
+    ReactiveFormsModule,
   ],
   templateUrl: './game-card.component.html',
   styleUrl: './game-card.component.css'
@@ -42,8 +44,10 @@ export class GameCardComponent implements OnInit {
     points_away: 0,
   }
 
-  points_home: number = 0;
-  points_away: number = 0;
+  points = new FormGroup({
+    points_home: new FormControl<number>(0, [Validators.required, numericValidator()]),
+    points_away: new FormControl<number>(0, [Validators.required, numericValidator()]),
+  })
 
   locked: boolean = false;
   label: 'success' | 'info' | 'warning' | 'danger' | 'help' | 'primary' | 'secondary' | 'contrast' | null | undefined = "primary";
@@ -54,25 +58,44 @@ export class GameCardComponent implements OnInit {
 
   ngOnInit(): void {
     if(this.match.points_home>0 || this.match.points_away>0) {
-      this.points_home = this.match.points_home
-      this.points_away = this.match.points_away
+      this.points_home?.setValue(this.match.points_home)
+      this.points_away?.setValue(this.match.points_away)
       this.locked = !this.locked
       this.label = 'contrast'
     }
   }
 
+  get points_home() {
+    return this.points.get('points_home');
+  }
+
+  get points_away() {
+    return this.points.get('points_away');
+  }
+
   // method to lock the match points and send request to backend
   setLocked(): void {
+    if(this.points_home?.invalid || this.points_away?.invalid) {
+      this.beerpongstore.dispatch(setToastStatus({toastStatus: 'invalid match result'}))
+      return
+    }
     this.locked = !this.locked
     if(this.label == 'primary') {
       this.label = 'contrast'
       // decide whether the team points must also be updated or the game status was already set once
       // TODO: handle special case where the points where entered wrong and the other team has won 
-      let updateTeamPoints: boolean = this.points_home===0 || this.points_away===0
+      let updateTeamPoints: boolean = false;
+      if(typeof this.points_home?.value === 'number' && typeof this.points_away?.value === 'number') {
+        updateTeamPoints = this.points_home.value===0 || this.points_away.value===0
+      }
       if(this.match.group_number != '' && this.match.game_id != 0) {
         let m: Match = this.getCopyOfMatch(this.match)
-        m.points_home = this.points_home
-        m.points_away = this.points_away
+        if(typeof this.points_home?.value === 'number') {
+          m.points_home = this.points_home.value
+        }
+        if(typeof this.points_away?.value === 'number') {
+          m.points_away = this.points_away.value
+        }
         this.beerpongstore.dispatch(updateMatch({match: m}))
         let teamsToUpdate = this.getTeamsToUpdate(m, updateTeamPoints)
         this.beerpongstore.dispatch(updateTeams({teams: teamsToUpdate}))
@@ -83,6 +106,12 @@ export class GameCardComponent implements OnInit {
   }
 
   getCopyOfMatch(m: Match): Match{
+    let ph: number = 0;
+    let pa: number = 0;
+    if(typeof this.points_home?.value === 'number' && typeof this.points_away?.value === 'number') {
+      ph = this.points_home.value
+      pa = this.points_away.value
+    }
     let newMatch: Match = {
       game_id: m.game_id,
       match_id: m.match_id,
@@ -90,8 +119,8 @@ export class GameCardComponent implements OnInit {
       group_number: m.group_number,
       home_team: m.home_team,
       away_team: m.away_team,
-      points_home: this.points_home,
-      points_away: this.points_away,
+      points_home: ph,
+      points_away: pa,
       referee: m.referee,
       start_time: m.start_time,
       end_time: m.end_time,

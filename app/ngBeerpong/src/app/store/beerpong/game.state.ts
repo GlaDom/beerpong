@@ -15,6 +15,7 @@ export type Status = 'notset' |
                     "failed update final" |
                     "success game finished" |
                     "failed game finished" |
+                    "invalid match result" |
                     undefined
 
 
