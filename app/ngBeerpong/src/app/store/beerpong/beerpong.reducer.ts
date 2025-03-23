@@ -102,6 +102,15 @@ export const beerpongReducer = createReducer(initialState,
         let oldTeams = group[0].teams.filter(t => t.id!=teams[0].id && t.id!=teams[1].id)
         //add new teams
         oldTeams.push(...teams)
+        //sort teams by points and cup difference
+        oldTeams.sort((a, b) => {
+            if (a.points === b.points) {
+                if(b.cup_difference && a.cup_difference){
+                    return b.cup_difference - a.cup_difference;
+                }
+            }
+            return b.points - a.points;
+        });
         //assign new teams to group
         group[0].teams = oldTeams
         //add updated group to groups
