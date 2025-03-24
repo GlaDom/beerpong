@@ -22,6 +22,7 @@ import { RankingComponent } from '../../components/ranking/ranking.component';
 import Group from '../../api/group.interface';
 import Team from '../../api/team.interface';
 import { AuthService } from '../../services/auth/auth.service';
+import { ModeSGfTComponent } from "../../components/admin-space-components/mode-s-gf-t/mode-s-gf-t.component";
 
 @Component({
   selector: 'app-game-plan',
@@ -38,8 +39,9 @@ import { AuthService } from '../../services/auth/auth.service';
     BeerpongSetupComponent,
     RankingComponent,
     ConfirmDialogModule,
-    ModeOGfTComponent
-  ],
+    ModeOGfTComponent,
+    ModeSGfTComponent
+],
   providers: [
     MessageService,
     ConfirmationService
@@ -97,30 +99,6 @@ export class AdminSpaceComponent implements OnInit {
         }
         this.isLoading = game.isLoading
       })
-    }
-
-    updateRoundOfSixteen(): void {
-      if(this.gameId) {
-        this.beerpongStore.dispatch(updateMatchesRoundOfSixteen({gameId: this.gameId}))
-      }
-    }
-
-    updateQuaterFinals(): void {
-      if(this.gameId) {
-        this.beerpongStore.dispatch(updateMatchesQuaterFinals({gameId: this.gameId}))
-      }
-    }
-
-    updateSemiFinals(): void {
-      if(this.gameId) {
-        this.beerpongStore.dispatch(updateMatchesSemiFinals({gameId: this.gameId}))
-      }
-    }
-
-    updateFinal(): void {
-      if(this.gameId && this.gameMode) {
-        this.beerpongStore.dispatch(updateMatchesFinal({gameId: this.gameId, gameMode: this.gameMode}))
-      }
     }
 
     finishTournament(): void {
