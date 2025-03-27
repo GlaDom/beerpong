@@ -25,22 +25,25 @@
     <p-stepperPanel header="Mannschaften">
         <ng-template pTemplate="content" let-prevCallback="prevCallback" let-nextCallback="nextCallback" let-index="index">
             <form [formGroup]="gameForm">
+                <div class="flex justify-between">
                     <h1>Tragen Sie ihre Mannschaften ein</h1>
-                    <ng-container formArrayName="groups">
-                        <ng-container *ngFor="let groupForm of groups.controls; let i=index">
-                            <div class="my-1" [formGroupName]="i">
-                                <p-card header="Gruppe {{groupForm.get('name')?.value}}">
-                                    <div class="flex flex-col">
-                                        <input formControlName="team1" pInputText placeholder="Mannschaft 1" class="my-1"/>
-                                        <input formControlName="team2" pInputText placeholder="Mannschaft 2" class="my-1"/>
-                                        <input formControlName="team3" pInputText placeholder="Mannschaft 3" class="my-1"/>
-                                        <input formControlName="team4" pInputText placeholder="Mannschaft 4" class="my-1"/>
-                                        <input formControlName="team5" pInputText placeholder="Mannschaft 5" class="my-1"/>
-                                    </div>
-                                </p-card>
-                            </div>
-                        </ng-container>
+                    <p-button pTooltip="Random teamnames" tooltipPosition="left" label="" icon="pi pi-sparkles" size="small" severity="contrast" (onClick)="fillGroupsWithTeamNames()"/>
+                </div>
+                <ng-container formArrayName="groups">
+                    <ng-container *ngFor="let groupForm of groups.controls; let i=index">
+                        <div class="my-1" [formGroupName]="i">
+                            <p-card header="Gruppe {{groupForm.get('name')?.value}}">
+                                <div class="flex flex-col">
+                                    <input formControlName="team1" pInputText placeholder="Mannschaft 1" class="my-1"/>
+                                    <input formControlName="team2" pInputText placeholder="Mannschaft 2" class="my-1"/>
+                                    <input formControlName="team3" pInputText placeholder="Mannschaft 3" class="my-1"/>
+                                    <input formControlName="team4" pInputText placeholder="Mannschaft 4" class="my-1"/>
+                                    <input formControlName="team5" pInputText placeholder="Mannschaft 5" class="my-1"/>
+                                </div>
+                            </p-card>
+                        </div>
                     </ng-container>
+                </ng-container>
             </form>
             <div class="flex pt-4 justify-content-between gap-2">
                 <p-button 

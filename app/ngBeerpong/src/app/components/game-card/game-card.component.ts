@@ -45,11 +45,10 @@ export class GameCardComponent implements OnInit {
   }
 
   points = new FormGroup({
-    points_home: new FormControl<number>(0, [Validators.required, numericValidator()]),
-    points_away: new FormControl<number>(0, [Validators.required, numericValidator()]),
+    points_home: new FormControl<number>({value: 0, disabled: false}, [Validators.required, numericValidator()]),
+    points_away: new FormControl<number>({value: 0, disabled: false}, [Validators.required, numericValidator()]),
   })
 
-  locked: boolean = false;
   label: 'success' | 'info' | 'warning' | 'danger' | 'help' | 'primary' | 'secondary' | 'contrast' | null | undefined = "primary";
 
   constructor(
@@ -60,7 +59,8 @@ export class GameCardComponent implements OnInit {
     if(this.match.points_home>0 || this.match.points_away>0) {
       this.points_home?.setValue(this.match.points_home)
       this.points_away?.setValue(this.match.points_away)
-      this.locked = !this.locked
+      this.points_home?.disable()
+      this.points_away?.disable()
       this.label = 'contrast'
     }
   }
@@ -79,7 +79,6 @@ export class GameCardComponent implements OnInit {
       this.beerpongstore.dispatch(setToastStatus({toastStatus: 'invalid match result'}))
       return
     }
-    this.locked = !this.locked
     if(this.label == 'primary') {
       this.label = 'contrast'
       // decide whether the team points must also be updated or the game status was already set once
