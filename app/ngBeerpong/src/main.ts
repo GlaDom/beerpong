@@ -6,7 +6,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { AdminSpaceComponent } from './app/pages/admin-space/admin-space.component';
 import { GameplanComponent } from './app/pages/gameplan/gameplan.component';
 import { BeerpongSetupComponent } from './app/components/beerpong-setup/beerpong-setup.component';
-import { HttpClientModule, provideHttpClient, withInterceptors } from '@angular/common/http';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideEffects } from '@ngrx/effects';
 import { provideState, provideStore } from '@ngrx/store';
 import { beerpongReducer } from './app/store/beerpong/beerpong.reducer';
