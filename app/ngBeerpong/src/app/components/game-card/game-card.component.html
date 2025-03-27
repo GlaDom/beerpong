@@ -16,12 +16,12 @@
                 <div class="flex justify-between mb-1 max-h-7">
                     <p>{{match.home_team}}</p>
                     <div class="flex flex-row-reverse">
-                        <p-inputNumber [disabled]="locked" [inputStyle]="{'width': '50px'}" formControlName="points_home">{{match.points_home}}</p-inputNumber>
+                        <p-inputNumber [inputStyle]="{'width': '50px'}" formControlName="points_home" />
                     </div>
                 </div>
                 <div class="flex justify-between max-h-7">
                     <p>{{match.away_team}}</p>
-                    <p-inputNumber [disabled]="locked" [inputStyle]="{'width': '50px'}" formControlName="points_away">{{match.points_away}}</p-inputNumber>
+                    <p-inputNumber [inputStyle]="{'width': '50px'}" formControlName="points_away">{{match.points_away}}</p-inputNumber>
                 </div>
             </div>
         </ng-template>

@@ -1,4 +1,4 @@
-import { NgFor, NgIf } from '@angular/common';
+import { CommonModule, NgFor, NgIf } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
@@ -196,6 +196,19 @@ export class BeerpongSetupComponent implements OnInit {
   getRandomTeamName(): string {
     let index = Math.floor(Math.random() * (29 - 0 + 1) + 0);
     return DemoTeams[index]
+  }
+
+  fillGroupsWithTeamNames(): void {
+    let groups: any = this.groups.value
+    for(let i=0; i<groups.length;i++) {
+      groups[i].team1 = this.getRandomTeamName()
+      groups[i].team2 = this.getRandomTeamName()
+      groups[i].team3 = this.getRandomTeamName()
+      groups[i].team4 = this.getRandomTeamName()
+      groups[i].team5 = this.getRandomTeamName()
+    }
+    this.groups.setValue(groups)
+    console.log(this.groups)
   }
 
 }
