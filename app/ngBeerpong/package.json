@@ -53,6 +53,6 @@
     "openapi-typescript": "^6.7.6",
     "postcss": "^8.4.38",
     "tailwindcss": "^3.4.3",
-    "typescript": "5.4"
+    "typescript": "^5.8.2"
   }
 }
