@@ -10,11 +10,10 @@ import { BeerpongState } from '../../../store/beerpong/game.state';
 import { updateMatchesRoundOfSixteen, updateMatchesQuaterFinals, updateMatchesSemiFinals, updateMatchesFinal } from '../../../store/beerpong/beerpong.actions';
 
 @Component({
-  selector: 'app-mode-s-gf-t',
-  templateUrl: './mode-s-gf-t.component.html',
-  styleUrl: './mode-s-gf-t.component.css',
-  standalone: true,
-  imports: [FieldsetModule, TabViewModule, NgIf, NgFor, GameCardComponent, ButtonModule]
+    selector: 'app-mode-s-gf-t',
+    templateUrl: './mode-s-gf-t.component.html',
+    styleUrl: './mode-s-gf-t.component.css',
+    imports: [FieldsetModule, TabViewModule, NgIf, NgFor, GameCardComponent, ButtonModule]
 })
 export class ModeSGfTComponent {
 

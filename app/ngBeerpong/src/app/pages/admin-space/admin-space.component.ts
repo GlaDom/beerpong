@@ -25,29 +25,28 @@ import { AuthService } from '../../services/auth/auth.service';
 import { ModeSGfTComponent } from "../../components/admin-space-components/mode-s-gf-t/mode-s-gf-t.component";
 
 @Component({
-  selector: 'app-game-plan',
-  standalone: true,
-  imports: [
-    GameCardComponent,
-    NgIf,
-    NgFor,
-    TabViewModule,
-    ButtonModule,
-    PanelModule,
-    FieldsetModule,
-    ToastModule,
-    BeerpongSetupComponent,
-    RankingComponent,
-    ConfirmDialogModule,
-    ModeOGfTComponent,
-    ModeSGfTComponent
-],
-  providers: [
-    MessageService,
-    ConfirmationService
-  ],
-  templateUrl: './admin-space.component.html',
-  styleUrl: './admin-space.component.css'
+    selector: 'app-game-plan',
+    imports: [
+        GameCardComponent,
+        NgIf,
+        NgFor,
+        TabViewModule,
+        ButtonModule,
+        PanelModule,
+        FieldsetModule,
+        ToastModule,
+        BeerpongSetupComponent,
+        RankingComponent,
+        ConfirmDialogModule,
+        ModeOGfTComponent,
+        ModeSGfTComponent
+    ],
+    providers: [
+        MessageService,
+        ConfirmationService
+    ],
+    templateUrl: './admin-space.component.html',
+    styleUrl: './admin-space.component.css'
 })
 export class AdminSpaceComponent implements OnInit {
 

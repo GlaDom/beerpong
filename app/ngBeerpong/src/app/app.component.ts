@@ -18,23 +18,21 @@ import { LandingPageComponent } from './pages/landing-page/landing-page.componen
 import { AuthService } from './services/auth/auth.service';
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.css',
-  standalone: true,
-  providers: [
-  ],
-  imports: [
-    AvatarModule,
-    ButtonModule,
-    DividerModule,
-    MenubarModule,
-    TieredMenuModule,
-    RouterOutlet,
-    TabMenuModule,
-    NgIf,
-    LandingPageComponent,
-  ]
+    selector: 'app-root',
+    templateUrl: './app.component.html',
+    styleUrl: './app.component.css',
+    providers: [],
+    imports: [
+        AvatarModule,
+        ButtonModule,
+        DividerModule,
+        MenubarModule,
+        TieredMenuModule,
+        RouterOutlet,
+        TabMenuModule,
+        NgIf,
+        LandingPageComponent,
+    ]
 })
 export class AppComponent implements OnInit {
   public tieredItems: MenuItem[] | undefined = []; 

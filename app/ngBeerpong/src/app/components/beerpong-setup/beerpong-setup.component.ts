@@ -24,25 +24,24 @@ const GAMEMODE_6_GROUPS = 0;
 const GAMEMODE_1_GROUP = 1;
 
 @Component({
-  selector: 'app-beerpong-setup',
-  templateUrl: './beerpong-setup.component.html',
-  styleUrl: './beerpong-setup.component.css',
-  standalone: true,
-  imports: [
-    ButtonModule,
-    CardModule,
-    StepsModule,
-    ToggleButtonModule,
-    NgIf,
-    NgFor,
-    InputTextModule,
-    DividerModule,
-    ReactiveFormsModule,
-    StepperModule,
-    InputNumberModule,
-    CalendarModule,
-    FormsModule,
-  ]
+    selector: 'app-beerpong-setup',
+    templateUrl: './beerpong-setup.component.html',
+    styleUrl: './beerpong-setup.component.css',
+    imports: [
+        ButtonModule,
+        CardModule,
+        StepsModule,
+        ToggleButtonModule,
+        NgIf,
+        NgFor,
+        InputTextModule,
+        DividerModule,
+        ReactiveFormsModule,
+        StepperModule,
+        InputNumberModule,
+        CalendarModule,
+        FormsModule,
+    ]
 })
 export class BeerpongSetupComponent implements OnInit {
 

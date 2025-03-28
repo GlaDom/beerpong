@@ -17,21 +17,20 @@ import { GameplanOGfTComponent } from '../../components/gameplan-components/game
 import { GameplanSGfTComponent } from "../../components/gameplan-components/gameplan-s-gf-t/gameplan-s-gf-t.component";
 
 @Component({
-  selector: 'app-gameplan',
-  standalone: true,
-  imports: [
-    GameplanCardComponent,
-    GroupCardComponent,
-    DividerModule,
-    NgFor,
-    NgIf,
-    FieldsetModule,
-    RankingComponent,
-    GameplanOGfTComponent,
-    GameplanSGfTComponent
-],
-  templateUrl: './gameplan.component.html',
-  styleUrl: './gameplan.component.css'
+    selector: 'app-gameplan',
+    imports: [
+        GameplanCardComponent,
+        GroupCardComponent,
+        DividerModule,
+        NgFor,
+        NgIf,
+        FieldsetModule,
+        RankingComponent,
+        GameplanOGfTComponent,
+        GameplanSGfTComponent
+    ],
+    templateUrl: './gameplan.component.html',
+    styleUrl: './gameplan.component.css'
 })
 export class GameplanComponent implements OnInit {
 

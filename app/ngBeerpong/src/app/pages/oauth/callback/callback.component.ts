@@ -4,11 +4,10 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-callback',
-  templateUrl: './callback.component.html',
-  styleUrl: './callback.component.css',
-  standalone: true,
-  imports: [ProgressSpinnerModule]
+    selector: 'app-callback',
+    templateUrl: './callback.component.html',
+    styleUrl: './callback.component.css',
+    imports: [ProgressSpinnerModule]
 })
 export class CallbackComponent implements OnInit {
   constructor(

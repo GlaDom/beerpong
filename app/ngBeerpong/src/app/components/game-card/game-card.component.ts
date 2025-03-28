@@ -15,21 +15,20 @@ import { DatePipe } from '@angular/common';
 import { numericValidator } from '../../shared/validators/numeric-validator';
 
 @Component({
-  selector: 'app-game-card',
-  standalone: true,
-  imports: [
-    CardModule,
-    DividerModule,
-    InputNumberModule,
-    ChipModule,
-    ButtonModule,
-    FormsModule,
-    TagModule,
-    DatePipe,
-    ReactiveFormsModule,
-  ],
-  templateUrl: './game-card.component.html',
-  styleUrl: './game-card.component.css'
+    selector: 'app-game-card',
+    imports: [
+        CardModule,
+        DividerModule,
+        InputNumberModule,
+        ChipModule,
+        ButtonModule,
+        FormsModule,
+        TagModule,
+        DatePipe,
+        ReactiveFormsModule,
+    ],
+    templateUrl: './game-card.component.html',
+    styleUrl: './game-card.component.css'
 })
 export class GameCardComponent implements OnInit {
 

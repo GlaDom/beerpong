@@ -7,14 +7,13 @@ import { MenubarModule } from 'primeng/menubar';
 import { TabMenuModule } from 'primeng/tabmenu';
 
 @Component({
-  selector: 'app-landing-page',
-  templateUrl: './landing-page.component.html',
-  styleUrl: './landing-page.component.css',
-  standalone: true,
-  imports: [
-    ButtonModule,
-    MenubarModule
-  ]
+    selector: 'app-landing-page',
+    templateUrl: './landing-page.component.html',
+    styleUrl: './landing-page.component.css',
+    imports: [
+        ButtonModule,
+        MenubarModule
+    ]
 })
 export class LandingPageComponent implements OnInit {
   public items: MenuItem[];
