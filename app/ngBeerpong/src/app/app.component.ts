@@ -5,7 +5,7 @@ import { ButtonModule } from 'primeng/button';
 import { DividerModule } from 'primeng/divider';
 import { MenubarModule } from 'primeng/menubar';
 import { TieredMenuModule } from 'primeng/tieredmenu';
-import { RouterOutlet } from '@angular/router';
+import { RouterModule, RouterOutlet } from '@angular/router';
 import { Observable } from 'rxjs';
 import { BeerpongState } from './store/beerpong/game.state';
 import { Store } from '@ngrx/store';
@@ -32,6 +32,7 @@ import { AuthService } from './services/auth/auth.service';
         TabMenuModule,
         NgIf,
         LandingPageComponent,
+        RouterModule
     ]
 })
 export class AppComponent implements OnInit {
@@ -62,9 +63,9 @@ export class AppComponent implements OnInit {
       }
     })
     this.items = [
-      {label: "Home", icon: "pi pi-home", route: "/home"},
-      {label: "Spielplan", icon: "pi pi-list", route: "/gameplan"},
-      {label: "AdminBereich", icon: "pi pi-code", route: "/adminspace"}
+      {label: "Home", icon: "pi pi-home", routerLink: "/home"},
+      {label: "Spielplan", icon: "pi pi-list", routerLink: "/gameplan"},
+      {label: "AdminBereich", icon: "pi pi-code", routerLink: "/adminspace"}
     ]
     this.tieredItems = [
       {label: "Logout", icon: "pi pi-sign-out", command: () => this.authService.logout()}

@@ -13,7 +13,7 @@ import { updateMatchesRoundOfSixteen, updateMatchesQuaterFinals, updateMatchesSe
     selector: 'app-mode-s-gf-t',
     templateUrl: './mode-s-gf-t.component.html',
     styleUrl: './mode-s-gf-t.component.css',
-    imports: [FieldsetModule, TabViewModule, NgIf, NgFor, GameCardComponent, ButtonModule]
+    imports: [FieldsetModule, TabViewModule, NgFor, GameCardComponent, ButtonModule]
 })
 export class ModeSGfTComponent {
 

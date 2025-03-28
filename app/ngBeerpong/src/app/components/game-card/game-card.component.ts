@@ -48,7 +48,7 @@ export class GameCardComponent implements OnInit {
     points_away: new FormControl<number>({value: 0, disabled: false}, [Validators.required, numericValidator()]),
   })
 
-  label: 'success' | 'info' | 'warning' | 'danger' | 'help' | 'primary' | 'secondary' | 'contrast' | null | undefined = "primary";
+  label: "success" | "secondary" | "info" | "warn" | "danger" | "contrast" | "help" | "primary" | null | undefined = 'primary';
 
   constructor(
     private beerpongstore: Store<BeerpongState>,

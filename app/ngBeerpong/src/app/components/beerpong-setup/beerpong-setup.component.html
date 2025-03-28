@@ -1,5 +1,5 @@
 <p-stepper>
-    <p-stepperPanel header="Spielmodus">
+    <p-stepper header="Spielmodus">
         <ng-template pTemplate="content" let-nextCallback="nextCallback" let-index="index">
             <div class="flex flex-column h-12rem">
                 <div class="flex flex-col gap-3">
@@ -21,8 +21,8 @@
                     (onClick)="nextCallback.emit()" />
             </div>
         </ng-template>
-    </p-stepperPanel>
-    <p-stepperPanel header="Mannschaften">
+    </p-stepper>
+    <p-stepper header="Mannschaften">
         <ng-template pTemplate="content" let-prevCallback="prevCallback" let-nextCallback="nextCallback" let-index="index">
             <form [formGroup]="gameForm">
                 <div class="flex justify-between">
@@ -58,8 +58,8 @@
                     (onClick)="nextCallback.emit()" />
             </div>
         </ng-template>
-    </p-stepperPanel>
-    <p-stepperPanel header="Zeit & Schiedsrichter">
+    </p-stepper>
+    <p-stepper header="Zeit & Schiedsrichter">
         <ng-template pTemplate="content" let-prevCallback="prevCallback" let-nextCallback="nextCallback" let-index="index">
             <div class="flex flex-col h-12rem">
                 <div>
@@ -88,8 +88,8 @@
                     (onClick)="nextCallback.emit()" />
             </div>
         </ng-template>
-    </p-stepperPanel>
-    <p-stepperPanel header="Spieluebersicht">
+    </p-stepper>
+    <p-stepper header="Spieluebersicht">
         <ng-template pTemplate="content" let-prevCallback="prevCallback" let-index="index">
             <div class="flex flex-col">
                 <div>
@@ -133,5 +133,5 @@
                 <p-button (onClick)="startGame()" label="Spiel starten" />
             </div>
         </ng-template>
-    </p-stepperPanel>
+    </p-stepper>
 </p-stepper>

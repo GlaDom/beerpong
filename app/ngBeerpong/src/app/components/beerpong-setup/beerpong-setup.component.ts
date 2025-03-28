@@ -32,7 +32,6 @@ const GAMEMODE_1_GROUP = 1;
         CardModule,
         StepsModule,
         ToggleButtonModule,
-        NgIf,
         NgFor,
         InputTextModule,
         DividerModule,

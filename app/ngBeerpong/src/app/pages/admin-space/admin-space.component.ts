@@ -27,16 +27,13 @@ import { ModeSGfTComponent } from "../../components/admin-space-components/mode-
 @Component({
     selector: 'app-game-plan',
     imports: [
-        GameCardComponent,
         NgIf,
-        NgFor,
         TabViewModule,
         ButtonModule,
         PanelModule,
         FieldsetModule,
         ToastModule,
         BeerpongSetupComponent,
-        RankingComponent,
         ConfirmDialogModule,
         ModeOGfTComponent,
         ModeSGfTComponent

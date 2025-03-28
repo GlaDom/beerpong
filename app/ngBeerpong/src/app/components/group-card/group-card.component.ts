@@ -8,7 +8,6 @@ import { TableModule } from 'primeng/table';
     selector: 'app-group-card',
     imports: [
         CardModule,
-        NgFor,
         NgIf,
         TableModule
     ],

@@ -19,10 +19,7 @@ import { GameplanSGfTComponent } from "../../components/gameplan-components/game
 @Component({
     selector: 'app-gameplan',
     imports: [
-        GameplanCardComponent,
-        GroupCardComponent,
         DividerModule,
-        NgFor,
         NgIf,
         FieldsetModule,
         RankingComponent,
