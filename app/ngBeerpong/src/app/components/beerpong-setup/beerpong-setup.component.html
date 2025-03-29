@@ -7,32 +7,34 @@
     </p-step-list>
     <p-step-panels>
         <p-step-panel [value]="1">
-            <ng-template pTemplate="content" let-nextCallback="nextCallback" let-activateCallback="activateCallback" let-index="index">
-                <div class="flex flex-column h-12rem">
-                    <div class="flex flex-col gap-3">
-                        <h1>Waehlen Sie einen Spielmodus</h1>
-                        <form [formGroup]="buttonsFormGroup">
-                            <div class="flex flex-row gap-2">
-                                <p-toggleButton formControlName="buttonOne" (onChange)="toggleSelectButton(0)" onLabel="{{buttonLabelSixGroups}}" offLabel="{{buttonLabelSixGroups}}"></p-toggleButton>
-                                <p-toggleButton formControlName="buttonTwo" (onChange)="toggleSelectButton(1)" onLabel="{{buttonLabelOneGroup}}" offLabel="{{buttonLabelOneGroup}}"></p-toggleButton>
-                            </div>
-                        </form>
+            <ng-template pTemplate="content" let-activateCallback="activateCallback" let-index="index">
+                <div class="grid grid-cols-8 gap-4">
+                    <div class="col-span-4 col-start-2 col-end-7">
+                        <div class="flex flex-col gap-3 text-xl">
+                            <h1>Waehlen Sie einen Spielmodus</h1>
+                            <form [formGroup]="buttonsFormGroup">
+                                <div class="flex flex-row gap-2">
+                                    <p-toggleButton formControlName="buttonOne" (onChange)="toggleSelectButton(0)" onLabel="{{buttonLabelSixGroups}}" offLabel="{{buttonLabelSixGroups}}"></p-toggleButton>
+                                    <p-toggleButton formControlName="buttonTwo" (onChange)="toggleSelectButton(1)" onLabel="{{buttonLabelOneGroup}}" offLabel="{{buttonLabelOneGroup}}"></p-toggleButton>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="flex pt-4 justify-content-end">
+                            <p-button 
+                                [disabled]="playMode === undefined"
+                                label="Next" 
+                                icon="pi pi-arrow-right" 
+                                iconPos="right" 
+                                (onClick)="activateCallback(2)" />
+                        </div>
                     </div>
-                </div>
-                <div class="flex pt-4 justify-content-end">
-                    <p-button 
-                        [disabled]="playMode === undefined"
-                        label="Next" 
-                        icon="pi pi-arrow-right" 
-                        iconPos="right" 
-                        (onClick)="activateCallback(2)" />
                 </div>
             </ng-template>
         </p-step-panel>
         <p-step-panel [value]="2">
-            <ng-template pTemplate="content" let-prevCallback="prevCallback" let-activateCallback="activateCallback" let-index="index">
+            <ng-template pTemplate="content" let-activateCallback="activateCallback" let-index="index">
                 <form [formGroup]="gameForm">
-                    <div class="flex justify-between">
+                    <div class="flex justify-between my-4 text-xl">
                         <h1>Tragen Sie ihre Mannschaften ein</h1>
                         <p-button pTooltip="Random teamnames" tooltipPosition="left" label="" icon="pi pi-sparkles" size="small" severity="primary" (onClick)="fillGroupsWithTeamNames()"/>
                     </div>
