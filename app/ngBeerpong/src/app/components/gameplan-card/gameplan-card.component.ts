@@ -7,17 +7,16 @@ import { TagModule } from 'primeng/tag';
 import { DatePipe } from '@angular/common';
 
 @Component({
-  selector: 'app-gameplan-card',
-  standalone: true,
-  imports: [
-    CardModule,
-    ChipModule,
-    DividerModule,
-    TagModule,
-    DatePipe
-  ],
-  templateUrl: './gameplan-card.component.html',
-  styleUrl: './gameplan-card.component.css'
+    selector: 'app-gameplan-card',
+    imports: [
+        CardModule,
+        ChipModule,
+        DividerModule,
+        TagModule,
+        DatePipe
+    ],
+    templateUrl: './gameplan-card.component.html',
+    styleUrl: './gameplan-card.component.css'
 })
 export class GameplanCardComponent {
   @Input()

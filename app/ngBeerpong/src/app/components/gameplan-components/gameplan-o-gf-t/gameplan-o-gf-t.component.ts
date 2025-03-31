@@ -7,17 +7,16 @@ import { GroupCardComponent } from '../../group-card/group-card.component';
 import Group from '../../../api/group.interface';
 
 @Component({
-  selector: 'app-gameplan-o-gf-t',
-  standalone: true,
-  imports: [
-    GameplanCardComponent,
-    NgFor,
-    FieldsetModule,
-    GroupCardComponent,
-    NgIf
-  ],
-  templateUrl: './gameplan-o-gf-t.component.html',
-  styleUrl: './gameplan-o-gf-t.component.css'
+    selector: 'app-gameplan-o-gf-t',
+    imports: [
+        GameplanCardComponent,
+        NgFor,
+        FieldsetModule,
+        GroupCardComponent,
+        NgIf
+    ],
+    templateUrl: './gameplan-o-gf-t.component.html',
+    styleUrl: './gameplan-o-gf-t.component.css'
 })
 export class GameplanOGfTComponent {
   @Input()

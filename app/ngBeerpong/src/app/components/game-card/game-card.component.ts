@@ -15,21 +15,20 @@ import { DatePipe } from '@angular/common';
 import { numericValidator } from '../../shared/validators/numeric-validator';
 
 @Component({
-  selector: 'app-game-card',
-  standalone: true,
-  imports: [
-    CardModule,
-    DividerModule,
-    InputNumberModule,
-    ChipModule,
-    ButtonModule,
-    FormsModule,
-    TagModule,
-    DatePipe,
-    ReactiveFormsModule,
-  ],
-  templateUrl: './game-card.component.html',
-  styleUrl: './game-card.component.css'
+    selector: 'app-game-card',
+    imports: [
+        CardModule,
+        DividerModule,
+        InputNumberModule,
+        ChipModule,
+        ButtonModule,
+        FormsModule,
+        TagModule,
+        DatePipe,
+        ReactiveFormsModule,
+    ],
+    templateUrl: './game-card.component.html',
+    styleUrl: './game-card.component.css'
 })
 export class GameCardComponent implements OnInit {
 
@@ -49,7 +48,7 @@ export class GameCardComponent implements OnInit {
     points_away: new FormControl<number>({value: 0, disabled: false}, [Validators.required, numericValidator()]),
   })
 
-  label: 'success' | 'info' | 'warning' | 'danger' | 'help' | 'primary' | 'secondary' | 'contrast' | null | undefined = "primary";
+  label: "success" | "secondary" | "info" | "warn" | "danger" | "contrast" | "help" | "primary" | null | undefined = 'primary';
 
   constructor(
     private beerpongstore: Store<BeerpongState>,

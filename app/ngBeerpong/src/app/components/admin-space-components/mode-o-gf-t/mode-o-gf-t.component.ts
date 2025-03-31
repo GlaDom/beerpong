@@ -17,26 +17,25 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import Group from '../../../api/group.interface';
 
 @Component({
-  selector: 'app-mode-o-gf-t',
-  standalone: true,
-  imports: [
-    GameCardComponent,
-    TabViewModule,
-    NgFor,
-    ButtonModule,
-    FieldsetModule,
-    NgIf,
-    RankingComponent,
-    ToastModule,
-    ConfirmDialogModule
-  ],
-  providers: [
-    MessageService,
-    ConfigurationService,
-    ConfirmationService
-  ],
-  templateUrl: './mode-o-gf-t.component.html',
-  styleUrl: './mode-o-gf-t.component.css'
+    selector: 'app-mode-o-gf-t',
+    imports: [
+        GameCardComponent,
+        TabViewModule,
+        NgFor,
+        ButtonModule,
+        FieldsetModule,
+        NgIf,
+        RankingComponent,
+        ToastModule,
+        ConfirmDialogModule
+    ],
+    providers: [
+        MessageService,
+        ConfigurationService,
+        ConfirmationService
+    ],
+    templateUrl: './mode-o-gf-t.component.html',
+    styleUrl: './mode-o-gf-t.component.css'
 })
 export class ModeOGfTComponent implements OnInit {
   @Input()

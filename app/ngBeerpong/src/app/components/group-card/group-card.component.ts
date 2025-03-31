@@ -5,16 +5,14 @@ import { NgFor, NgIf } from '@angular/common';
 import { TableModule } from 'primeng/table';
 
 @Component({
-  selector: 'app-group-card',
-  standalone: true,
-  imports: [
-    CardModule,
-    NgFor,
-    NgIf,
-    TableModule
-  ],
-  templateUrl: './group-card.component.html',
-  styleUrl: './group-card.component.css'
+    selector: 'app-group-card',
+    imports: [
+        CardModule,
+        NgIf,
+        TableModule
+    ],
+    templateUrl: './group-card.component.html',
+    styleUrl: './group-card.component.css'
 })
 export class GroupCardComponent implements OnInit {
   @Input()

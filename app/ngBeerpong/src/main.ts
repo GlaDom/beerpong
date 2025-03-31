@@ -1,51 +1,36 @@
 import { BrowserModule, bootstrapApplication } from '@angular/platform-browser';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { AppComponent } from './app/app.component';
-import { BrowserAnimationsModule, provideAnimations } from '@angular/platform-browser/animations';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { importProvidersFrom } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
-import { AdminSpaceComponent } from './app/pages/admin-space/admin-space.component';
-import { GameplanComponent } from './app/pages/gameplan/gameplan.component';
-import { BeerpongSetupComponent } from './app/components/beerpong-setup/beerpong-setup.component';
-import { HttpClientModule, provideHttpClient, withInterceptors } from '@angular/common/http';
+import { provideRouter } from '@angular/router';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideEffects } from '@ngrx/effects';
-import { provideState, provideStore } from '@ngrx/store';
+import { provideStore } from '@ngrx/store';
 import { beerpongReducer } from './app/store/beerpong/beerpong.reducer';
 import { BeerpongEffects } from './app/store/beerpong/beerpong.effects';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { provideRouterStore } from '@ngrx/router-store';
-import { HomeComponent } from './app/pages/home/home.component';
 import { authHttpInterceptorFn, provideAuth0 } from '@auth0/auth0-angular';
-import { AuthGuardService } from './app/services/auth/auth-guard.service';
-import { CallbackComponent } from './app/pages/oauth/callback/callback.component';
 import { ENVIRONMENT } from './app/services/env/environment.service';
 import { environment } from './environments/environment';
 import { userReducer } from './app/store/user/user.reducer';
-
-const routes: Routes = [
-  {
-    path: "home", component: HomeComponent, canActivate: [AuthGuardService]
-  },
-  {
-    path: "adminspace", component: AdminSpaceComponent, canActivate: [AuthGuardService]
-  },
-  {
-    path: "gameconfiguration", component: BeerpongSetupComponent, canActivate: [AuthGuardService]
-  },
-  {
-    path: "gameplan", component: GameplanComponent, canActivate: [AuthGuardService]
-  },
-  {
-    path: 'callback', component: CallbackComponent
-  },
-];
+import { providePrimeNG } from 'primeng/config';
+import Aura from '@primeng/themes/aura';
+import { routes } from './app.routes';
 
 bootstrapApplication(AppComponent, {
   providers: [
     importProvidersFrom(BrowserAnimationsModule),
     importProvidersFrom(BrowserModule),
-    importProvidersFrom(RouterModule.forRoot(routes)),
-    importProvidersFrom(HttpClientModule),
-    provideAnimations(),
+    provideRouter(routes),
+    provideHttpClient(),
+    provideAnimationsAsync(),
+    providePrimeNG({
+      theme: {
+        preset: Aura,
+      }
+    }),
     provideEffects(BeerpongEffects),
     provideStore({
       userState: userReducer,
@@ -59,7 +44,7 @@ bootstrapApplication(AppComponent, {
         connectInZone: true, // If set to true, the connection is established within the Angular zone
         logOnly: false
     }),
-    provideState({name: 'beerpongState', reducer: beerpongReducer}),
+    // provideState({name: 'beerpongState', reducer: beerpongReducer}),
     provideHttpClient(withInterceptors([authHttpInterceptorFn])),
     provideAuth0({
       domain: 'dev-nduro5lf8x5ddjgj.eu.auth0.com',

@@ -7,11 +7,10 @@ import Group from '../../../api/group.interface';
 import Match from '../../../api/match.interface';
 
 @Component({
-  selector: 'app-gameplan-s-gf-t',
-  templateUrl: './gameplan-s-gf-t.component.html',
-  styleUrl: './gameplan-s-gf-t.component.css',
-  standalone: true,
-  imports: [GroupCardComponent, GameplanCardComponent, FieldsetModule, NgIf, NgFor]
+    selector: 'app-gameplan-s-gf-t',
+    templateUrl: './gameplan-s-gf-t.component.html',
+    styleUrl: './gameplan-s-gf-t.component.css',
+    imports: [GroupCardComponent, GameplanCardComponent, FieldsetModule, NgIf, NgFor]
 })
 export class GameplanSGfTComponent {
   @Input()

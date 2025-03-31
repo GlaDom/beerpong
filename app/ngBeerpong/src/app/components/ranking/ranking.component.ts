@@ -6,16 +6,15 @@ import { ConfirmPopupModule } from 'primeng/confirmpopup';
 import Team from '../../api/team.interface';
 
 @Component({
-  selector: 'app-ranking',
-  standalone: true,
-  imports: [
-    CardModule,
-    TableModule,
-    ButtonModule,
-    ConfirmPopupModule
-  ],
-  templateUrl: './ranking.component.html',
-  styleUrl: './ranking.component.css'
+    selector: 'app-ranking',
+    imports: [
+        CardModule,
+        TableModule,
+        ButtonModule,
+        ConfirmPopupModule
+    ],
+    templateUrl: './ranking.component.html',
+    styleUrl: './ranking.component.css'
 })
 export class RankingComponent {
   @Input()
