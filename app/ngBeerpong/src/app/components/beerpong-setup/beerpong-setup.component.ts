@@ -1,4 +1,4 @@
-import { CommonModule, NgFor, NgIf } from '@angular/common';
+import { CommonModule, DatePipe, NgFor, NgIf } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
@@ -19,6 +19,8 @@ import { BeerpongState } from '../../store/beerpong/game.state';
 import { Store } from '@ngrx/store';
 import { createGame } from '../../store/beerpong/beerpong.actions';
 import { Referee } from '../../api/referee';
+import { PanelModule } from 'primeng/panel';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
 
 const GAMEMODE_6_GROUPS = 0;
 const GAMEMODE_1_GROUP = 1;
@@ -40,6 +42,9 @@ const GAMEMODE_1_GROUP = 1;
         InputNumberModule,
         CalendarModule,
         FormsModule,
+        PanelModule,
+        ToggleSwitchModule,
+        DatePipe
     ]
 })
 export class BeerpongSetupComponent implements OnInit {
@@ -74,9 +79,10 @@ export class BeerpongSetupComponent implements OnInit {
       mode: new FormControl<string>('')
     })
     this.refereeFormGroup = new FormGroup({
-      referees: new FormControl<string>('', [Validators.required]),
+      referees: new FormControl<string>(''),
       gameTime: new FormControl<number | null>(null, [Validators.required]),
       date: new FormControl<Date | null>(null, [Validators.required]),
+      checked: new FormControl<boolean>(false)
     })
   }
     
