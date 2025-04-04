@@ -1,7 +1,148 @@
-<div>
-    <p-menubar>
+<div class="flex flex-col h-screen">
+    <!-- <p-menubar>
         <ng-template pTemplate="end">
             <p-button label="Login" icon="pi pi-sign-in" [loading]="false" (onClick)="login()" size="small"></p-button>
         </ng-template>
-    </p-menubar>
+    </p-menubar> -->
+    <div class="navbar flex flex-row justify-between h-20 items-center mx-20">
+        <div class="font-bold text-2xl">
+            <span>SKBeerpong</span>
+        </div>
+        <div class="menu flex flex-row gap-20 font-bold text-gray-500">
+            <div>
+                <a href="#features">Features</a>
+            </div>
+            <div>
+                <a href="#pricing">Pricing</a>
+            </div>
+            <div>
+                <a href="#faq">FAQ's</a>
+            </div>
+        </div>
+        <div class="loginBtn font-bold">
+            <button (click)="login()">Sign up</button>
+        </div>
+    </div>
+    <div class="content flex flex-col items-center mt-32 h-full overflow-y-auto">
+        <div class="flex flex-col justify-center items-center text-4xl font-bold">
+            <div>
+                <span>SKBeerpong - Einfach, schnell und intuitiv!</span>
+            </div>
+            <div>
+                <span>Zeig deinen Freunden wer der Beste ist!</span>
+            </div>
+        </div>
+        <div id="features" class="h-2/3 mt-24">
+            <div>features works</div>
+        </div>
+        <div id="pricing" class="h-2/3 mt-24 w-full">
+            <div>
+                <div class="flex justify-center items-center font-bold text-4xl">
+                    <span>Flexible Preisplaene</span>
+                </div>
+                <div id="pricing" class="flex flex-row gap-4 justify-center">
+                    <div class="flex flex-col gap-2.5 m-8 w-1/4">
+                        <div class="font-bold text-2xl">
+                            <span>Freier Plan</span>
+                        </div>
+                        <div class="flex flex-row">
+                            <div class="font-bold text-6xl">
+                                <span>$0</span>
+                            </div>
+                            <div class="flex items-end font-bold text-sm text-gray-500">
+                                <span>/pro Monat</span>
+                            </div>
+                        </div>
+                        <div class="font-bold text-gray-500 text-sm">Zugriff auf essentielle Features.</div>
+                        <div class="w-full my-2">
+                            <button class="pricingBtn">Jetzt kaufen</button>
+                        </div>
+                        <div>
+                            <div class="font-bold text-lg mb-2">
+                                <span>Was ist beinhaltet?</span>
+                            </div>
+                            <div class="flex flex-col gap-1.5">
+                                <div class="flex flex-row gap-2 items-center">
+                                    <i class="pi pi-check-circle" style="color: var(--primary)"></i>
+                                    <div class="text-gray-500 text-sm">
+                                        <span>Erstellen von Turnierplaenen</span>
+                                    </div>
+                                </div>
+                                <div class="flex flex-row gap-2 items-center">
+                                    <i class="pi pi-check-circle"></i>
+                                    <div class="text-gray-500 text-sm">
+                                        <span>Uneingeschraenkte Spielmodi</span>
+                                    </div>
+                                </div>
+                                <div class="flex flex-row gap-2 items-center">
+                                    <i class="pi pi-check-circle"></i>
+                                    <div class="text-gray-500 text-sm">
+                                        <span>Export des Spielplan (.pdf, .xlsx, .csv)</span>
+                                    </div>
+                                </div>
+                                <div class="flex flex-row gap-2 items-center">
+                                    <i class="pi pi-check-circle"></i>
+                                    <div class="text-gray-500 text-sm">
+                                        <span>Spielplan teilen via QR-Code</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="horizontal-divider"></div>
+                    <div class="flex flex-col gap-2.5 m-8 w-1/4">
+                        <div class="font-bold text-2xl">
+                            <span>Premium Plan</span>
+                        </div>
+                        <div class="flex flex-row">
+                            <div class="font-bold text-6xl">
+                                <span>$10</span>
+                            </div>
+                            <div class="flex items-end font-bold text-sm text-gray-500">
+                                <span>/pro Monat</span>
+                            </div>
+                        </div>
+                        <div class="font-bold text-gray-500 text-sm">Zugriff auf alle premium Features.</div>
+                        <div class="w-full my-2">
+                            <button class="pricingBtn">Jetzt kaufen</button>
+                        </div>
+                        <div>
+                            <div class="font-bold text-lg mb-2">
+                                <span>Was ist beinhaltet?</span>
+                            </div>
+                            <div class="flex flex-col gap-1.5">
+                                <div class="flex flex-row gap-2 items-center">
+                                    <i class="pi pi-check-circle" style="color: var(--primary)"></i>
+                                    <div class="text-gray-500 text-sm">
+                                        <span>Erstellen von Turnierplaenen</span>
+                                    </div>
+                                </div>
+                                <div class="flex flex-row gap-2 items-center">
+                                    <i class="pi pi-check-circle" style="color: var(--primary)"></i>
+                                    <div class="text-gray-500 text-sm">
+                                        <span>Uneingeschraenkte Spielmodi</span>
+                                    </div>
+                                </div>
+                                <div class="flex flex-row gap-2 items-center">
+                                    <i class="pi pi-check-circle" style="color: var(--primary)"></i>
+                                    <div class="text-gray-500 text-sm">
+                                        <span>Export des Spielplan (.pdf, .xlsx, .csv)</span>
+                                    </div>
+                                </div>
+                                <div class="flex flex-row gap-2 items-center">
+                                    <i class="pi pi-check-circle" style="color: var(--primary)"></i>
+                                    <div class="text-gray-500 text-sm">
+                                        <span>Spielplan teilen via QR-Code</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="faq" class="h-2/3 mt-24">
+            <div>faq works</div>
+        </div>
+    </div>
 </div>

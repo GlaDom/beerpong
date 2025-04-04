@@ -1,6 +1,6 @@
 <ng-container *ngIf="isLoggedIn; else landingPage">
     <p-drawer [(visible)]="showDrawer" header="SKBeerpong">
-        <div>
+        <div class="flex flex-col justify-between h-full">
             <ul>
                 <li>
                     <a pRipple class="flex items-center cursor-pointer p-4 rounded-border text-surface-700 dark:text-surface-100 hover:bg-surface-100 dark:hover:bg-surface-700 duration-150 transition-colors p-ripple">
@@ -21,18 +21,25 @@
                     </a>
                 </li>
             </ul>
+            <div>
+                <hr />
+                <ul>
+                    <li>
+                        <div id="darkmodeBtn" class="flex flex-row gap-2 items-top m-4">
+                            <p-toggleswitch [(ngModel)]="darkModeChecked" (onChange)="toggleDarkMode()"></p-toggleswitch>
+                            <span>Darkmode</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
         </div>
     </p-drawer>
     <p-menubar [model]="items">
-        <ng-template pTemplate="item" let-item>
-            <ng-container *ngIf="item.route">
-                <a [routerLink]="item.route">
-                    <span [class]="item.icon"></span>
-                    <span class="ml-2">
-                        {{ item.label }}
-                    </span>
-                </a>
-            </ng-container>
+        <ng-template #start>
+            <p-button icon="pi pi-bars" (onClick)="toggleDrawer()"></p-button>
+            <div class="ml-4 font-bold text-xl">
+                SKBeerpong
+            </div>
         </ng-template>
         <ng-template pTemplate="end">
             <div class="flex align-items-center gap-2">

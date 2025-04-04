@@ -1,0 +1,24 @@
+:host {
+    --primary: #06D6A0;
+    --btnWhite: #ffffff;
+}
+
+.loginBtn {
+    background-color: var(--primary);
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+}
+
+.pricingBtn {
+    width: 100%;
+    background-color: var(--primary);
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+}
+
+.horizontal-divider {
+    width: 2px;
+    background-color: var(--primary);
+    height: 300px;
+    margin-top: 2rem;
+}
