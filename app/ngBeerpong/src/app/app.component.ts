@@ -11,12 +11,14 @@ import { BeerpongState } from './store/beerpong/game.state';
 import { Store } from '@ngrx/store';
 import { loadGame } from './store/beerpong/beerpong.actions';
 import { TabMenuModule } from 'primeng/tabmenu';
-import { NgIf } from '@angular/common';
+import { CommonModule, NgIf } from '@angular/common';
 import { UserState } from './store/user/user.state';
 import { selectUserState } from './store/user/user.selectors';
 import { LandingPageComponent } from './pages/landing-page/landing-page.component';
 import { AuthService } from './services/auth/auth.service';
 import { DrawerModule } from 'primeng/drawer';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
+import { FormsModule } from '@angular/forms';
 
 @Component({
     selector: 'app-root',
@@ -35,6 +37,8 @@ import { DrawerModule } from 'primeng/drawer';
         LandingPageComponent,
         RouterModule,
         DrawerModule,
+        ToggleSwitchModule,
+        FormsModule
     ]
 })
 export class AppComponent implements OnInit {
@@ -45,6 +49,7 @@ export class AppComponent implements OnInit {
   public user$: Observable<UserState> | undefined;
   public isLoggedIn: boolean = false;
   public showDrawer = false;
+  public darkModeChecked = true;
 
 
   constructor(
@@ -65,14 +70,18 @@ export class AppComponent implements OnInit {
         this.isLoggedIn = user.isLoggedIn
       }
     })
-    this.items = [
-      {icon: 'pi pi-bars', command: () => {this.showDrawer = !this.showDrawer}},
-      // {label: "Home", icon: "pi pi-home", routerLink: "/home"},
-      // {label: "Spielplan", icon: "pi pi-list", routerLink: "/gameplan"},
-      // {label: "AdminBereich", icon: "pi pi-code", routerLink: "/adminspace"}
-    ]
     this.tieredItems = [
       {label: "Logout", icon: "pi pi-sign-out", command: () => this.authService.logout()}
     ]
+  }
+
+  public toggleDrawer(): void {
+    this.showDrawer = !this.showDrawer
+  }
+
+  public toggleDarkMode() {
+    const element = document.querySelector('html');
+    console.log(element)
+    element!.classList.toggle('my-app-dark');
   }
 }

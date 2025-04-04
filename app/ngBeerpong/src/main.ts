@@ -29,6 +29,9 @@ bootstrapApplication(AppComponent, {
     providePrimeNG({
       theme: {
         preset: Aura,
+        options: {
+          darkModeSelector: '.my-app-dark'
+        }
       }
     }),
     provideEffects(BeerpongEffects),
