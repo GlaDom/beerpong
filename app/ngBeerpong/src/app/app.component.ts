@@ -16,6 +16,7 @@ import { UserState } from './store/user/user.state';
 import { selectUserState } from './store/user/user.selectors';
 import { LandingPageComponent } from './pages/landing-page/landing-page.component';
 import { AuthService } from './services/auth/auth.service';
+import { DrawerModule } from 'primeng/drawer';
 
 @Component({
     selector: 'app-root',
@@ -32,7 +33,8 @@ import { AuthService } from './services/auth/auth.service';
         TabMenuModule,
         NgIf,
         LandingPageComponent,
-        RouterModule
+        RouterModule,
+        DrawerModule,
     ]
 })
 export class AppComponent implements OnInit {
@@ -42,6 +44,7 @@ export class AppComponent implements OnInit {
   public avatarUrl: string = '../assets/default-avatar.jpg';
   public user$: Observable<UserState> | undefined;
   public isLoggedIn: boolean = false;
+  public showDrawer = false;
 
 
   constructor(
@@ -63,9 +66,10 @@ export class AppComponent implements OnInit {
       }
     })
     this.items = [
-      {label: "Home", icon: "pi pi-home", routerLink: "/home"},
-      {label: "Spielplan", icon: "pi pi-list", routerLink: "/gameplan"},
-      {label: "AdminBereich", icon: "pi pi-code", routerLink: "/adminspace"}
+      {icon: 'pi pi-bars', command: () => {this.showDrawer = !this.showDrawer}},
+      // {label: "Home", icon: "pi pi-home", routerLink: "/home"},
+      // {label: "Spielplan", icon: "pi pi-list", routerLink: "/gameplan"},
+      // {label: "AdminBereich", icon: "pi pi-code", routerLink: "/adminspace"}
     ]
     this.tieredItems = [
       {label: "Logout", icon: "pi pi-sign-out", command: () => this.authService.logout()}

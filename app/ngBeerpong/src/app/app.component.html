@@ -1,5 +1,28 @@
-
 <ng-container *ngIf="isLoggedIn; else landingPage">
+    <p-drawer [(visible)]="showDrawer" header="SKBeerpong">
+        <div>
+            <ul>
+                <li>
+                    <a pRipple class="flex items-center cursor-pointer p-4 rounded-border text-surface-700 dark:text-surface-100 hover:bg-surface-100 dark:hover:bg-surface-700 duration-150 transition-colors p-ripple">
+                        <i class="pi pi-home mr-2"></i>
+                        <span class="font-medium" routerLink="/home">Home</span>
+                    </a>
+                </li>
+                <li>
+                    <a pRipple class="flex items-center cursor-pointer p-4 rounded-border text-surface-700 dark:text-surface-100 hover:bg-surface-100 dark:hover:bg-surface-700 duration-150 transition-colors p-ripple">
+                        <i class="pi pi-list mr-2"></i>
+                        <span class="font-medium" routerLink="/gameplan">Spielplan</span>
+                    </a>
+                </li>
+                <li>
+                    <a pRipple class="flex items-center cursor-pointer p-4 rounded-border text-surface-700 dark:text-surface-100 hover:bg-surface-100 dark:hover:bg-surface-700 duration-150 transition-colors p-ripple">
+                        <i class="pi pi-code mr-2"></i>
+                        <span class="font-medium" routerLink="/adminspace">Adminspace</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </p-drawer>
     <p-menubar [model]="items">
         <ng-template pTemplate="item" let-item>
             <ng-container *ngIf="item.route">
