@@ -39,7 +39,7 @@
                         <form [formGroup]="gameForm">
                             <div class="flex justify-between my-4 text-xl">
                                 <h1>Tragen Sie ihre Mannschaften ein</h1>
-                                <p-button pTooltip="Random teamnames" tooltipPosition="left" label="" icon="pi pi-sparkles" size="small" severity="primary" (onClick)="fillGroupsWithTeamNames()"/>
+                                <p-button pTooltip="Random teamnames" tooltipPosition="left" pTooltip="Zufaellige Mannschaftesnamen" label="" icon="pi pi-sparkles" size="small" severity="primary" (onClick)="fillGroupsWithTeamNames()"/>
                             </div>
                             <ng-container formArrayName="groups">
                                 <ng-container *ngFor="let groupForm of groups.controls; let i=index">

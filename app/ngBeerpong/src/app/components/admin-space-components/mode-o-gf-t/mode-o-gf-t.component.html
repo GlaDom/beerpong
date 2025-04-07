@@ -26,7 +26,8 @@
             </div>
         </p-fieldset>
     </div>
-    <div class="flex flex-row-reverse mt-5">
+    <div class="flex flex-row justify-between mt-5">
+        <p-button severity="danger" (onClick)="confirmGameFinish($event)" label="Spiel sofort beenden"></p-button>
         <p-button (onClick)="setTournamentFinished()" label="Zur Tabelle"></p-button>
     </div>
 </ng-container>

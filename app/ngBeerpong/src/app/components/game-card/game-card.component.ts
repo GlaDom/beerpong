@@ -84,7 +84,7 @@ export class GameCardComponent implements OnInit {
       // TODO: handle special case where the points where entered wrong and the other team has won 
       let updateTeamPoints: boolean = false;
       if(typeof this.points_home?.value === 'number' && typeof this.points_away?.value === 'number') {
-        updateTeamPoints = this.points_home.value===0 || this.points_away.value===0
+        updateTeamPoints = this.match.points_home===0 || this.match.points_away===0
       }
       if(this.match.group_number != '' && this.match.game_id != 0) {
         let m: Match = this.getCopyOfMatch(this.match)
@@ -128,6 +128,7 @@ export class GameCardComponent implements OnInit {
 
   getTeamsToUpdate(match: Match, updatePoints: boolean): TeamUpdate[] {
     let retval: TeamUpdate[] = []
+    // Auswaertsteam
     let teamOne: TeamUpdate = {
       game_id: match.game_id,
       team_name: match.away_team,
@@ -136,6 +137,7 @@ export class GameCardComponent implements OnInit {
       cups_hitted: match.points_away,
       cups_got: match.points_home
     }
+    // Heimteam
     let teamTwo: TeamUpdate = {
       game_id: match.game_id,
       team_name: match.home_team,
@@ -144,9 +146,11 @@ export class GameCardComponent implements OnInit {
       cups_hitted: match.points_home,
       cups_got: match.points_away
     }
+    console.log(match.points_home, match.points_away)
+    // Wenn auwaerts mehr getroffen, dann sieg team one
     if(match.points_away>match.points_home && updatePoints) {
       teamOne.points_to_add=3;
-    } else {
+    } else if(updatePoints) {
       teamTwo.points_to_add=3;
     }
     retval.push(teamOne)

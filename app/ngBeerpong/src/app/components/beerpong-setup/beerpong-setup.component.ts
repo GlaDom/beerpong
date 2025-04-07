@@ -21,6 +21,7 @@ import { createGame } from '../../store/beerpong/beerpong.actions';
 import { Referee } from '../../api/referee';
 import { PanelModule } from 'primeng/panel';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
+import { TooltipModule } from 'primeng/tooltip';
 
 const GAMEMODE_6_GROUPS = 0;
 const GAMEMODE_1_GROUP = 1;
@@ -44,7 +45,8 @@ const GAMEMODE_1_GROUP = 1;
         FormsModule,
         PanelModule,
         ToggleSwitchModule,
-        DatePipe
+        DatePipe,
+        TooltipModule
     ]
 })
 export class BeerpongSetupComponent implements OnInit {
