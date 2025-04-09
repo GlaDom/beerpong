@@ -9,7 +9,7 @@ CREATE TABLE games (
   start_time TIMESTAMP
 );
 
-CREATE TABLE modes {
+CREATE TABLE modes (
   name VARCHAR(255) PRIMARY KEY,
   number_of_groups INTEGER,
   number_of_teams INTEGER,
@@ -20,7 +20,7 @@ CREATE TABLE modes {
   got_semi_final BOOLEAN,
   got_final BOOLEAN,
   description VARCHAR(255)
-}
+)
 
 CREATE TABLE referees (
   id SERIAL PRIMARY KEY,

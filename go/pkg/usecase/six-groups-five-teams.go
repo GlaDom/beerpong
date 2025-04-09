@@ -232,19 +232,31 @@ func (s *SixGroupsFiveTeams) calculateMatchesPerGroup(teams []models.Team, gameI
 		refs := []models.Referee{}
 		switch g[0].GroupName {
 		case "A":
-			refs = referees[:2]
+			if len(referees) > 2 {
+				refs = referees[:2]
+			}
 		case "B":
-			refs = referees[2:4]
+			if len(referees) > 4 {
+				refs = referees[2:4]
+			}
 		case "C":
-			refs = referees[4:6]
+			if len(referees) > 6 {
+				refs = referees[4:6]
+			}
 		case "D":
-			refs = referees[6:8]
+			if len(referees) > 8 {
+				refs = referees[6:8]
+			}
 		case "E":
-			refs = referees[8:10]
+			if len(referees) > 10 {
+				refs = referees[8:10]
+			}
 		case "F":
-			refs = referees[10:]
+			if len(referees) > 11 {
+				refs = referees[10:]
+			}
 		default:
-			break
+			continue
 		}
 		newmatches := generateSchedule(g, gameId, g[0].GroupName, refs, startTime, playTime)
 		matches = append(matches, newmatches...)
@@ -314,7 +326,11 @@ func generateSchedule(teams []models.Team, gameId int, group string, referees []
 		// Zufälliges Spiel auswählen
 		index := rand.Intn(len(allMatches))
 		match := allMatches[index]
-		match.Referee = referees[refereeCounter].Name
+		if len(referees) > refereeCounter {
+			match.Referee = referees[refereeCounter].Name
+		} else {
+			match.Referee = " - "
+		}
 
 		schedule = append(schedule, match)
 
