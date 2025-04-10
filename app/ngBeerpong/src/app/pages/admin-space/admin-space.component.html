@@ -3,7 +3,7 @@
     <div class="col-span-12">
         <ng-container *ngIf="!isLoading && matches && matches.length > 0">
             <ng-container *ngIf="groups.length>1">
-                <app-mode-s-gf-t [gameId]="gameId" [gameMode]="gameMode" [sortedMatches]="sortedMatches" [roundOfsixteen]="roundOfsixteen" [quaterFinalMatches]="quaterFinalMatches" [semiFinalMatches]="semiFinalMatches" [finalMatch]="finalMatch"></app-mode-s-gf-t>
+                <app-mode-s-gf-t [groups]="groups" [showRanking]="this.showRanking" [gameId]="gameId" [gameMode]="gameMode" [sortedMatches]="sortedMatches" [roundOfsixteen]="roundOfsixteen" [quaterFinalMatches]="quaterFinalMatches" [semiFinalMatches]="semiFinalMatches" [finalMatches]="finalMatch"></app-mode-s-gf-t>
             </ng-container>
             <ng-container *ngIf="groups.length===1">
                 <app-mode-o-gf-t [groups]="groups" [showRanking]="this.showRanking" [gameMode]="this.gameMode" [regularMatches]="regularMatches" [finalMatches]="finalMatch"></app-mode-o-gf-t>

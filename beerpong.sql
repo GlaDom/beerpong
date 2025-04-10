@@ -60,3 +60,9 @@ CREATE TABLE matches (
   updated_at TIMESTAMP,
   FOREIGN KEY (game_id) REFERENCES games(id)
 );
+
+INSERT INTO modes (name, number_of_groups, number_of_teams, got_round_inbetween, got_round_of_32, got_round_of_16, got_quater_final, got_semi_final, got_final, description)
+values('SIXGROUPSFIVETEAMS', 6, 5, false, true, true, true, true, true, 'sechs gruppen mit je fuenf teams')
+
+INSERT INTO modes (name, number_of_groups, number_of_teams, got_round_inbetween, got_round_of_32, got_round_of_16, got_quater_final, got_semi_final, got_final, description)
+values('ONEGROUPFIVETEAMS', 1, 5, false, false, false, false, false, true, 'eine gruppe mit fuenf teams')
