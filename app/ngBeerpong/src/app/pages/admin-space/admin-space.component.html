@@ -1,6 +1,6 @@
 <p-toast></p-toast>
-<div class="m-8 grid h-[calc(100%-66px)] grid-cols-12"> 
-    <div class="col-span-12">
+<div class="m-8 grid grid-cols-12"> 
+    <div class="col-span-12 mb-4">
         <ng-container *ngIf="!isLoading && matches && matches.length > 0">
             <ng-container *ngIf="groups.length>1">
                 <app-mode-s-gf-t [groups]="groups" [showRanking]="this.showRanking" [gameId]="gameId" [gameMode]="gameMode" [sortedMatches]="sortedMatches" [roundOfsixteen]="roundOfsixteen" [quaterFinalMatches]="quaterFinalMatches" [semiFinalMatches]="semiFinalMatches" [finalMatches]="finalMatch"></app-mode-s-gf-t>

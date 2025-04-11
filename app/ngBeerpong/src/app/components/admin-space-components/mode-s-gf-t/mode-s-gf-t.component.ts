@@ -84,18 +84,22 @@ export class ModeSGfTComponent {
   getRanking(): Team[] {
     let retval: Team[] = [];
     let winner: Team[] = [];
-    if(this.finalMatches[0]?.points_away> this.finalMatches[0]?.points_home) {
-      winner = this.getTeamsByName([this.finalMatches[0].away_team])
-      retval.push(...winner)
-    } else if(this.finalMatches[0]?.points_home > this.finalMatches[0]?.points_away) {
-      winner = this.getTeamsByName([this.finalMatches[0].home_team])
-      retval.push(...winner)
-    }
-    let placeTwoToFive = this.groups[0].teams?.filter(t => t.team_name !== winner[0]?.team_name)
-    console.log(winner)
-    console.log(placeTwoToFive)
-    placeTwoToFive = this.configService.sortTeamsbyDifference(placeTwoToFive)
-    retval.push(...placeTwoToFive.reverse())
+    // alle teams aus den gruppen in ein array und dann sortieren
+    let allTeams: Team[] = [];
+    this.groups.map((g) => {allTeams.push(...g.teams)})
+    retval = this.configService.sortTeamsByPointsAndCupDifference(allTeams);
+    // if(this.finalMatches[0]?.points_away> this.finalMatches[0]?.points_home) {
+    //   winner = this.getTeamsByName([this.finalMatches[0].away_team])
+    //   retval.push(...winner)
+    // } else if(this.finalMatches[0]?.points_home > this.finalMatches[0]?.points_away) {
+    //   winner = this.getTeamsByName([this.finalMatches[0].home_team])
+    //   retval.push(...winner)
+    // }
+    // let placeTwoToFive = this.groups[0].teams?.filter(t => t.team_name !== winner[0]?.team_name)
+    // console.log(winner)
+    // console.log(placeTwoToFive)
+    // placeTwoToFive = this.configService.sortTeamsbyDifference(placeTwoToFive)
+    // retval.push(...placeTwoToFive.reverse())
     return retval
   }
 
@@ -139,6 +143,7 @@ export class ModeSGfTComponent {
   }
 
   setTournamentFinished(): void {
+    window.scrollTo(0,0)
     this.beerpongStore.dispatch(setShowRanking({showRanking: true}))
   }
 }
