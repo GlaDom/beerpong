@@ -9,6 +9,19 @@ CREATE TABLE games (
   start_time TIMESTAMP
 );
 
+CREATE TABLE modes (
+  name VARCHAR(255) PRIMARY KEY,
+  number_of_groups INTEGER,
+  number_of_teams INTEGER,
+  got_round_inbetween BOOLEAN,
+  got_round_of_32 BOOLEAN,
+  got_round_of_16 BOOLEAN,
+  got_quater_final BOOLEAN,
+  got_semi_final BOOLEAN,
+  got_final BOOLEAN,
+  description VARCHAR(255)
+)
+
 CREATE TABLE referees (
   id SERIAL PRIMARY KEY,
   game_id INTEGER,
@@ -47,3 +60,9 @@ CREATE TABLE matches (
   updated_at TIMESTAMP,
   FOREIGN KEY (game_id) REFERENCES games(id)
 );
+
+INSERT INTO modes (name, number_of_groups, number_of_teams, got_round_inbetween, got_round_of_32, got_round_of_16, got_quater_final, got_semi_final, got_final, description)
+values('SIXGROUPSFIVETEAMS', 6, 5, false, true, true, true, true, true, 'sechs gruppen mit je fuenf teams')
+
+INSERT INTO modes (name, number_of_groups, number_of_teams, got_round_inbetween, got_round_of_32, got_round_of_16, got_quater_final, got_semi_final, got_final, description)
+values('ONEGROUPFIVETEAMS', 1, 5, false, false, false, false, false, true, 'eine gruppe mit fuenf teams')

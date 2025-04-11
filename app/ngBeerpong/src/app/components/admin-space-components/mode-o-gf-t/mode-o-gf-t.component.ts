@@ -59,7 +59,7 @@ export class ModeOGfTComponent implements OnInit {
     private beerpongStore: Store<BeerpongState>,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
-    private configSerice: ConfigurationService
+    private configService: ConfigurationService
   ) {}
 
   ngOnInit(): void {
@@ -85,7 +85,7 @@ export class ModeOGfTComponent implements OnInit {
     let placeTwoToFive = this.groups[0].teams?.filter(t => t.team_name !== winner[0]?.team_name)
     console.log(winner)
     console.log(placeTwoToFive)
-    placeTwoToFive = this.configSerice.sortTeamsbyDifference(placeTwoToFive)
+    placeTwoToFive = this.configService.sortTeamsbyDifference(placeTwoToFive)
     retval.push(...placeTwoToFive.reverse())
     return retval
   }
@@ -112,7 +112,7 @@ export class ModeOGfTComponent implements OnInit {
       reject: () => {
           this.messageService.add({ severity: 'error', summary: 'Rejected', detail: 'Spiel nicht beendet', life: 3000 });
       }
-  });
+    });
   }
 
   setTournamentFinished(): void {

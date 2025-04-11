@@ -2,7 +2,7 @@
     <div class="col-span-12">
         @if (!showRanking && !isLoading) {
             @if (groups.length>1) {
-                <app-gameplan-s-gf-t [regularMatches]="regularMatches" [roundOfSixteenMatches]="roundOfsixteen" [quarterFinalMatches]="quaterFinals" [semiFinalMatches]="semiFinals" [semiFinalMatches]="semiFinals" [finalMatches]="final"></app-gameplan-s-gf-t>
+                <app-gameplan-s-gf-t [regularMatches]="regularMatches" [roundOfSixteenMatches]="roundOfsixteen" [quarterFinalMatches]="quaterFinals" [semiFinalMatches]="semiFinals" [semiFinalMatches]="semiFinals" [finalMatches]="final" [groups]="groups"></app-gameplan-s-gf-t>
             } @else if (groups.length===1) {
                 <app-gameplan-o-gf-t [regularMatches]="regularMatches[0]" [finalMatches]="final" [groups]="groups"></app-gameplan-o-gf-t>
             } @else {
