@@ -128,4 +128,17 @@ export class ConfigurationService {
     })
     return retval
   }
+
+  // sort teams by points and cup difference
+  public sortTeamsByPointsAndCupDifference(teams: Team[]): Team[] {
+    teams.sort((a, b) => {
+      if (a.points === b.points) {
+        if(b.cup_difference && a.cup_difference){
+          return b.cup_difference - a.cup_difference;
+        }
+      }
+      return b.points - a.points;
+    });
+    return teams
+  }
 }

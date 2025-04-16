@@ -44,9 +44,9 @@
     </div>
     <div>
         <p-fieldset legend="Achtelfinals">
-            <div class="flex flex-row">
+            <div class="flex flex-wrap">
                 <ng-container *ngFor="let m of roundOfsixteen">
-                    <div class="flex-1">
+                    <div class="">
                         <app-game-card [match]="m"></app-game-card>
                     </div>
                 </ng-container>
@@ -101,10 +101,12 @@
     </div>
 </ng-container>
 <ng-container *ngIf="showRanking">
-    <app-ranking [teams]="getRanking()">
-        <div class="flex gap-3 mt-1">
-            <p-button label="Zurueck" (onClick)="backToAdminSpace()"></p-button>
-            <p-button label="Spiel beenden" (onClick)="confirmGameFinish($event)"></p-button>
-        </div>
-    </app-ranking>
+    <div class="">
+        <app-ranking [teams]="getRanking()">
+            <div class="flex gap-3 mt-1">
+                <p-button label="Zurueck" (onClick)="backToAdminSpace()"></p-button>
+                <p-button label="Spiel beenden" (onClick)="confirmGameFinish($event)"></p-button>
+            </div>
+        </app-ranking>
+    </div>
 </ng-container>

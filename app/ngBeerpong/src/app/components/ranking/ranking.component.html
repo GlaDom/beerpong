@@ -2,6 +2,7 @@
     <p-table [value]="teams">
         <ng-template pTemplate="header">
             <tr>
+                <th>Nr.</th>
                 <th>Team-Name</th>
                 <th>Becher getroffen</th>
                 <th>Becher bekommen</th>
@@ -9,9 +10,18 @@
                 <th>Punkte</th>
             </tr>
         </ng-template>
-        <ng-template pTemplate="body" let-teams>
+        <ng-template pTemplate="body" let-teams let-i="rowIndex">
             <tr>
-                <td>{{ teams.team_name }}</td>
+                <td>{{ i+1 }}</td>
+                @if (i+1 === 1) {
+                    <td>🥇 {{ teams.team_name }}</td>
+                } @else if (i+1 === 2) {
+                    <td>🥈 {{ teams.team_name }}</td>
+                } @else if (i+1 === 3) {
+                    <td>🥉 {{ teams.team_name }}</td>
+                } @else {
+                    <td>{{ teams.team_name }}</td>
+                }
                 <td>{{ teams.cups_hit }}</td>
                 <td>{{ teams.cups_get }}</td>
                 <td>{{ teams.cup_difference }}</td>
