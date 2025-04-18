@@ -1,5 +1,8 @@
 import { Component } from '@angular/core';
 import { AuthService } from '@auth0/auth0-angular';
+import { BeerpongState } from '../../store/beerpong/game.state';
+import { Store } from '@ngrx/store';
+import { loadGame } from '../../store/beerpong/beerpong.actions';
 
 @Component({
     selector: 'app-home',
@@ -9,8 +12,9 @@ import { AuthService } from '@auth0/auth0-angular';
 })
 export class HomeComponent {
 
-  constructor(private authService: AuthService) {}
+  constructor(private beerpongStore: Store<BeerpongState>) {}
 
   ngOnInit(): void {
+    this.beerpongStore.dispatch(loadGame())
   }
 }

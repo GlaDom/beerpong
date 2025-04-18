@@ -5,6 +5,7 @@ import { group } from "console";
 
 export const initialState: BeerpongState = {
     game: {
+        user_sub: '',
         mode: 0,
         amount_of_teams: 0,
         is_finished: false,
@@ -53,6 +54,7 @@ export const beerpongReducer = createReducer(initialState,
             isLoading: false,
             showRanking: false,
             game: {
+                user_sub: '',
                 mode: 0,
                 amount_of_teams: 0,
                 is_finished: false,

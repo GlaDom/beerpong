@@ -22,6 +22,9 @@ import { Referee } from '../../api/referee';
 import { PanelModule } from 'primeng/panel';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { TooltipModule } from 'primeng/tooltip';
+import { Observable } from 'rxjs';
+import { UserState } from '../../store/user/user.state';
+import { selectUserState } from '../../store/user/user.selectors';
 
 const GAMEMODE_6_GROUPS = 0;
 const GAMEMODE_1_GROUP = 1;
@@ -50,7 +53,16 @@ const GAMEMODE_1_GROUP = 1;
     ]
 })
 export class BeerpongSetupComponent implements OnInit {
+  // user
+  private userDetails$: Observable<UserState>;
+  private userSub: string;
+  private userObserver = {
+    next: (u: UserState) => this.userSub = u.userDetails.sub!,
+    error: (err: Error) => console.log(err),
+    complete: () => console.log('user observable completed on beerpong setup component')
+  }
 
+  // game
   public selectedMode: string = '';
   public gameForm: FormGroup;
   public refereeFormGroup: FormGroup;
@@ -71,9 +83,9 @@ export class BeerpongSetupComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private beerpongstore: Store<BeerpongState>
+    private beerpongstore: Store<BeerpongState>,
+    private userstore: Store<UserState>,
   ) {
-    console.log(this.playMode)
     this.gameForm = this.fb.group({
       groups: this.fb.array([])
     })
@@ -86,9 +98,13 @@ export class BeerpongSetupComponent implements OnInit {
       date: new FormControl<Date | null>(null, [Validators.required]),
       checked: new FormControl<boolean>(false)
     })
+
+    this.userDetails$ = this.userstore.select(selectUserState)
   }
     
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.userDetails$.subscribe(this.userObserver)
+  }
 
   get groups(): FormArray {
     return this.gameForm.controls["groups"] as FormArray;
@@ -152,6 +168,7 @@ export class BeerpongSetupComponent implements OnInit {
     }
     let newGame: GameRequest = {
       game: {
+        user_sub: this.userSub,
         mode: this.playMode,
         amount_of_teams: amountOfTeams,
         is_finished: false,

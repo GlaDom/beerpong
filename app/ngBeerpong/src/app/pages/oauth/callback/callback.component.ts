@@ -14,7 +14,8 @@ export class CallbackComponent implements OnInit {
     private router: Router) {}
 
   ngOnInit(): void {
+    console.log('callback component hit');
     // TODO: check nach url in storage um richtig weiter zu leiten
-    this.router.navigate(['/home']);
+    this.router.navigate(['home'], { skipLocationChange: false });
   }
 }

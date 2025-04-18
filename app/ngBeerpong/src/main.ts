@@ -18,6 +18,7 @@ import { userReducer } from './app/store/user/user.reducer';
 import { providePrimeNG } from 'primeng/config';
 import Aura from '@primeng/themes/aura';
 import { routes } from './app.routes';
+import { headersInterceptor } from './app/interceptors/headers.interceptor';
 
 bootstrapApplication(AppComponent, {
   providers: [

@@ -5,6 +5,7 @@ import Team from "./team.interface";
 
 interface Game {
   id?: number;
+  user_sub: string;
   mode: number;
   amount_of_teams: number;
   is_finished: boolean;

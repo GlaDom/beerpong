@@ -1,10 +1,20 @@
 # NgBeerpong
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.2.2.
+Frontend fuer die Beerpong Applikation
+
+## Authentifizierung
+
+Fuer die Authentifizierung wird in diesem Projekt Auth0 verwendet. Um sich erfolgreich bei Auth0 zu authentifizieren und sich anschliessend einen validen Token
+fuer die Beerpong API abholen zu koennen muessen folgende lokale Einstellungen gemacht werden.
+
+Im File /etc/hosts muss die Zeile `127.0.0.1 skbeerpong.com` hinzugefuegt werden. 
+Die Applikation wird zudem mit dem Flag `--host=skbeerpong.com` gestartet, da Auth0 keinen "Consent Skip" fuer unverfiable Hosts zulaesst und localhost
+ist immer ein unverifiable Host. Dieser Workaround dient allein dazu mit der Methode `getAccessTokenSilently()` einen validen Access Token fuer 
+die Beerpong API abzurufen.
+Um den Workaround abzuschliessen muss die Applikation auch noch unter HTTPS gestartet werden, da fuer wurde ein self-signed Zertifikat dem Projekt 
+hinzugefuegt.
 
 ## Development server
-
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
 
 ## Code scaffolding
 
