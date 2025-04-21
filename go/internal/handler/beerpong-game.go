@@ -9,6 +9,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/gladom/beerpong/pkg/models"
+	"github.com/gladom/beerpong/pkg/requestvalidation"
 	"github.com/gladom/beerpong/pkg/usecase"
 )
 
@@ -80,8 +81,14 @@ func (h *beerpongGameHandler) CreateGame(c *gin.Context) {
 //		@Failure 		404 {object} map[string]any
 //		@Router			/game [get]
 func (h *beerpongGameHandler) GetGame(c *gin.Context) {
+	// get sub from context
+	sub := requestvalidation.GetClaimString(c, "sub")
+	if sub == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "missing sub"})
+		return
+	}
 
-	game, err := h.General.GetGame()
+	game, err := h.General.GetGameBySub(sub)
 	if err != nil {
 		// if no active game found return 404 otherwise 500
 		if strings.Contains(err.Error(), "no active game found") {

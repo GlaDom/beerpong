@@ -3,11 +3,13 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/gladom/beerpong/docs"
 	"github.com/gladom/beerpong/internal/handler"
 	"github.com/gladom/beerpong/pkg/repo"
+	"github.com/gladom/beerpong/pkg/requestvalidation"
 	"github.com/gladom/beerpong/pkg/usecase"
 	_ "github.com/lib/pq"
 	swaggerFiles "github.com/swaggo/files"
@@ -30,6 +32,13 @@ import (
 // @BasePath	/api/v1
 // @schemes	http
 func main() {
+	// Auth0 Konfiguration
+	auth0Config := requestvalidation.Auth0Config{
+		Domain:        "dev-nduro5lf8x5ddjgj.eu.auth0.com",
+		Audience:      "https://skbeerpongtst.com/api",
+		JwksURI:       "https://dev-nduro5lf8x5ddjgj.eu.auth0.com/.well-known/jwks.json",
+		TokenLifetime: 1 * time.Hour,
+	}
 
 	router := gin.Default()
 	router.Use(func(c *gin.Context) {
@@ -70,6 +79,7 @@ func main() {
 	)
 
 	v1 := router.Group("/api/v1")
+	v1.Use(requestvalidation.NewAuth0Middleware(auth0Config))
 	{
 		v1.POST("/game", beerpongGameHandler.CreateGame)
 		v1.GET("/game", beerpongGameHandler.GetGame)
