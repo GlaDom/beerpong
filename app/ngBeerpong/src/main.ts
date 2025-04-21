@@ -18,14 +18,16 @@ import { userReducer } from './app/store/user/user.reducer';
 import { providePrimeNG } from 'primeng/config';
 import Aura from '@primeng/themes/aura';
 import { routes } from './app.routes';
-import { headersInterceptor } from './app/interceptors/headers.interceptor';
+import { authHeaderInterceptor } from './app/services/interceptors/auth-header.interceptor';
 
 bootstrapApplication(AppComponent, {
   providers: [
     importProvidersFrom(BrowserAnimationsModule),
     importProvidersFrom(BrowserModule),
     provideRouter(routes),
-    provideHttpClient(),
+    provideHttpClient(
+      withInterceptors([authHeaderInterceptor])
+    ),
     provideAnimationsAsync(),
     providePrimeNG({
       theme: {

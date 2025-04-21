@@ -31,6 +31,7 @@ export class AuthGuardService implements CanActivate {
         if (loggedIn) {
           return of(true);
         } else {
+          console.log('try to restore user state')
           // Versuche, den Benutzerstatus wiederherzustellen
           return this.authService.restoreUserState().pipe(
             map(restored => {

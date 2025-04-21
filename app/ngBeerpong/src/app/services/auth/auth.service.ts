@@ -53,14 +53,18 @@ export class AuthService {
     });
   }
 
+  get authToken(): string {
+    console.log('get authToken', this.userState?.bearerToken);
+    return this.userState?.bearerToken || '';
+  }
+
   login(): void {
-    console.log('try to restore user state')
-        this.oauthService.loginWithRedirect({
-          authorizationParams: {
-            audience: 'https://dev-nduro5lf8x5ddjgj.eu.auth0.com/api/v2/',
-            redirect_uri: 'https://skbeerpong.com:4200/callback'
-          }
-        });
+    this.oauthService.loginWithRedirect({
+      authorizationParams: {
+        audience: 'https://dev-nduro5lf8x5ddjgj.eu.auth0.com/api/v2/',
+        redirect_uri: 'https://skbeerpong.com:4200/callback'
+      }
+    });
   }
 
   logout(): void {
@@ -94,6 +98,7 @@ export class AuthService {
       // Hier könntest du den User-Status in deiner App aktualisieren
       this.store.dispatch(setUser({userState: cachedState.userDetails}));
       this.store.dispatch(setToken({token: cachedState.bearerToken}));
+      this.userState = cachedState
       
       return of(true);
     } catch (error) {
