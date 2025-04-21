@@ -1,18 +1,37 @@
-<div class="m-4 grid h-full grid-cols-12"> 
-    <div class="col-span-12">
-        @if (!showRanking && !isLoading) {
-            @if (groups.length>1) {
-                <app-gameplan-s-gf-t [regularMatches]="regularMatches" [roundOfSixteenMatches]="roundOfsixteen" [quarterFinalMatches]="quaterFinals" [semiFinalMatches]="semiFinals" [semiFinalMatches]="semiFinals" [finalMatches]="final" [groups]="groups"></app-gameplan-s-gf-t>
-            } @else if (groups.length===1) {
-                <app-gameplan-o-gf-t [regularMatches]="regularMatches[0]" [finalMatches]="final" [groups]="groups"></app-gameplan-o-gf-t>
-            } @else {
-                <div class="flex flex-col items-center justify-center h-full">
-                    <p>Es ist derzeit kein Spiel aktiv</p>
+<div class="m-4">
+    <p-card>
+        <ng-template #title>
+            <div class="flex flex-row justify-between items-center">
+                <p>Spielplan</p>
+                <div class="flex flex-row gap-2 items-center">
+                    <p>Tabellenansicht</p>
+                    <p-togglebutton [(ngModel)]="toggleButtonChecked" onLabel="On" offLabel="Off"></p-togglebutton>
                 </div>
-            }
-        }
-        <ng-container *ngIf="showRanking">
-            <app-ranking [teams]="getBestEightTeams()"></app-ranking>
-        </ng-container>
-    </div>
+            </div>
+        </ng-template>
+    </p-card>
 </div>
+@if (!toggleButtonChecked) {
+    <div class="m-4 grid h-full grid-cols-12"> 
+        <div class="col-span-12">
+            @if (!showRanking && !isLoading) {
+                @if (groups.length>1) {
+                    <app-gameplan-s-gf-t [regularMatches]="regularMatches" [roundOfSixteenMatches]="roundOfsixteen" [quarterFinalMatches]="quaterFinals" [semiFinalMatches]="semiFinals" [semiFinalMatches]="semiFinals" [finalMatches]="final" [groups]="groups"></app-gameplan-s-gf-t>
+                } @else if (groups.length===1) {
+                    <app-gameplan-o-gf-t [regularMatches]="regularMatches[0]" [finalMatches]="final" [groups]="groups"></app-gameplan-o-gf-t>
+                } @else {
+                    <div class="flex flex-col items-center justify-center h-full">
+                        <p>Es ist derzeit kein Spiel aktiv</p>
+                    </div>
+                }
+            }
+            <!-- <ng-container *ngIf="showRanking">
+                <app-ranking [teams]="getBestEightTeams()"></app-ranking>
+            </ng-container> -->
+        </div>
+    </div>
+} @else {
+    <div class="m-4 h-full">
+        <app-table-view [matches]="matches"></app-table-view>
+    </div>
+}

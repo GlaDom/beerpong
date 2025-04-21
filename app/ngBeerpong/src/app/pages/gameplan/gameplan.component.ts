@@ -15,6 +15,10 @@ import { RankingComponent } from '../../components/ranking/ranking.component';
 import Team from '../../api/team.interface';
 import { GameplanOGfTComponent } from '../../components/gameplan-components/gameplan-o-gf-t/gameplan-o-gf-t.component';
 import { GameplanSGfTComponent } from "../../components/gameplan-components/gameplan-s-gf-t/gameplan-s-gf-t.component";
+import { TableViewComponent } from '../../components/table-view/table-view.component';
+import { CardModule } from 'primeng/card';
+import { ToggleButtonModule } from 'primeng/togglebutton';
+import { FormsModule } from '@angular/forms';
 
 @Component({
     selector: 'app-gameplan',
@@ -24,7 +28,11 @@ import { GameplanSGfTComponent } from "../../components/gameplan-components/game
         FieldsetModule,
         RankingComponent,
         GameplanOGfTComponent,
-        GameplanSGfTComponent
+        GameplanSGfTComponent,
+        TableViewComponent,
+        CardModule,
+        ToggleButtonModule,
+        FormsModule
     ],
     templateUrl: './gameplan.component.html',
     styleUrl: './gameplan.component.css'
@@ -40,8 +48,9 @@ export class GameplanComponent implements OnInit {
   semiFinals: Match[] = [];
   final: Match[] = [];
 
-  isLoading: boolean = true;
-  showRanking: boolean = false;
+  public toggleButtonChecked: false;
+  public isLoading: boolean = true;
+  public showRanking: boolean = false;
 
   constructor(
     private configService: ConfigurationService,
