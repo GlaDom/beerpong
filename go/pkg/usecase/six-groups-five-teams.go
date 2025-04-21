@@ -10,7 +10,7 @@ import (
 )
 
 type IGamerepo interface {
-	GetGame() (*models.GameResponse, error)
+	GetGameBySub(string) (*models.GameResponse, error)
 	GetGameByID(string) (*models.Game, error)
 	CreateGame(*models.NewGame) error
 	GetTeamsByGameID(int) ([]models.Team, error)

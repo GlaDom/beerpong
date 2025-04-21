@@ -40,9 +40,9 @@ func (gr *Gamerepo) CreateMatches(matches []*models.Match) error {
 	return nil
 }
 
-func (gr *Gamerepo) GetGame() (*models.GameResponse, error) {
+func (gr *Gamerepo) GetGameBySub(sub string) (*models.GameResponse, error) {
 	retval := &models.GameResponse{}
-	if tx := gr.db.Where("is_finished=false").Preload("Teams").First(&retval.Game); tx.Error != nil {
+	if tx := gr.db.Where("is_finished=false and user_sub=?", sub).Preload("Teams").First(&retval.Game); tx.Error != nil {
 		if tx.Error == gorm.ErrRecordNotFound {
 			return retval, fmt.Errorf("no active game found")
 		}
