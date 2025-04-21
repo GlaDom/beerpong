@@ -45,7 +45,7 @@ func TestSortTeamsById(t *testing.T) {
 
 type MockGameRepo struct{}
 
-func (mr *MockGameRepo) GetGame() (*models.GameResponse, error) {
+func (mr *MockGameRepo) GetGameBySub(string) (*models.GameResponse, error) {
 	return &models.GameResponse{}, nil
 }
 func (mr *MockGameRepo) GetGameByID(string) (*models.Game, error) {

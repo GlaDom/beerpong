@@ -16,8 +16,8 @@ func NewGeneral(gr IGamerepo) *General {
 	}
 }
 
-func (g *General) GetGame() (*models.GameResponse, error) {
-	return g.GameRepo.GetGame()
+func (g *General) GetGameBySub(sub string) (*models.GameResponse, error) {
+	return g.GameRepo.GetGameBySub(sub)
 }
 
 func (g *General) GetTeamsByGameID(gameID int) ([]models.Team, error) {

@@ -73,21 +73,42 @@ export class ModeOGfTComponent implements OnInit {
   }
 
   getRanking(): Team[] {
-    let retval: Team[] = [];
-    let winner: Team[] = [];
-    if(this.finalMatches[0]?.points_away> this.finalMatches[0]?.points_home) {
-      winner = this.getTeamsByName([this.finalMatches[0].away_team])
-      retval.push(...winner)
-    } else if(this.finalMatches[0]?.points_home > this.finalMatches[0]?.points_away) {
-      winner = this.getTeamsByName([this.finalMatches[0].home_team])
-      retval.push(...winner)
-    }
-    let placeTwoToFive = this.groups[0].teams?.filter(t => t.team_name !== winner[0]?.team_name)
-    console.log(winner)
-    console.log(placeTwoToFive)
-    placeTwoToFive = this.configService.sortTeamsbyDifference(placeTwoToFive)
-    retval.push(...placeTwoToFive.reverse())
-    return retval
+    let allTeams: Team[] = [];
+    let rankedTeams: Team[] = [];
+
+    // Alle Teams aus den Gruppen sammeln
+    this.groups.forEach(group => {
+        allTeams.push(...group.teams);
+    });
+
+    // Prüfen, ob Spiele in den verschiedenen Turnierphasen gespielt wurden
+    const finalsPlayed = this.finalMatches.some(match => match.points_home > 0 || match.points_away > 0);
+
+    // Wenn Spiele gespielt wurden, sortiere die Teams entsprechend der Turnierphase
+    const eliminatedTeams = allTeams.filter(team => 
+        !this.finalMatches.some(match => match.home_team === team.team_name || match.away_team === team.team_name)
+    );
+
+    // Sortiere ausgeschiedene Teams
+    const sortedEliminatedTeams = this.configService.sortTeamsByPointsAndCupDifference(eliminatedTeams);
+
+    // Gewinner und Verlierer der Finalspiele bestimmen (falls gespielt)
+    const finalWinners = finalsPlayed
+        ? this.getTeamsByName(this.finalMatches.map(match => match.points_home > match.points_away ? match.home_team : match.away_team))
+        : [];
+    const finalLosers = finalsPlayed
+        ? this.getTeamsByName(this.finalMatches.map(match => match.points_home > match.points_away ? match.away_team : match.home_team))
+        : [];
+
+    // Rangliste zusammenstellen
+    rankedTeams = [
+        ...finalWinners, // Platz 1
+        ...finalLosers,  // Platz 2
+        ...sortedEliminatedTeams // Platz 3-5
+    ];
+    
+
+    return rankedTeams;
   }
 
   backToAdminSpace(): void {

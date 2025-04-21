@@ -27,6 +27,7 @@ export class LandingPageComponent implements OnInit {
   }
 
   login(): void {
-    this.router.navigate(['/home']);
+    console.log('Routing to /home');
+    this.router.navigate(['/home'], { skipLocationChange: false });
   }
 }

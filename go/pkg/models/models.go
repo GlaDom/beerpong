@@ -5,6 +5,7 @@ import "time"
 // Game repräsentiert die Spiele-Tabelle
 type Game struct {
 	ID            int           `json:"id" gorm:"<-:create;primaryKey;autoIncrement"`
+	UserSub       string        `json:"user_sub"`
 	Mode          int           `json:"mode"`
 	AmountOfTeams int           `json:"amount_of_teams"`
 	IsFinished    bool          `json:"is_finished"`

@@ -1,5 +1,6 @@
 CREATE TABLE games (
   id SERIAL PRIMARY KEY,
+  user_sub VARCHAR(255),
   mode INTEGER,
   amount_of_teams INTEGER,
   is_finished BOOLEAN,

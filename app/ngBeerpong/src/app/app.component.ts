@@ -5,7 +5,7 @@ import { ButtonModule } from 'primeng/button';
 import { DividerModule } from 'primeng/divider';
 import { MenubarModule } from 'primeng/menubar';
 import { TieredMenuModule } from 'primeng/tieredmenu';
-import { RouterModule, RouterOutlet } from '@angular/router';
+import { Router, RouterModule, RouterOutlet } from '@angular/router';
 import { Observable } from 'rxjs';
 import { BeerpongState } from './store/beerpong/game.state';
 import { Store } from '@ngrx/store';
@@ -26,22 +26,22 @@ import { FormsModule } from '@angular/forms';
     styleUrl: './app.component.css',
     providers: [],
     imports: [
-        AvatarModule,
-        ButtonModule,
-        DividerModule,
-        MenubarModule,
-        TieredMenuModule,
-        RouterOutlet,
-        TabMenuModule,
-        NgIf,
-        LandingPageComponent,
-        RouterModule,
-        DrawerModule,
-        ToggleSwitchModule,
-        FormsModule
-    ]
+    AvatarModule,
+    ButtonModule,
+    DividerModule,
+    MenubarModule,
+    TieredMenuModule,
+    RouterOutlet,
+    TabMenuModule,
+    NgIf,
+    RouterModule,
+    DrawerModule,
+    ToggleSwitchModule,
+    FormsModule
+]
 })
 export class AppComponent implements OnInit {
+  public emptyUrlPath = true;
   public tieredItems: MenuItem[] | undefined = []; 
   public items: MenuItem[] | undefined = [];
   public title = 'SKBeerpong';
@@ -56,12 +56,16 @@ export class AppComponent implements OnInit {
     private beerpongStore: Store<BeerpongState>,
     private userStore: Store<UserState>,
     private authService: AuthService,
+    private router: Router,
   ) {
     this.user$ = this.userStore.select(selectUserState)
+    if (this.router.url === '/' || this.router.url === '') {
+      this.emptyUrlPath = true;
+    }
   }
 
   ngOnInit(): void {
-    this.beerpongStore.dispatch(loadGame())
+    console.log('app component hit');
     this.user$?.subscribe((user) => {
       if(user.userDetails) {
         this.avatarUrl = user.userDetails.picture!;
