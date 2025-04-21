@@ -80,7 +80,6 @@ func (h *beerpongGameHandler) CreateGame(c *gin.Context) {
 //		@Failure 		404 {object} map[string]any
 //		@Router			/game [get]
 func (h *beerpongGameHandler) GetGame(c *gin.Context) {
-	// id := c.Param("id")
 
 	game, err := h.General.GetGame()
 	if err != nil {
