@@ -5,7 +5,7 @@
                 <div class="flex flex-row justify-between items-center">
                     <p>Spielplan</p>
                     <div class="flex flex-row gap-2 items-center">
-                        <p-button [pTooltip]="tooltipContent" icon="pi pi-table" (onClick)="toggleShowTableView()"/>
+                        <p-button [pTooltip]="tooltipContent" tooltipPosition="left" icon="pi pi-table" (onClick)="toggleShowTableView()"/>
                         <ng-template #tooltipContent>
                             <div class="flex items-center">
                                 <span> Tabellenansicht </span>
@@ -37,7 +37,7 @@
         </div>
     } @else {
         <div class="m-4">
-            <app-table-view [matches]="regularMatches[0]" [finalMatches]="final"></app-table-view>
+            <app-table-view [regularMatches]="regularMatches" [roundOfSixteenMatches]="roundOfsixteen" [quarterFinalMatches]="quaterFinals" [semiFinalMatches]="semiFinals" [finalMatches]="final"></app-table-view>
         </div>
     }
 </div>

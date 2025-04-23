@@ -18,7 +18,7 @@
                             <p-tag value="{{match?.start_time | date: 'hh:mm'}}-{{match?.end_time | date: 'hh:mm'}}" severity="secondary"></p-tag>
                         </td>
                         <td>
-                            <p-tag value="Tisch {{match.group_number}}" severity="success"></p-tag>
+                            <p-tag value="Tisch {{match.group_number}}" [style]="getGroupNameStyle(match.group_number)"></p-tag>
                         </td>
                         <td>{{match.referee}}</td>
                         <td>{{match.home_team}}</td>
@@ -62,7 +62,7 @@
                             <p-tag value="{{match?.start_time | date: 'hh:mm'}}-{{match?.end_time | date: 'hh:mm'}}" severity="secondary"></p-tag>
                         </td>
                         <td>
-                            <p-tag value="Tisch {{match.group_number}}" severity="success"></p-tag>
+                            <p-tag value="Tisch {{match.group_number}}" [style]="getGroupNameStyle(match.group_number)"></p-tag>
                         </td>
                         <td>{{match.referee}}</td>
                         <td>{{match.home_team}}</td>
@@ -106,7 +106,7 @@
                             <p-tag value="{{match?.start_time | date: 'hh:mm'}}-{{match?.end_time | date: 'hh:mm'}}" severity="secondary"></p-tag>
                         </td>
                         <td>
-                            <p-tag value="Tisch {{match.group_number}}" severity="success"></p-tag>
+                            <p-tag value="Tisch {{match.group_number}}" [style]="getGroupNameStyle(match.group_number)"></p-tag>
                         </td>
                         <td>{{match.referee}}</td>
                         <td>{{match.home_team}}</td>
@@ -150,7 +150,7 @@
                             <p-tag value="{{match?.start_time | date: 'hh:mm'}}-{{match?.end_time | date: 'hh:mm'}}" severity="secondary"></p-tag>
                         </td>
                         <td>
-                            <p-tag value="Tisch {{match.group_number}}" severity="success"></p-tag>
+                            <p-tag value="Tisch {{match.group_number}}" [style]="getGroupNameStyle(match.group_number)"></p-tag>
                         </td>
                         <td>{{match.referee}}</td>
                         <td>{{match.home_team}}</td>
@@ -194,7 +194,7 @@
                             <p-tag value="{{match?.start_time | date: 'hh:mm'}}-{{match?.end_time | date: 'hh:mm'}}" severity="secondary"></p-tag>
                         </td>
                         <td>
-                            <p-tag value="Tisch {{match.group_number}}" severity="success"></p-tag>
+                            <p-tag value="Tisch {{match.group_number}}" [style]="getGroupNameStyle(match.group_number)"></p-tag>
                         </td>
                         <td>{{match.referee}}</td>
                         <td>{{match.home_team}}</td>
