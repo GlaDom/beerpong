@@ -1,40 +1,222 @@
-<p-table [value]="matches" stripedRows [tableStyle]="{'min-width': '50rem'}">
-    <ng-template #header>
-        <tr>
-            <th>Uhrzeit</th>
-            <th>Tisch</th>
-            <th>Schiedsrichter</th>
-            <th>Heim</th>
-            <th>Gast</th>
-            <th>Ergebnis</th>
-        </tr>
-    </ng-template>
-    <ng-template #body let-match>
-        <tr>
-            <td>
-                <p-tag value="{{match?.start_time | date: 'hh:mm'}}-{{match?.end_time | date: 'hh:mm'}}" severity="secondary"></p-tag>
-            </td>
-            <td>
-                <p-tag value="Tisch {{match.group_number}}" severity="success"></p-tag>
-            </td>
-            <td>{{match.referee}}</td>
-            <td>{{match.home_team}}</td>
-            <td>{{match.away_team}}</td>
-            <td>
-                <div class="flex flex-row mt-2 mb-2">
-                    <div class="flex flex-row justify-between">
-                        <div class="rounded-sm w-7 flex flex-row-reverse px-1 {{getColor(match?.points_home, match?.points_away, 'home')}}">
-                            <p>{{match?.points_home}}</p>
-                        </div>
-                    </div>
-                    <div>:</div>
-                    <div class="flex flex-row justify-between">
-                        <div class="rounded-sm w-7 flex flex-row-reverse px-1 {{getColor(match?.points_home, match?.points_away, 'away')}}">
-                            <p>{{match?.points_away}}</p>
-                        </div>
-                    </div>
-                </div>
-            </td>
-        </tr>
-    </ng-template>
-</p-table>
+<div class="flex flex-col gap-4">
+    <ng-container *ngIf="matches.length > 0">
+        <p-fieldset legend="Regulaere Spiele">
+            <p-table [value]="matches" stripedRows [tableStyle]="{'min-width': '50rem'}">
+                <ng-template #header>
+                    <tr>
+                        <th>Uhrzeit</th>
+                        <th>Tisch</th>
+                        <th>Schiedsrichter</th>
+                        <th>Heim</th>
+                        <th>Gast</th>
+                        <th>Ergebnis</th>
+                    </tr>
+                </ng-template>
+                <ng-template #body let-match>
+                    <tr>
+                        <td>
+                            <p-tag value="{{match?.start_time | date: 'hh:mm'}}-{{match?.end_time | date: 'hh:mm'}}" severity="secondary"></p-tag>
+                        </td>
+                        <td>
+                            <p-tag value="Tisch {{match.group_number}}" severity="success"></p-tag>
+                        </td>
+                        <td>{{match.referee}}</td>
+                        <td>{{match.home_team}}</td>
+                        <td>{{match.away_team}}</td>
+                        <td>
+                            <div class="flex flex-row mt-2 mb-2">
+                                <div class="flex flex-row justify-between">
+                                    <div class="rounded-sm w-7 flex flex-row-reverse px-1 {{getColor(match?.points_home, match?.points_away, 'home')}}">
+                                        <p>{{match?.points_home}}</p>
+                                    </div>
+                                </div>
+                                <div>:</div>
+                                <div class="flex flex-row justify-between">
+                                    <div class="rounded-sm w-7 flex flex-row-reverse px-1 {{getColor(match?.points_home, match?.points_away, 'away')}}">
+                                        <p>{{match?.points_away}}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </p-fieldset>
+    </ng-container>
+    <ng-container *ngIf="roundOfSixteenMatches.length > 0">
+        <p-fieldset legend="Achtelfinale">
+            <p-table [value]="roundOfSixteenMatches" stripedRows [tableStyle]="{'min-width': '50rem'}">
+                <ng-template #header>
+                    <tr>
+                        <th>Uhrzeit</th>
+                        <th>Tisch</th>
+                        <th>Schiedsrichter</th>
+                        <th>Heim</th>
+                        <th>Gast</th>
+                        <th>Ergebnis</th>
+                    </tr>
+                </ng-template>
+                <ng-template #body let-match>
+                    <tr>
+                        <td>
+                            <p-tag value="{{match?.start_time | date: 'hh:mm'}}-{{match?.end_time | date: 'hh:mm'}}" severity="secondary"></p-tag>
+                        </td>
+                        <td>
+                            <p-tag value="Tisch {{match.group_number}}" severity="success"></p-tag>
+                        </td>
+                        <td>{{match.referee}}</td>
+                        <td>{{match.home_team}}</td>
+                        <td>{{match.away_team}}</td>
+                        <td>
+                            <div class="flex flex-row mt-2 mb-2">
+                                <div class="flex flex-row justify-between">
+                                    <div class="rounded-sm w-7 flex flex-row-reverse px-1 {{getColor(match?.points_home, match?.points_away, 'home')}}">
+                                        <p>{{match?.points_home}}</p>
+                                    </div>
+                                </div>
+                                <div>:</div>
+                                <div class="flex flex-row justify-between">
+                                    <div class="rounded-sm w-7 flex flex-row-reverse px-1 {{getColor(match?.points_home, match?.points_away, 'away')}}">
+                                        <p>{{match?.points_away}}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </p-fieldset>
+    </ng-container>
+    <ng-container *ngIf="quarterFinalMatches.length > 0">
+        <p-fieldset legend="Viertelfinals">
+            <p-table [value]="quarterFinalMatches" stripedRows [tableStyle]="{'min-width': '50rem'}">
+                <ng-template #header>
+                    <tr>
+                        <th>Uhrzeit</th>
+                        <th>Tisch</th>
+                        <th>Schiedsrichter</th>
+                        <th>Heim</th>
+                        <th>Gast</th>
+                        <th>Ergebnis</th>
+                    </tr>
+                </ng-template>
+                <ng-template #body let-match>
+                    <tr>
+                        <td>
+                            <p-tag value="{{match?.start_time | date: 'hh:mm'}}-{{match?.end_time | date: 'hh:mm'}}" severity="secondary"></p-tag>
+                        </td>
+                        <td>
+                            <p-tag value="Tisch {{match.group_number}}" severity="success"></p-tag>
+                        </td>
+                        <td>{{match.referee}}</td>
+                        <td>{{match.home_team}}</td>
+                        <td>{{match.away_team}}</td>
+                        <td>
+                            <div class="flex flex-row mt-2 mb-2">
+                                <div class="flex flex-row justify-between">
+                                    <div class="rounded-sm w-7 flex flex-row-reverse px-1 {{getColor(match?.points_home, match?.points_away, 'home')}}">
+                                        <p>{{match?.points_home}}</p>
+                                    </div>
+                                </div>
+                                <div>:</div>
+                                <div class="flex flex-row justify-between">
+                                    <div class="rounded-sm w-7 flex flex-row-reverse px-1 {{getColor(match?.points_home, match?.points_away, 'away')}}">
+                                        <p>{{match?.points_away}}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </p-fieldset>
+    </ng-container>
+    <ng-container *ngIf="semiFinalMatches.length > 0">
+        <p-fieldset legend="Halbfinals">
+            <p-table [value]="semiFinalMatches" stripedRows [tableStyle]="{'min-width': '50rem'}">
+                <ng-template #header>
+                    <tr>
+                        <th>Uhrzeit</th>
+                        <th>Tisch</th>
+                        <th>Schiedsrichter</th>
+                        <th>Heim</th>
+                        <th>Gast</th>
+                        <th>Ergebnis</th>
+                    </tr>
+                </ng-template>
+                <ng-template #body let-match>
+                    <tr>
+                        <td>
+                            <p-tag value="{{match?.start_time | date: 'hh:mm'}}-{{match?.end_time | date: 'hh:mm'}}" severity="secondary"></p-tag>
+                        </td>
+                        <td>
+                            <p-tag value="Tisch {{match.group_number}}" severity="success"></p-tag>
+                        </td>
+                        <td>{{match.referee}}</td>
+                        <td>{{match.home_team}}</td>
+                        <td>{{match.away_team}}</td>
+                        <td>
+                            <div class="flex flex-row mt-2 mb-2">
+                                <div class="flex flex-row justify-between">
+                                    <div class="rounded-sm w-7 flex flex-row-reverse px-1 {{getColor(match?.points_home, match?.points_away, 'home')}}">
+                                        <p>{{match?.points_home}}</p>
+                                    </div>
+                                </div>
+                                <div>:</div>
+                                <div class="flex flex-row justify-between">
+                                    <div class="rounded-sm w-7 flex flex-row-reverse px-1 {{getColor(match?.points_home, match?.points_away, 'away')}}">
+                                        <p>{{match?.points_away}}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </p-fieldset>
+    </ng-container>
+    <ng-container *ngIf="finalMatches.length > 0">
+        <p-fieldset legend="Finale">
+            <p-table [value]="finalMatches" stripedRows [tableStyle]="{'min-width': '50rem'}">
+                <ng-template #header>
+                    <tr>
+                        <th>Uhrzeit</th>
+                        <th>Tisch</th>
+                        <th>Schiedsrichter</th>
+                        <th>Heim</th>
+                        <th>Gast</th>
+                        <th>Ergebnis</th>
+                    </tr>
+                </ng-template>
+                <ng-template #body let-match>
+                    <tr>
+                        <td>
+                            <p-tag value="{{match?.start_time | date: 'hh:mm'}}-{{match?.end_time | date: 'hh:mm'}}" severity="secondary"></p-tag>
+                        </td>
+                        <td>
+                            <p-tag value="Tisch {{match.group_number}}" severity="success"></p-tag>
+                        </td>
+                        <td>{{match.referee}}</td>
+                        <td>{{match.home_team}}</td>
+                        <td>{{match.away_team}}</td>
+                        <td>
+                            <div class="flex flex-row mt-2 mb-2">
+                                <div class="flex flex-row justify-between">
+                                    <div class="rounded-sm w-7 flex flex-row-reverse px-1 {{getColor(match?.points_home, match?.points_away, 'home')}}">
+                                        <p>{{match?.points_home}}</p>
+                                    </div>
+                                </div>
+                                <div>:</div>
+                                <div class="flex flex-row justify-between">
+                                    <div class="rounded-sm w-7 flex flex-row-reverse px-1 {{getColor(match?.points_home, match?.points_away, 'away')}}">
+                                        <p>{{match?.points_away}}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </p-fieldset>
+    </ng-container>
+</div>
