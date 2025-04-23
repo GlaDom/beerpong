@@ -33,6 +33,7 @@ export class TableViewComponent implements OnInit {
   ngOnInit(): void {
     if (this.regularMatches.length > 0) {
       this.matches = this.regularMatches.flat();
+      this.matches = this.sortMatchesByStartTime(this.matches);
     }
   }
 
@@ -72,18 +73,52 @@ export class TableViewComponent implements OnInit {
       default: 
         styleClass = {}
         break;
-    } 
-    // = {
-    //   "A": "bg-blue-400",
-    //   "B": "bg-green-400",
-    //   "C": "bg-yellow-400",
-    //   "D": "bg-red-400",
-    //   "E": "bg-purple-400",
-    //   "F": "bg-pink-400",
-    //   "G": "bg-orange-400",
-    //   "H": "bg-teal-400"
-    // };
+    }
   
     return styleClass;
+  }
+
+  /**
+ * Sortiert ein Array von Match-Objekten nach start_time in aufsteigender Reihenfolge.
+ * Bei gleichen start_time-Werten wird nach group_number sortiert.
+ * Matches ohne start_time werden am Ende einsortiert.
+ * @param matches Array von Match-Objekten
+ * @returns Ein neues sortiertes Array, das Original-Array bleibt unverändert
+ */
+ private sortMatchesByStartTime(matches: Match[]): Match[] {
+    return [...matches].sort((a, b) => {
+      // Wenn beide Matches keine start_time haben, sortiere nach group_number
+      if (!a.start_time && !b.start_time) {
+        return this.compareGroups(a, b);
+      }
+      
+      // Matches ohne start_time kommen ans Ende
+      if (!a.start_time) {
+        return 1;
+      }
+      
+      if (!b.start_time) {
+        return -1;
+      }
+      
+      // Vergleiche start_time
+      const timeComparison = new Date(a.start_time).getTime() - new Date(b.start_time).getTime();
+      
+      // Wenn start_time gleich ist, verwende group_number als sekundäres Sortierkriterium
+      if (timeComparison === 0) {
+        return this.compareGroups(a, b);
+      }
+      
+      return timeComparison;
+    });
+  }
+
+  /**
+   * Hilfsfunktion zum Vergleichen von group_number
+   * Sortiert alphabetisch (A, B, C, ...)
+   */
+  private compareGroups(a: Match, b: Match): number {
+    // Vergleiche group_number lexikographisch
+    return a.group_number.localeCompare(b.group_number);
   }
 }
