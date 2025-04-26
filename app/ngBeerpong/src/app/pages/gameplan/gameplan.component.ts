@@ -16,6 +16,7 @@ import { CardModule } from 'primeng/card';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
+import { loadGame } from '../../store/beerpong/beerpong.actions';
 
 @Component({
     selector: 'app-gameplan',
@@ -53,6 +54,7 @@ export class GameplanComponent implements OnInit {
     private beerpongstore: Store<BeerpongState>
   ){
     this.game$ = this.beerpongstore.select(selectBeerpongState)
+    this.beerpongstore.dispatch(loadGame())
   }
 
   ngOnInit(): void {
