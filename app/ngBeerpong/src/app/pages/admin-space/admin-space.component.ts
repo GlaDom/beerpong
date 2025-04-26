@@ -15,7 +15,7 @@ import { ToastModule } from 'primeng/toast';
 import { ConfirmationService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog'
 import { MessageService } from 'primeng/api';
-import { finishGame, setShowRanking, updateMatchesFinal, updateMatchesQuaterFinals, updateMatchesRoundOfSixteen, updateMatchesSemiFinals } from '../../store/beerpong/beerpong.actions';
+import { finishGame, loadGame, setShowRanking, updateMatchesFinal, updateMatchesQuaterFinals, updateMatchesRoundOfSixteen, updateMatchesSemiFinals } from '../../store/beerpong/beerpong.actions';
 import { BeerpongSetupComponent } from '../../components/beerpong-setup/beerpong-setup.component';
 import { Observable } from 'rxjs';
 import { RankingComponent } from '../../components/ranking/ranking.component';
@@ -70,6 +70,7 @@ export class AdminSpaceComponent implements OnInit {
       private confirmationService: ConfirmationService,
     ) {
       this.game$ = this.beerpongStore.select(selectBeerpongState)
+      this.beerpongStore.dispatch(loadGame())
     }
 
     ngOnInit(): void {

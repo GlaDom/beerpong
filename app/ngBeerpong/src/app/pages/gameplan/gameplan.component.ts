@@ -1,30 +1,35 @@
 import { Component, OnInit } from '@angular/core';
 import { DividerModule } from 'primeng/divider';
-import { GameplanCardComponent } from '../../components/gameplan-card/gameplan-card.component';
-import { GroupCardComponent } from '../../components/group-card/group-card.component';
 import { BeerpongState } from '../../store/beerpong/game.state';
 import { Store } from '@ngrx/store';
 import Match from '../../api/match.interface';
 import { selectBeerpongState } from '../../store/beerpong/beerpong.selectors';
 import { ConfigurationService } from '../../services/configuration.service';
-import { NgFor, NgIf } from '@angular/common';
 import Group from '../../api/group.interface';
 import { FieldsetModule } from 'primeng/fieldset';
 import { Observable } from 'rxjs';
-import { RankingComponent } from '../../components/ranking/ranking.component';
 import Team from '../../api/team.interface';
 import { GameplanOGfTComponent } from '../../components/gameplan-components/gameplan-o-gf-t/gameplan-o-gf-t.component';
 import { GameplanSGfTComponent } from "../../components/gameplan-components/gameplan-s-gf-t/gameplan-s-gf-t.component";
+import { TableViewComponent } from '../../components/table-view/table-view.component';
+import { CardModule } from 'primeng/card';
+import { FormsModule } from '@angular/forms';
+import { ButtonModule } from 'primeng/button';
+import { TooltipModule } from 'primeng/tooltip';
+import { loadGame } from '../../store/beerpong/beerpong.actions';
 
 @Component({
     selector: 'app-gameplan',
     imports: [
         DividerModule,
-        NgIf,
         FieldsetModule,
-        RankingComponent,
         GameplanOGfTComponent,
-        GameplanSGfTComponent
+        GameplanSGfTComponent,
+        TableViewComponent,
+        CardModule,
+        ButtonModule,
+        FormsModule,
+        TooltipModule,
     ],
     templateUrl: './gameplan.component.html',
     styleUrl: './gameplan.component.css'
@@ -40,14 +45,16 @@ export class GameplanComponent implements OnInit {
   semiFinals: Match[] = [];
   final: Match[] = [];
 
-  isLoading: boolean = true;
-  showRanking: boolean = false;
+  public showTableView = false;
+  public isLoading: boolean = true;
+  public showRanking: boolean = false;
 
   constructor(
     private configService: ConfigurationService,
     private beerpongstore: Store<BeerpongState>
   ){
     this.game$ = this.beerpongstore.select(selectBeerpongState)
+    this.beerpongstore.dispatch(loadGame())
   }
 
   ngOnInit(): void {
@@ -70,5 +77,9 @@ export class GameplanComponent implements OnInit {
   getBestEightTeams(): Team[] {
     let retval: Team[] = this.configService.sortTeamsbyPointsAndDifferenze(this.groups);
     return retval
+  }
+
+  public toggleShowTableView() {
+    this.showTableView = !this.showTableView;
   }
 }
