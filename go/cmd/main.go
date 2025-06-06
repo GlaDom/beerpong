@@ -83,6 +83,7 @@ func main() {
 	{
 		v1.POST("/game", beerpongGameHandler.CreateGame)
 		v1.GET("/game", beerpongGameHandler.GetGame)
+		v1.GET("/game/last", beerpongGameHandler.GetLastGame)
 		v1.PUT("/game/:id", beerpongGameHandler.FinishGame)
 		// router.DELETE(apiPrefix+"/games/:id", gameRepo.DeleteGame)
 

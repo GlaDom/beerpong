@@ -54,7 +54,6 @@ export class AuthService {
   }
 
   get authToken(): string {
-    console.log('get authToken', this.userState?.bearerToken);
     return this.userState?.bearerToken || '';
   }
 

@@ -4,6 +4,7 @@ import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
 import Team from '../../api/team.interface';
+import { CommonModule } from '@angular/common';
 
 @Component({
     selector: 'app-ranking',
@@ -11,7 +12,8 @@ import Team from '../../api/team.interface';
         CardModule,
         TableModule,
         ButtonModule,
-        ConfirmPopupModule
+        ConfirmPopupModule,
+        CommonModule
     ],
     templateUrl: './ranking.component.html',
     styleUrl: './ranking.component.css'
@@ -19,6 +21,9 @@ import Team from '../../api/team.interface';
 export class RankingComponent {
   @Input()
   teams: Team[] = [];
+
+  @Input()
+  rankinkSize: number = 5;
 
   constructor() {}
 }

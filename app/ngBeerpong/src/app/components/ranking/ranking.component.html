@@ -1,5 +1,5 @@
 <p-card header="Platzierung">
-    <p-table [value]="teams">
+    <p-table [value]="teams | slice:0:rankinkSize">
         <ng-template pTemplate="header">
             <tr>
                 <th>Nr.</th>

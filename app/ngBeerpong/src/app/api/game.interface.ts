@@ -13,8 +13,8 @@ interface Game {
   start_time?: Date;
   referee: Referee[];
   teams: Team[];
-  updatedAt?: Date;
-  createdAt?: Date;
+  updated_at?: Date;
+  created_at?: Date;
 }
 
 export default Game;

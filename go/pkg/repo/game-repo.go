@@ -52,6 +52,18 @@ func (gr *Gamerepo) GetGameBySub(sub string) (*models.GameResponse, error) {
 	return retval, nil
 }
 
+func (gr *Gamerepo) GetLastGameBySub(sub string) (*models.GameResponse, error) {
+	retval := &models.GameResponse{}
+	if tx := gr.db.Where("user_sub=?", sub).Preload("Teams").Last(&retval.Game); tx.Error != nil {
+		if tx.Error == gorm.ErrRecordNotFound {
+			return retval, fmt.Errorf("no game found")
+		}
+		return retval, tx.Error
+	}
+
+	return retval, nil
+}
+
 func (gr *Gamerepo) GetTeamsByGameID(gameId int) ([]models.Team, error) {
 	var retval []models.Team
 	if tx := gr.db.Where("game_id=?", gameId).Find(&retval); tx.Error != nil {

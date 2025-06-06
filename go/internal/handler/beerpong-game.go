@@ -68,7 +68,13 @@ func (h *beerpongGameHandler) CreateGame(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, game)
+	createdGame, err := h.General.GetGameBySub(game.Game.UserSub)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("failed to handle create game request err: %s", err)})
+		return
+	}
+
+	c.JSON(http.StatusCreated, createdGame)
 }
 
 // GetGame godoc
@@ -112,6 +118,35 @@ func (h *beerpongGameHandler) GetGame(c *gin.Context) {
 		g.Teams = h.General.SortTeamsByPoints(g.Teams)
 	}
 
+	c.JSON(http.StatusOK, game)
+}
+
+func (h *beerpongGameHandler) GetLastGame(c *gin.Context) {
+	// get sub from context
+	sub := requestvalidation.GetClaimString(c, "sub")
+	if sub == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "missing sub"})
+		return
+	}
+
+	game, err := h.General.GetLastGameBySub(sub)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		return
+	}
+	game.Groups = h.General.GetGroups(game.Game.Teams)
+	game.Matches, err = h.General.GetMatchesByGameID(game.Game.ID)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		return
+	}
+
+	game.Matches = h.General.SortMatchesById(game.Matches)
+
+	game.Groups = h.General.SortGroupsByAlphabet(game.Groups)
+	for _, g := range game.Groups {
+		g.Teams = h.General.SortTeamsByPoints(g.Teams)
+	}
 	c.JSON(http.StatusOK, game)
 }
 

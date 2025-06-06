@@ -20,6 +20,10 @@ func (g *General) GetGameBySub(sub string) (*models.GameResponse, error) {
 	return g.GameRepo.GetGameBySub(sub)
 }
 
+func (g *General) GetLastGameBySub(sub string) (*models.GameResponse, error) {
+	return g.GameRepo.GetLastGameBySub(sub)
+}
+
 func (g *General) GetTeamsByGameID(gameID int) ([]models.Team, error) {
 	return g.GameRepo.GetTeamsByGameID(gameID)
 }

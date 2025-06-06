@@ -7,15 +7,21 @@ import Team from "../../api/team.interface";
 import TeamUpdate from "../../api/team-update.interface";
 import Game from "../../api/game.interface";
 import { GameRequest } from "../../api/game-request";
+import { GameState } from "../../models/game-state.model";
 
 
 //CREATE_GAME
 export const createGame = createAction('[Admin-space Component] Create Game', props<{game: GameRequest}>())
-export const createGameSuccess = createAction('[Admin-space Component] Create Game Success', props<{game: BeerpongState}>())
+export const createGameSuccess = createAction('[Admin-space Component] Create Game Success', props<{game: GameState}>())
 //LOAD_GAME
 export const loadGame = createAction('[App Component] Load Game')
-export const loadGameSuccess = createAction('[App Component] Load Game Succes', props<{game: BeerpongState}>())
+export const loadGameSuccess = createAction('[App Component] Load Game Succes', props<{game: GameState}>())
 export const loadGameFailure = createAction('[App Component] Load Game Failure')
+//LOAD_LAST_GAME
+export const loadLastGame = createAction('[Home Component] Load Last Game')
+export const loadLastGameSuccess = createAction('[Home Component] Load Last Game Succes', props<{game: GameState}>())
+export const loadLastGameFailure = createAction('[Home Component] Load Last Game Failure')
+
 //UPDATE_GAME (FINISH_GAME)
 export const updateGame = createAction('[TODO] Update Game')
 //UPDATE_MATCH
