@@ -1,7 +1,5 @@
-<div class="grid h-[calc(100%-66px)] lg:grid-cols-12 md:grid-cols-8 m-4 gap-4"> 
-    <!-- <div class="col-span-10 col-start-2 flex justify-center items-center font-bold text-4xl text-[#6b7280]">
-        <h1>Welcome to SKBeerpong</h1>
-    </div> -->
+<p-confirmDialog/>
+<div class="grid h-[calc(100%-66px)] lg:grid-cols-12 md:grid-cols-8 m-4 gap-4">
     <div class="lg:col-span-5 md:col-span-8 flex flex-col gap-2">
         <!-- <p-panel>
             
@@ -9,13 +7,13 @@
         <p-card>
             <div class="flex flex-row justify-between items-center font-bold text-2xl">
                 <h1>Neues Spiel starten</h1>
-                <p-button icon="pi pi-angle-right"></p-button>
+                <p-button icon="pi pi-angle-right" (click)="newGame('adminspace')"></p-button>
             </div>
         </p-card>
         <p-card>
-            <div class="flex flex-row justify-between items-center font-bold text-2xl">
+            <div class="flex flex-row justify-between items-center font-bold text-2xl" [ngClass]="continueGame()">
                 <h1>Aktuelles Spiel fortsetzen</h1>
-                <p-button icon="pi pi-angle-right"></p-button>
+                <p-button icon="pi pi-angle-right" routerLink="/adminspace"></p-button>
             </div>
         </p-card>
         <p-card>
@@ -29,47 +27,66 @@
         <p-panel>
             <ng-template #header>
                 <div class="font-bold text-2xl w-full">
-                    Ergebnis des letzten Turnieres
+                    <div class="flex flex-row justify-between">
+                        <span>Ergebnis des letzten Turnieres</span>
+                        @if (!lastGame.game.is_finished) {
+                            <div class="flex items-center gap-2 text-lg">
+                                <span class="relative flex h-3 w-3">
+                                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                                    <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+                                </span>
+                                <span>Aktiv</span>
+                            </div>
+                        } @else {
+                            <div class="flex items-center gap-2 text-lg">
+                                <span class="inline-flex rounded-full bg-red-500 h-3 w-3"></span>
+                                <span>Beendet</span>
+                            </div>
+                        }
+                    </div>
                     <hr />
                 </div>
             </ng-template>
             @if (lastGame) {
-                <div class="flex flex-col gap-4">
-                    <div class="flex flex-row justify-between">
-                        <span>Datum</span>
+            <div class="flex flex-col gap-4">
+                <div class="flex flex-row justify-between">
+                    <span>Datum</span>
+                    <p-tag severity="secondary">
                         <span>{{lastGame.game.created_at | date:'dd.MM.yyyy hh:mm'}}</span>
-                    </div>
-                    <div class="flex flex-row justify-between">
-                        <span>Modus</span>
-                        <span>{{lastGame.game.mode}}</span>
-                    </div>
-                    <div class="flex flex-row justify-between">
-                        <span>Schiedsrichter</span>
-                        @if (!lastGame.game.referee) {
-                            <span>Kein Schiedsrichter</span>
-                        } @else {
-                            @for (referee of lastGame.game.referee; track $index) {
-                                <span>{{referee}}</span>
-                            }
+                    </p-tag>
+                </div>
+                <div class="flex flex-row justify-between">
+                    <span>Modus</span>
+                    <p-tag [value]="getGameMode(lastGame.game.mode)" severity="info"></p-tag>
+                </div>
+                <div class="flex flex-row justify-between">
+                    <span>Schiedsrichter</span>
+                    @if (!lastGame.game.referee) {
+                    <p-tag value="Keine Schiedsrichter" severity="info"></p-tag>
+                    } @else {
+                    <div class="flex gap-2">
+                        @for (referee of lastGame.game.referee; track $index) {
+                        <p-tag [value]="referee.name" severity="info"></p-tag>
                         }
                     </div>
-                    <div class="flex flex-row justify-between">
-                        <span>Anzahl Teams</span>
-                        <span>{{lastGame.game.amount_of_teams}}</span>
-                    </div>
+                    }
                 </div>
-                <hr />
+                <div class="flex flex-row justify-between">
+                    <span>Anzahl Teams</span>
+                    <p-tag [value]="lastGame.game.amount_of_teams.toString()" severity="success"></p-tag>
+                </div>
+            </div>
+            <hr />
+            <div>
                 <div>
-                    <div>
-                        <app-ranking [teams]="lastGame.game.teams"></app-ranking>
-                    </div>
+                    <app-ranking [teams]="lastGame.game.teams"></app-ranking>
                 </div>
+            </div>
             } @else {
-                <div class="flex flex-col items-center justify-center h-60">
-                    <p>Es wurde noch kein Turnier gespielt</p>
-                </div>
+            <div class="flex flex-col items-center justify-center h-60">
+                <p>Es wurde noch kein Turnier gespielt</p>
+            </div>
             }
         </p-panel>
     </div>
 </div>
-  

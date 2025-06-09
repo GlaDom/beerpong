@@ -145,7 +145,7 @@
                             <p-panel header="Spieleinstellungen">
                                 <div class="flex flex-col gap-2">
                                     @if (refereeFormGroup.get('checked')?.value) {
-                                        <div class="flex flex-row">
+                                        <div class="flex flex-row justify-between">
                                             <span class="w-1/6">Schiedsrichter: </span>
                                             <span>{{refereeFormGroup.get('referees')?.value}}</span>
                                         </div>
