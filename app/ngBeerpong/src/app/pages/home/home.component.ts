@@ -16,6 +16,8 @@ import { TagModule } from 'primeng/tag';
 import { Router, RouterLink } from '@angular/router';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService, MessageService } from 'primeng/api';
+import Team from '../../api/team.interface';
+import { ConfigurationService } from '../../services/configuration.service';
 
 @Component({
     selector: 'app-home',
@@ -23,7 +25,7 @@ import { ConfirmationService, MessageService } from 'primeng/api';
     styleUrl: './home.component.css',
     standalone: true,
     imports: [PanelModule, CardModule, ButtonModule, RankingComponent, CommonModule, TagModule, RouterLink, ConfirmDialogModule],
-    providers: [ConfirmationService, MessageService]
+    providers: [ConfirmationService, MessageService, ConfigurationService]
 })
 export class HomeComponent {
   // public Variables
@@ -31,16 +33,27 @@ export class HomeComponent {
   public test: any;
 
   public lastGame: GameState;
+  public sortedTeams: Team[] = [];
 
-  constructor(private beerpongStore: Store<BeerpongState>, private confirmationService: ConfirmationService, private messageService: MessageService, private router: Router) {
+  constructor(private beerpongStore: Store<BeerpongState>, 
+    private confirmationService: ConfirmationService, 
+    private messageService: MessageService, 
+    private router: Router,
+    private configService: ConfigurationService) {
     this.lastGame$ = this.beerpongStore.select(selectLastGame);
   }
   
   ngOnInit(): void {
     this.beerpongStore.dispatch(loadLastGame())
     this.lastGame$.subscribe((game: GameState) => {
-      this.lastGame = game;
-      console.log('Last game loaded:', game);
+      if (game.game.user_sub !== '') {
+        this.lastGame = game;
+        if (game && game.game && game.game.teams.length > 0) {
+          this.sortedTeams = Array.from(game.game.teams);
+          this.sortedTeams = this.configService.sortTeamsByPointsAndCupDifference(this.sortedTeams);
+        }
+        console.log('Last game loaded:', game);
+      }
     });
   }
 

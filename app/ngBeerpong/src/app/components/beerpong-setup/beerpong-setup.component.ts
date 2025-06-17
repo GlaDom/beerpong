@@ -93,7 +93,7 @@ export class BeerpongSetupComponent implements OnInit {
       mode: new FormControl<string>('')
     })
     this.refereeFormGroup = new FormGroup({
-      referees: new FormControl<string>(''),
+      referees: new FormControl<string | null>(null),
       gameTime: new FormControl<number | null>(null, [Validators.required]),
       date: new FormControl<Date | null>(null, [Validators.required]),
       checked: new FormControl<boolean>(false)
@@ -158,10 +158,14 @@ export class BeerpongSetupComponent implements OnInit {
     console.log(this.gameForm)
     console.log(this.refereeFormGroup)
     console.log(this.gameMode)
-    let refs: string = this.refereeFormGroup.get('referees')?.value
-    let refsArray = refs.trim().split(',')
-    let referees: Referee[] = [];
-    refsArray.map(r => referees.push({name: r}))
+    let referees: Referee[] | null = null;
+    console.log(this.refereeFormGroup.get('referees')?.value)
+    if (this.refereeFormGroup.get('referees')?.value) {
+      referees = [];
+      let refs: string = this.refereeFormGroup.get('referees')?.value
+      let refsArray = refs.trim().split(',')
+      refsArray.map(r => referees!.push({name: r}))
+    }
     let amountOfTeams: number = 30
     if(this.playMode == 1) {
       amountOfTeams = 5
