@@ -1,0 +1,31 @@
+# --- Build Stage ---
+FROM golang:1.22-alpine AS builder
+
+WORKDIR /app
+
+# Optional: Install git if you use private modules
+RUN apk add --no-cache git
+
+# Copy go mod and sum files
+COPY go.mod go.sum ./
+RUN go mod download
+
+# Copy the rest of the source code
+COPY . .
+
+# Build the Go app (passe ggf. den Pfad zu main.go an)
+RUN go build -o beerpong-server ./cmd/.
+
+# --- Run Stage ---
+FROM alpine:latest
+
+WORKDIR /app
+
+# Copy binary from builder
+COPY --from=builder /app/beerpong-server .
+
+# Expose port (passe ggf. an)
+EXPOSE 8082
+
+# Start the server
+CMD ["./beerpong-server"]

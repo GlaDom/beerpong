@@ -83,12 +83,6 @@ type NewGame struct {
 	Game Game `json:"game"`
 }
 
-type GameResponse struct {
-	Game    Game    `json:"game"`
-	Groups  []Group `json:"groups"`
-	Matches []Match `json:"matches"`
-}
-
 type MatchUpdateRequest struct {
 	Matches []Match `json:"matches"`
 }

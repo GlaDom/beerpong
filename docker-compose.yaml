@@ -22,3 +22,11 @@ services:
       PGADMIN_DEFAULT_EMAIL: beerpong@web.de
       PGADMIN_DEFAULT_PASSWORD: beerpong
 
+  bpbackend:
+    image: gladom95/beeerpong-backend
+    container_name: bpbackend
+    ports:
+      - "8082:8082"
+    volumes:
+      - ./go/cmd/config.json:/app/beerpong-server/
+

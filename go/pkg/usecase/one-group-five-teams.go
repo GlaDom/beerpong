@@ -124,8 +124,13 @@ func (s *OneGroupFiveTeams) generateSchedule(teams []models.Team, gameId int, gr
 		// Zufälliges Spiel auswählen
 		index := rand.Intn(len(allMatches))
 		match := allMatches[index]
-		if len(match.Referee) >= refereeCounter && referees[refereeCounter].Name != "" {
-			match.Referee = referees[refereeCounter].Name
+		// Pruefen, ob referees angegeben wurden und ob der aktuelle refereeCounter innerhalb der Grenzen liegt
+		if referees != nil {
+			if len(match.Referee) >= refereeCounter && referees[refereeCounter].Name != "" {
+				match.Referee = referees[refereeCounter].Name
+			} else {
+				match.Referee = " - "
+			}
 		} else {
 			match.Referee = " - "
 		}

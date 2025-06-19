@@ -6,7 +6,7 @@ import Match from '../../api/match.interface';
 import { NgFor, NgIf } from '@angular/common';
 import { Store } from '@ngrx/store';
 import { BeerpongState, Status } from '../../store/beerpong/game.state';
-import { selectBeerpongState, selectGame } from '../../store/beerpong/beerpong.selectors';
+import { selectBeerpongState } from '../../store/beerpong/beerpong.selectors';
 import { TabViewModule } from 'primeng/tabview';
 import { ButtonModule } from 'primeng/button';
 import { PanelModule } from 'primeng/panel';
@@ -23,6 +23,7 @@ import Group from '../../api/group.interface';
 import Team from '../../api/team.interface';
 import { AuthService } from '../../services/auth/auth.service';
 import { ModeSGfTComponent } from "../../components/admin-space-components/mode-s-gf-t/mode-s-gf-t.component";
+import { GameState } from '../../models/game-state.model';
 
 @Component({
     selector: 'app-game-plan',
@@ -75,11 +76,11 @@ export class AdminSpaceComponent implements OnInit {
 
     ngOnInit(): void {
       this.game$.subscribe((game) => {
-        if(game.matches.length>0) {
-          this.gameMode = game.game.mode
-          this.gameId = game.groups[0].teams[0].game_id
-          this.matches = game.matches
-          this.groups = game.groups
+        if(game.currentGame.matches.length>0) {
+          this.gameMode = game.currentGame.game.mode
+          this.gameId = game.currentGame.groups[0].teams[0].game_id
+          this.matches = game.currentGame.matches
+          this.groups = game.currentGame.groups
           this.showRanking = game.showRanking
           this.regularMatches = this.configService.filterMatches('regular', this.matches)
           this.sortedMatches = this.configService.sortMatches(this.matches)
@@ -90,8 +91,8 @@ export class AdminSpaceComponent implements OnInit {
           
           this.checkForToastMessage(game.toastStatus)
         } else {
-          this.matches = game.matches
-          this.groups = game.groups
+          this.matches = game.currentGame.matches
+          this.groups = game.currentGame.groups
           this.showRanking = game.showRanking
         }
         this.isLoading = game.isLoading

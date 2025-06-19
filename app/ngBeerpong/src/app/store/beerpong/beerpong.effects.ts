@@ -52,6 +52,21 @@ export class BeerpongEffects {
         )
     )
 
+    loadLastGame$ = createEffect(() => this.actions$.pipe(
+        ofType('[Home Component] Load Last Game'),
+        switchMap(() => this.configService.GetLastGame("")
+            .pipe(
+                map(game => {
+                    return ({type: '[Home Component] Load Last Game Succes', game})}),
+                catchError((error, source) => {
+                    console.log(error, 'error load game')
+                    return of({type: '[Home Component] Load Last Game Failure'})
+                })
+            ))
+        )
+    )
+
+
     updateMatch$ = createEffect(() => this.actions$.pipe(
         ofType('[GamePlan Component] Update Match'),
         exhaustMap((req: MatchRequest) => this.configService.UpdateMatch(req.match)

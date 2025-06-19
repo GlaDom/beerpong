@@ -1,6 +1,7 @@
 import Game from "../../api/game.interface";
 import Group from "../../api/group.interface";
 import Match from "../../api/match.interface";
+import { GameState } from "../../models/game-state.model";
 
 export type Status = 'notset' | 
                     'success match updated' | 
@@ -21,9 +22,11 @@ export type Status = 'notset' |
 
 
 export interface BeerpongState {
-    game: Game,
-    groups: Group[],
-    matches: Match[],
+    lastGame: GameState,
+    currentGame: GameState,
+    // game: Game,
+    // groups: Group[],
+    // matches: Match[],
     toastStatus: Status,
     isLoading: boolean,
     showRanking: boolean

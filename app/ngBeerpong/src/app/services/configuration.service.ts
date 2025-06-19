@@ -6,6 +6,7 @@ import TeamUpdate from '../api/team-update.interface';
 import { GameRequest } from '../api/game-request';
 import Group from '../api/group.interface';
 import Team from '../api/team.interface';
+import { GameState } from '../models/game-state.model';
 
 @Injectable({
   providedIn: 'root'
@@ -22,6 +23,10 @@ export class ConfigurationService {
 
   GetGame(url: string) {
     return this.httpClient.get<BeerpongState>(this.url+"/game").pipe()
+  }
+
+  GetLastGame(url: string) {
+    return this.httpClient.get<GameState>(this.url+"/game/last").pipe()
   }
 
   UpdateMatch(match: Match) {

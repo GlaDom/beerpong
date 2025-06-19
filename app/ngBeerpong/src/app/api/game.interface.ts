@@ -11,10 +11,10 @@ interface Game {
   is_finished: boolean;
   game_time: number;
   start_time?: Date;
-  referee: Referee[];
+  referee: Referee[] | null;
   teams: Team[];
-  updatedAt?: Date;
-  createdAt?: Date;
+  updated_at?: Date;
+  created_at?: Date;
 }
 
 export default Game;

@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -32,14 +33,7 @@ import (
 // @BasePath	/api/v1
 // @schemes	http
 func main() {
-	// Auth0 Konfiguration
-	auth0Config := requestvalidation.Auth0Config{
-		Domain:        "dev-nduro5lf8x5ddjgj.eu.auth0.com",
-		Audience:      "https://skbeerpongtst.com/api",
-		JwksURI:       "https://dev-nduro5lf8x5ddjgj.eu.auth0.com/.well-known/jwks.json",
-		TokenLifetime: 1 * time.Hour,
-	}
-
+	// Router initialisieren
 	router := gin.Default()
 	router.Use(func(c *gin.Context) {
 		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
@@ -56,19 +50,21 @@ func main() {
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
-	// Verbindungsinformationen zur PostgreSQL-Datenbank
-	const (
-		host     = "localhost" // Der Name des PostgreSQL-Containers
-		port     = 5433        // Standard-PostgreSQL-Port
-		user     = "admin"     // Ihr Benutzername
-		password = "beerpong"  // Ihr Passwort
-		dbname   = "beerpong"  // Der Name Ihrer Datenbank
-	)
+	// Konfiguration aus json Datei laden
+	var configuration *BeerpongConfig
+	configuration, err := LoadConfig("config.json")
+	if err != nil {
+		fmt.Printf("Fehler beim Laden der Konfiguration: %v\n", err)
+		os.Exit(1)
+	}
 
 	// PostgreSQL-Verbindungsinformationen
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
 		"password=%s dbname=%s sslmode=disable",
-		host, port, user, password, dbname)
+		configuration.DatabaseConfig.Host,
+		configuration.DatabaseConfig.Port,
+		configuration.DatabaseConfig.User, configuration.DatabaseConfig.Password,
+		configuration.DatabaseConfig.Database)
 
 	gameRepo := repo.NewGameRepo(psqlInfo)
 	general := usecase.NewGeneral(gameRepo)
@@ -78,11 +74,13 @@ func main() {
 		*usecase.NewOneGroupFiveTeams(gameRepo, *general),
 	)
 
+	configuration.Auth0Config.TokenLifetime = time.Duration(1 * time.Hour)
 	v1 := router.Group("/api/v1")
-	v1.Use(requestvalidation.NewAuth0Middleware(auth0Config))
+	v1.Use(requestvalidation.NewAuth0Middleware(*configuration.Auth0Config))
 	{
 		v1.POST("/game", beerpongGameHandler.CreateGame)
 		v1.GET("/game", beerpongGameHandler.GetGame)
+		v1.GET("/game/last", beerpongGameHandler.GetLastGame)
 		v1.PUT("/game/:id", beerpongGameHandler.FinishGame)
 		// router.DELETE(apiPrefix+"/games/:id", gameRepo.DeleteGame)
 

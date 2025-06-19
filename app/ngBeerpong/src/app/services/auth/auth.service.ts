@@ -48,13 +48,16 @@ export class AuthService {
           // Im SessionStorage speichern
           sessionStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.userState));
           console.log('Token cached successfully');
+          const redirectUrl = sessionStorage.getItem('redirectUrl');
+          if (redirectUrl) {
+            this.router.navigate([redirectUrl]);
+          }
         })
       }
     });
   }
 
   get authToken(): string {
-    console.log('get authToken', this.userState?.bearerToken);
     return this.userState?.bearerToken || '';
   }
 

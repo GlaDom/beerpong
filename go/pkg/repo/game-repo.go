@@ -42,9 +42,21 @@ func (gr *Gamerepo) CreateMatches(matches []*models.Match) error {
 
 func (gr *Gamerepo) GetGameBySub(sub string) (*models.GameResponse, error) {
 	retval := &models.GameResponse{}
-	if tx := gr.db.Where("is_finished=false and user_sub=?", sub).Preload("Teams").First(&retval.Game); tx.Error != nil {
+	if tx := gr.db.Where("is_finished=false and user_sub=?", sub).Preload("Teams").Preload("Referee").First(&retval.Game); tx.Error != nil {
 		if tx.Error == gorm.ErrRecordNotFound {
 			return retval, fmt.Errorf("no active game found")
+		}
+		return retval, tx.Error
+	}
+
+	return retval, nil
+}
+
+func (gr *Gamerepo) GetLastGameBySub(sub string) (*models.GameResponse, error) {
+	retval := &models.GameResponse{}
+	if tx := gr.db.Where("user_sub=?", sub).Preload("Teams").Preload("Referee").Last(&retval.Game); tx.Error != nil {
+		if tx.Error == gorm.ErrRecordNotFound {
+			return retval, fmt.Errorf("no game found")
 		}
 		return retval, tx.Error
 	}
