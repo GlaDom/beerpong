@@ -25,6 +25,7 @@ import { TooltipModule } from 'primeng/tooltip';
 import { Observable } from 'rxjs';
 import { UserState } from '../../store/user/user.state';
 import { selectUserState } from '../../store/user/user.selectors';
+import { uniqueTeamNamesValidator } from '../../shared/validators/duplicate-team-names-validator';
 
 const GAMEMODE_6_GROUPS = 0;
 const GAMEMODE_1_GROUP = 1;
@@ -49,7 +50,8 @@ const GAMEMODE_1_GROUP = 1;
         PanelModule,
         ToggleSwitchModule,
         DatePipe,
-        TooltipModule
+        TooltipModule,
+        CommonModule
     ]
 })
 export class BeerpongSetupComponent implements OnInit {
@@ -87,7 +89,7 @@ export class BeerpongSetupComponent implements OnInit {
     private userstore: Store<UserState>,
   ) {
     this.gameForm = this.fb.group({
-      groups: this.fb.array([])
+      groups: this.fb.array([], uniqueTeamNamesValidator())
     })
     this.gameMode = new FormGroup({
       mode: new FormControl<string>('')
@@ -126,11 +128,11 @@ export class BeerpongSetupComponent implements OnInit {
         for(let i=0;i<=5;i++) {
           let groupForm = this.fb.group({
             name: new FormControl(this.groupNames[i]),
-            team1: new FormControl('', [Validators.required, Validators.minLength(3)]),
-            team2: new FormControl('', [Validators.required, Validators.minLength(3)]),
-            team3: new FormControl('', [Validators.required, Validators.minLength(3)]),
-            team4: new FormControl('', [Validators.required, Validators.minLength(3)]),
-            team5: new FormControl('', [Validators.required, Validators.minLength(3)])
+            team1: new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(20)]),
+            team2: new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(20)]),
+            team3: new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(20)]),
+            team4: new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(20)]),
+            team5: new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(20)])
           })
     
           this.groups.push(groupForm)
@@ -141,11 +143,11 @@ export class BeerpongSetupComponent implements OnInit {
         this.groups.clear();
         let groupForm = this.fb.group({
           name: new FormControl(this.groupNames[0]),
-          team1: new FormControl('', [Validators.required, Validators.minLength(3)]),
-          team2: new FormControl('', [Validators.required, Validators.minLength(3)]),
-          team3: new FormControl('', [Validators.required, Validators.minLength(3)]),
-          team4: new FormControl('', [Validators.required, Validators.minLength(3)]),
-          team5: new FormControl('', [Validators.required, Validators.minLength(3)])
+          team1: new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(20)]),
+          team2: new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(20)]),
+          team3: new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(20)]),
+          team4: new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(20)]),
+          team5: new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(20)]),
         })
   
         this.groups.push(groupForm)

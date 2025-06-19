@@ -46,11 +46,14 @@
                                     <div class="my-1" [formGroupName]="i">
                                         <p-card header="Gruppe {{groupForm.get('name')?.value}}">
                                             <div class="flex flex-col">
-                                                <input formControlName="team1" pInputText placeholder="Mannschaft 1" class="my-1"/>
-                                                <input formControlName="team2" pInputText placeholder="Mannschaft 2" class="my-1"/>
-                                                <input formControlName="team3" pInputText placeholder="Mannschaft 3" class="my-1"/>
-                                                <input formControlName="team4" pInputText placeholder="Mannschaft 4" class="my-1"/>
-                                                <input formControlName="team5" pInputText placeholder="Mannschaft 5" class="my-1"/>
+                                                <input formControlName="team1" [ngClass]="{'ng-invalid': groupForm.get('team1')?.hasError('notUnique')}" pInputText placeholder="Mannschaft 1" class="my-1"/>
+                                                <div *ngIf="groupForm.get('team1')?.hasError('notUnique')" class="text-red-500 text-xs ml-2">
+                                                   Teamname ist bereits vergeben!
+                                                </div>
+                                                <input formControlName="team2" [ngClass]="{'ng-invalid': groupForm.get('team2')?.hasError('notUnique')}" pInputText placeholder="Mannschaft 2" class="my-1"/>
+                                                <input formControlName="team3" [ngClass]="{'ng-invalid': groupForm.get('team3')?.hasError('notUnique')}" pInputText placeholder="Mannschaft 3" class="my-1"/>
+                                                <input formControlName="team4" [ngClass]="{'ng-invalid': groupForm.get('team4')?.hasError('notUnique')}" pInputText placeholder="Mannschaft 4" class="my-1"/>
+                                                <input formControlName="team5" [ngClass]="{'ng-invalid': groupForm.get('team5')?.hasError('notUnique')}" pInputText placeholder="Mannschaft 5" class="my-1"/>
                                             </div>
                                         </p-card>
                                     </div>
