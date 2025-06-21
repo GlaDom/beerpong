@@ -33,6 +33,7 @@ func NewAuth0Middleware(config Auth0Config) gin.HandlerFunc {
 	}
 
 	return func(c *gin.Context) {
+		c.Next()
 		// Token aus dem Authorization Header extrahieren
 		token, err := extractToken(c.Request)
 		if err != nil {

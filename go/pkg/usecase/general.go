@@ -7,25 +7,25 @@ import (
 )
 
 type General struct {
-	GameRepo IGamerepo
+	GameRepo ITournamentrepo
 }
 
-func NewGeneral(gr IGamerepo) *General {
+func NewGeneral(gr ITournamentrepo) *General {
 	return &General{
 		GameRepo: gr,
 	}
 }
 
-func (g *General) GetGameBySub(sub string) (*models.GameResponse, error) {
-	return g.GameRepo.GetGameBySub(sub)
+func (g *General) GetTournamentBySub(sub string) (*models.TournamentResponse, error) {
+	return g.GameRepo.GetTournamentBySub(sub)
 }
 
-func (g *General) GetLastGameBySub(sub string) (*models.GameResponse, error) {
-	return g.GameRepo.GetLastGameBySub(sub)
+func (g *General) GetLastGameBySub(sub string) (*models.TournamentResponse, error) {
+	return g.GameRepo.GetLastTournamentBySub(sub)
 }
 
 func (g *General) GetTeamsByGameID(gameID int) ([]models.Team, error) {
-	return g.GameRepo.GetTeamsByGameID(gameID)
+	return g.GameRepo.GetTeamsByTournamentID(gameID)
 }
 
 func (g *General) GetGroups(teams []models.Team) []models.Group {
@@ -56,7 +56,7 @@ func (g *General) GetGroups(teams []models.Team) []models.Group {
 }
 
 func (g *General) GetMatchesByGameID(gameID int) ([]models.Match, error) {
-	return g.GameRepo.GetMatchesByGameID(gameID)
+	return g.GameRepo.GetMatchesByTournamentID(gameID)
 }
 
 func (g *General) SortMatchesById(matches []models.Match) []models.Match {
@@ -83,13 +83,13 @@ func (g *General) UpdateMatches(match models.Match) error {
 }
 
 func (g *General) GetTeamByGameID(gameID int, teamName string, groupName string) (models.Team, error) {
-	return g.GameRepo.GetTeamByGameID(gameID, teamName, groupName)
+	return g.GameRepo.GetTeamByTournamentID(gameID, teamName, groupName)
 }
 
 func (g *General) GetUpdatedTeam(currentTeam *models.Team, newTeam *models.TeamUpdate) *models.Team {
 	retval := &models.Team{
 		ID:            currentTeam.ID,
-		GameID:        currentTeam.GameID,
+		GroupID:       currentTeam.GroupID,
 		GroupName:     currentTeam.GroupName,
 		TeamName:      currentTeam.TeamName,
 		Points:        currentTeam.Points + newTeam.PointsToAdd,
@@ -104,17 +104,17 @@ func (g *General) UpdateTeam(team *models.Team) error {
 	return g.GameRepo.UpdateTeam(team)
 }
 
-func (g *General) GetGameByID(gameID string) (*models.Game, error) {
-	return g.GameRepo.GetGameByID(gameID)
+func (g *General) GetGameByID(tournamentID string) (*models.Tournament, error) {
+	return g.GameRepo.GetTournamentByID(tournamentID)
 }
 
-func (ge *General) UpdateGame(g *models.Game) error {
-	return ge.GameRepo.UpdateGame(g)
+func (ge *General) UpdateGame(g *models.Tournament) error {
+	return ge.GameRepo.UpdateTournament(g)
 }
 
 func (g *General) matchesAreFinished(gameId int, matchType string) bool {
 	//get matches
-	matches, err := g.GameRepo.GetMatchesByGameType(gameId, matchType)
+	matches, err := g.GameRepo.GetMatchesByTournamentType(gameId, matchType)
 	if err != nil {
 		return false
 	}

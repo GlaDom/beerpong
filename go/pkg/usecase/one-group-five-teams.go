@@ -10,24 +10,24 @@ import (
 
 type OneGroupFiveTeams struct {
 	General  General
-	GameRepo IGamerepo
+	GameRepo ITournamentrepo
 }
 
-func NewOneGroupFiveTeams(gr IGamerepo, ge General) *OneGroupFiveTeams {
+func NewOneGroupFiveTeams(gr ITournamentrepo, ge General) *OneGroupFiveTeams {
 	return &OneGroupFiveTeams{
 		GameRepo: gr,
 		General:  ge,
 	}
 }
 
-func (s *OneGroupFiveTeams) GenerateGamePlan(game *models.NewGame) error {
+func (s *OneGroupFiveTeams) GenerateGamePlan(tournament *models.NewTournament) error {
 	//save new game
-	err := s.GameRepo.CreateGame(game)
+	err := s.GameRepo.CreateTournament(tournament)
 	if err != nil {
 		return err
 	}
 	//calculate matches for game
-	matches := s.calculateMatchesForGroup(&game.Game)
+	matches := s.calculateMatchesForGroup(&tournament.Tournament)
 	err = s.GameRepo.CreateMatches(matches)
 	if err != nil {
 		return err
@@ -40,13 +40,13 @@ func (s *OneGroupFiveTeams) UpdateMatchesFinal(gameId int) error {
 		return fmt.Errorf("matches not finished yet")
 	}
 	//get teams
-	teams, err := s.GameRepo.GetTeamsByGameID(gameId)
+	teams, err := s.GameRepo.GetTeamsByTournamentID(gameId)
 	if err != nil {
 		return err
 	}
 	teams = s.General.SortTeamsByPoints(teams)
 	//get final
-	final, err := s.GameRepo.GetMatchesByGameType(gameId, "final")
+	final, err := s.GameRepo.GetMatchesByTournamentType(gameId, "final")
 	if err != nil {
 		return err
 	}
@@ -62,30 +62,19 @@ func (s *OneGroupFiveTeams) UpdateMatchesFinal(gameId int) error {
 	return nil
 }
 
-func (s *OneGroupFiveTeams) calculateMatchesForGroup(game *models.Game) []*models.Match {
+func (s *OneGroupFiveTeams) calculateMatchesForGroup(tournament *models.Tournament) []*models.Match {
 	var matches []*models.Match
 
-	//sort teams in groups
-	groups := map[string][]models.Team{}
-	for _, t := range game.Teams {
-		//if no map entry for group create first one
-		if _, ok := groups[t.GroupName]; !ok {
-			groups[t.GroupName] = append(groups[t.GroupName], t)
-			continue
-		}
-		groups[t.GroupName] = append(groups[t.GroupName], t)
-	}
-
 	//set playtime to minutes
-	playTime := game.GameTime * time.Minute
+	playTime := tournament.GameTime * time.Minute
 
-	newmatches := s.generateSchedule(groups["A"], game.ID, "A", game.Referee, game.StartTime, playTime)
+	newmatches := s.generateSchedule(tournament.Groups[0].Teams, tournament.ID, "A", tournament.Referee, tournament.StartTime, playTime)
 	matches = append(matches, newmatches...)
 
-	startOfFinal := game.StartTime.Add(playTime * 10)
+	startOfFinal := tournament.StartTime.Add(playTime * 10)
 
 	//add final
-	matches = append(matches, &models.Match{GameID: game.ID, Type: "final", GroupNumber: "A", HomeTeam: "1. der Gruppe", AwayTeam: "2. der Gruppe", PointsHome: 0, PointsAway: 0, StartTime: startOfFinal, EndTime: startOfFinal.Add((playTime * 2))})
+	matches = append(matches, &models.Match{TournamentID: tournament.ID, Type: "final", GroupNumber: "A", HomeTeam: "1. der Gruppe", AwayTeam: "2. der Gruppe", PointsHome: 0, PointsAway: 0, StartTime: startOfFinal, EndTime: startOfFinal.Add((playTime * 2))})
 
 	return matches
 }
@@ -102,13 +91,13 @@ func (s *OneGroupFiveTeams) generateSchedule(teams []models.Team, gameId int, gr
 	for i := 0; i < numTeams; i++ {
 		for j := i + 1; j < numTeams; j++ {
 			match := &models.Match{
-				GameID:      gameId,
-				Type:        "regular",
-				GroupNumber: group,
-				HomeTeam:    teams[i].TeamName,
-				AwayTeam:    teams[j].TeamName,
-				PointsHome:  0,
-				PointsAway:  0,
+				TournamentID: gameId,
+				Type:         "regular",
+				GroupNumber:  group,
+				HomeTeam:     teams[i].TeamName,
+				AwayTeam:     teams[j].TeamName,
+				PointsHome:   0,
+				PointsAway:   0,
 			}
 			allMatches = append(allMatches, match)
 		}

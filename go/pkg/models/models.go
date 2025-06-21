@@ -3,32 +3,33 @@ package models
 import "time"
 
 // Game repräsentiert die Spiele-Tabelle
-type Game struct {
+type Tournament struct {
 	ID            int           `json:"id" gorm:"<-:create;primaryKey;autoIncrement"`
 	UserSub       string        `json:"user_sub"`
-	Mode          int           `json:"mode"`
 	AmountOfTeams int           `json:"amount_of_teams"`
+	Groups        []Group       `json:"groups" gorm:"foreignKey:tournament_id;references:ID"`
+	Matches       []Match       `json:"matches" gorm:"foreignKey:tournament_id;references:ID"`
 	IsFinished    bool          `json:"is_finished"`
 	GameTime      time.Duration `json:"game_time"`
 	StartTime     time.Time     `json:"start_time"`
-	Referee       []Referee     `json:"referee" gorm:"foreignKey:game_id;references:ID"`
-	Teams         []Team        `json:"teams" gorm:"foreignKey:game_id;references:ID"`
-	UpdatedAt     time.Time     `json:"updated_at" gorm:"<-:create"`
-	CreatedAt     time.Time     `json:"created_at" gorm:"<-:create"`
+	Referee       []Referee     `json:"referee" gorm:"foreignKey:tournament_id;references:ID"`
+	// Teams         []Team        `json:"teams" gorm:"foreignKey:game_id;references:ID"`
+	UpdatedAt time.Time `json:"updated_at" gorm:"autoUpdateTime"`
+	CreatedAt time.Time `json:"created_at" gorm:"<-:create"`
 }
 
 // Referee repraesentiert die Referee-Tabelle
 type Referee struct {
-	ID        int       `gorm:"<-:create;primaryKey;autoIncrement"`
-	GameID    int       `json:"game_id"`
-	Name      string    `json:"name"`
-	CreatedAt time.Time `gorm:"<-:create"`
+	ID           int       `gorm:"<-:create;primaryKey;autoIncrement"`
+	TournamentID int       `json:"tournament_id"`
+	Name         string    `json:"name"`
+	CreatedAt    time.Time `gorm:"<-:create"`
 }
 
 // Team repräsentiert die Teams-Tabelle
 type Team struct {
 	ID            uint      `json:"id" gorm:"<-:create;primaryKey;autoIncrement"`
-	GameID        int       `json:"game_id"`
+	GroupID       int       `json:"group_id"`
 	TeamName      string    `json:"team_name"`
 	GroupName     string    `json:"group_name"`
 	Points        int       `json:"points"`
@@ -60,27 +61,28 @@ func (t Teams) Less(i, j int) bool {
 
 // Match repräsentiert die Matches-Tabelle
 type Match struct {
-	GameID      int       `json:"game_id"`
-	MatchID     int       `json:"match_id" gorm:"<-:create;primaryKey;autoIncrement"`
-	Type        string    `json:"type"`
-	GroupNumber string    `json:"group_number"`
-	HomeTeam    string    `json:"home_team"`
-	AwayTeam    string    `json:"away_team"`
-	PointsHome  int       `json:"points_home"`
-	PointsAway  int       `json:"points_away"`
-	StartTime   time.Time `json:"start_time"`
-	EndTime     time.Time `json:"end_time"`
-	Referee     string    `json:"referee"`
-	UpdatedAt   time.Time `json:"updated_at" gorm:"<-:create"`
-	CreatedAt   time.Time `json:"created_at" gorm:"<-:create"`
+	ID           int       `json:"id" gorm:"<-:create;primaryKey;autoIncrement"`
+	TournamentID int       `json:"tournament_id"`
+	MatchID      int       `json:"match_id" gorm:"<-:create;autoIncrement"`
+	Type         string    `json:"type"`
+	GroupNumber  string    `json:"group_number"`
+	HomeTeam     string    `json:"home_team"`
+	AwayTeam     string    `json:"away_team"`
+	PointsHome   int       `json:"points_home"`
+	PointsAway   int       `json:"points_away"`
+	StartTime    time.Time `json:"start_time"`
+	EndTime      time.Time `json:"end_time"`
+	Referee      string    `json:"referee"`
+	UpdatedAt    time.Time `json:"updated_at" gorm:"autoUpdateTime"`
+	CreatedAt    time.Time `json:"created_at" gorm:"<-:create"`
 }
 
 const (
 	GAME_MODE_30_TEAMS = iota //0
 )
 
-type NewGame struct {
-	Game Game `json:"game"`
+type NewTournament struct {
+	Tournament Tournament `json:"tournament"`
 }
 
 type MatchUpdateRequest struct {
@@ -92,15 +94,18 @@ type TeamUpdateRequest struct {
 }
 
 type TeamUpdate struct {
-	GameID      int    `json:"game_id"`
-	TeamName    string `json:"team_name"`
-	GroupName   string `json:"group_name"`
-	PointsToAdd int    `json:"points_to_add"`
-	CupsHitted  int    `json:"cups_hitted"`
-	CupsGot     int    `json:"cups_got"`
+	TournamentID int    `json:"tournament_id"`
+	TeamName     string `json:"team_name"`
+	GroupName    string `json:"group_name"`
+	PointsToAdd  int    `json:"points_to_add"`
+	CupsHitted   int    `json:"cups_hitted"`
+	CupsGot      int    `json:"cups_got"`
 }
 
 type Group struct {
-	GroupName string `json:"group_name"`
-	Teams     []Team `json:"teams"`
+	GroupID      int       `json:"group_id" gorm:"<-:create;primaryKey;autoIncrement"`
+	TournamentID int       `json:"tournament_id"`
+	GroupName    string    `json:"group_name"`
+	Teams        []Team    `json:"teams"`
+	CreatedAt    time.Time `json:"created_at" gorm:"<-:create"`
 }

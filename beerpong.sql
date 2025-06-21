@@ -1,8 +1,9 @@
-CREATE TABLE games (
+CREATE TABLE tournaments (
   id SERIAL PRIMARY KEY,
   user_sub VARCHAR(255),
-  mode INTEGER,
   amount_of_teams INTEGER,
+  got_stage_inbetween BOOLEAN,
+  got_ko_stage BOOLEAN,
   is_finished BOOLEAN,
   game_time INTEGER,
   updated_at TIMESTAMP,
@@ -10,30 +11,25 @@ CREATE TABLE games (
   start_time TIMESTAMP
 );
 
-CREATE TABLE modes (
-  name VARCHAR(255) PRIMARY KEY,
-  number_of_groups INTEGER,
-  number_of_teams INTEGER,
-  got_round_inbetween BOOLEAN,
-  got_round_of_32 BOOLEAN,
-  got_round_of_16 BOOLEAN,
-  got_quater_final BOOLEAN,
-  got_semi_final BOOLEAN,
-  got_final BOOLEAN,
-  description VARCHAR(255)
-)
+CREATE TABLE groups (
+  group_id SERIAL PRIMARY KEY,
+  tournament_id INTEGER,
+  group_name VARCHAR(255),
+  created_at TIMESTAMP,
+  FOREIGN KEY (tournament_id) REFERENCES tournaments(id)
+);
 
 CREATE TABLE referees (
   id SERIAL PRIMARY KEY,
-  game_id INTEGER,
+  tournament_id INTEGER,
   name VARCHAR(255),
   created_at TIMESTAMP,
-  FOREIGN KEY (game_id) REFERENCES games(id)
+  FOREIGN KEY (tournament_id) REFERENCES games(id)
 )
 
 CREATE TABLE teams (
   id SERIAL PRIMARY KEY,
-  game_id INTEGER,
+  group_id INTEGER,
   team_name VARCHAR(255),
   group_name VARCHAR(255),
   points INTEGER,
@@ -42,11 +38,12 @@ CREATE TABLE teams (
   cups_get INTEGER,
   cup_difference INTEGER,
   created_at TIMESTAMP,
-  FOREIGN KEY (game_id) REFERENCES games(id)
+  FOREIGN KEY (group_id) REFERENCES groups(id)
 );
 
 CREATE TABLE matches (
-  game_id INTEGER,
+  id SERIAL PRIMARY KEY,
+  tournament_id INTEGER,
   match_id SERIAL,
   type VARCHAR(255),
   group_number VARCHAR(255),
@@ -59,7 +56,7 @@ CREATE TABLE matches (
   referee VARCHAR(255),
   created_at TIMESTAMP,
   updated_at TIMESTAMP,
-  FOREIGN KEY (game_id) REFERENCES games(id)
+  FOREIGN KEY (tournament_id) REFERENCES games(id)
 );
 
 INSERT INTO modes (name, number_of_groups, number_of_teams, got_round_inbetween, got_round_of_32, got_round_of_16, got_quater_final, got_semi_final, got_final, description)
