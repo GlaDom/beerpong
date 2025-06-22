@@ -4,18 +4,21 @@ import "time"
 
 // Game repräsentiert die Spiele-Tabelle
 type Tournament struct {
-	ID            int           `json:"id" gorm:"<-:create;primaryKey;autoIncrement"`
-	UserSub       string        `json:"user_sub"`
-	AmountOfTeams int           `json:"amount_of_teams"`
-	Groups        []Group       `json:"groups" gorm:"foreignKey:tournament_id;references:ID"`
-	Matches       []Match       `json:"matches" gorm:"foreignKey:tournament_id;references:ID"`
-	IsFinished    bool          `json:"is_finished"`
-	GameTime      time.Duration `json:"game_time"`
-	StartTime     time.Time     `json:"start_time"`
-	Referee       []Referee     `json:"referee" gorm:"foreignKey:tournament_id;references:ID"`
-	// Teams         []Team        `json:"teams" gorm:"foreignKey:game_id;references:ID"`
-	UpdatedAt time.Time `json:"updated_at" gorm:"autoUpdateTime"`
-	CreatedAt time.Time `json:"created_at" gorm:"<-:create"`
+	ID                     int           `json:"id" gorm:"<-:create;primaryKey;autoIncrement"`
+	UserSub                string        `json:"user_sub"`
+	AmountOfTeams          int           `json:"amount_of_teams"`
+	Groups                 []Group       `json:"groups" gorm:"foreignKey:tournament_id;references:ID"`
+	Matches                []Match       `json:"matches" gorm:"foreignKey:tournament_id;references:ID"`
+	IsFinished             bool          `json:"is_finished"`
+	GotKoStage             bool          `json:"got_ko_stage"`
+	GotStageInbetween      bool          `json:"got_stage_in_between"`
+	NumberOfQualifiedTeams int           `json:"number_of_qualified_teams"`
+	IncludeThirdPlaceMatch bool          `json:"include_third_place_match"`
+	GameTime               time.Duration `json:"game_time"`
+	StartTime              time.Time     `json:"start_time"`
+	Referee                []Referee     `json:"referee" gorm:"foreignKey:tournament_id;references:ID"`
+	UpdatedAt              time.Time     `json:"updated_at" gorm:"autoUpdateTime"`
+	CreatedAt              time.Time     `json:"created_at" gorm:"<-:create"`
 }
 
 // Referee repraesentiert die Referee-Tabelle
@@ -108,4 +111,9 @@ type Group struct {
 	GroupName    string    `json:"group_name"`
 	Teams        []Team    `json:"teams"`
 	CreatedAt    time.Time `json:"created_at" gorm:"<-:create"`
+}
+
+type QualificationInfo struct {
+	GroupName string `json:"group_name"`
+	Position  int    `json:"position"`
 }

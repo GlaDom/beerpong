@@ -19,20 +19,22 @@ type ITournamentService interface {
 }
 
 type beerpongTournamentHandler struct {
-	General        usecase.General
-	SixGFiveT_Mode usecase.SixGroupsFiveTeams
-	OneGFiveT_Mode usecase.OneGroupFiveTeams
-	RoundRobin     *usecase.RoundRobin
-	GameRepo       *repo.Gamerepo
+	General          usecase.General
+	SixGFiveT_Mode   usecase.SixGroupsFiveTeams
+	OneGFiveT_Mode   usecase.OneGroupFiveTeams
+	RoundRobin       *usecase.RoundRobin
+	KoStageGenerator *usecase.KoRoundGenerator
+	GameRepo         *repo.Gamerepo
 }
 
 func NewBeerpongTournamentHandler(g usecase.General, sixGfiveT usecase.SixGroupsFiveTeams, oneGfiveT usecase.OneGroupFiveTeams, r *repo.Gamerepo) *beerpongTournamentHandler {
 	return &beerpongTournamentHandler{
-		SixGFiveT_Mode: sixGfiveT,
-		OneGFiveT_Mode: oneGfiveT,
-		General:        g,
-		RoundRobin:     usecase.NewRoundRobin(),
-		GameRepo:       r,
+		SixGFiveT_Mode:   sixGfiveT,
+		OneGFiveT_Mode:   oneGfiveT,
+		General:          g,
+		RoundRobin:       usecase.NewRoundRobin(),
+		KoStageGenerator: usecase.NewKoRoundGenerator(),
+		GameRepo:         r,
 	}
 }
 
@@ -57,6 +59,22 @@ func (h *beerpongTournamentHandler) CreateGame(c *gin.Context) {
 	for _, g := range tournament.Tournament.Groups {
 		matches := h.RoundRobin.GenerateOptimalRoundRobinTournament(g.Teams, tournament.Tournament.GameTime, g.GroupName, tournament.Tournament.StartTime)
 		tournament.Tournament.Matches = append(tournament.Tournament.Matches, matches...)
+	}
+	// Berechnung der matches, wenn KO-Modus aktiviert ist
+	if tournament.Tournament.GotKoStage {
+		koMatches, err := h.KoStageGenerator.GenerateKOMatches(
+			tournament.Tournament.ID,
+			tournament.Tournament.Groups,
+			tournament.Tournament.NumberOfQualifiedTeams,
+			tournament.Tournament.IncludeThirdPlaceMatch,
+			tournament.Tournament.GameTime,
+			tournament.Tournament.Matches[len(tournament.Tournament.Matches)-1].EndTime,
+		)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("failed to generate KO matches: %s", err)})
+			return
+		}
+		tournament.Tournament.Matches = append(tournament.Tournament.Matches, koMatches...)
 	}
 
 	// save new game

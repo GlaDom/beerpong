@@ -4,6 +4,8 @@ CREATE TABLE tournaments (
   amount_of_teams INTEGER,
   got_stage_inbetween BOOLEAN,
   got_ko_stage BOOLEAN,
+  number_of_qualified_teams INTEGER,
+  include_third_place_match BOOLEAN,
   is_finished BOOLEAN,
   game_time INTEGER,
   updated_at TIMESTAMP,
@@ -24,8 +26,8 @@ CREATE TABLE referees (
   tournament_id INTEGER,
   name VARCHAR(255),
   created_at TIMESTAMP,
-  FOREIGN KEY (tournament_id) REFERENCES games(id)
-)
+  FOREIGN KEY (tournament_id) REFERENCES tournaments(id)
+);
 
 CREATE TABLE teams (
   id SERIAL PRIMARY KEY,
@@ -38,7 +40,7 @@ CREATE TABLE teams (
   cups_get INTEGER,
   cup_difference INTEGER,
   created_at TIMESTAMP,
-  FOREIGN KEY (group_id) REFERENCES groups(id)
+  FOREIGN KEY (group_id) REFERENCES groups(group_id)
 );
 
 CREATE TABLE matches (
@@ -56,11 +58,11 @@ CREATE TABLE matches (
   referee VARCHAR(255),
   created_at TIMESTAMP,
   updated_at TIMESTAMP,
-  FOREIGN KEY (tournament_id) REFERENCES games(id)
+  FOREIGN KEY (tournament_id) REFERENCES tournaments(id)
 );
 
-INSERT INTO modes (name, number_of_groups, number_of_teams, got_round_inbetween, got_round_of_32, got_round_of_16, got_quater_final, got_semi_final, got_final, description)
-values('SIXGROUPSFIVETEAMS', 6, 5, false, true, true, true, true, true, 'sechs gruppen mit je fuenf teams')
+-- INSERT INTO modes (name, number_of_groups, number_of_teams, got_round_inbetween, got_round_of_32, got_round_of_16, got_quater_final, got_semi_final, got_final, description)
+-- values('SIXGROUPSFIVETEAMS', 6, 5, false, true, true, true, true, true, 'sechs gruppen mit je fuenf teams')
 
-INSERT INTO modes (name, number_of_groups, number_of_teams, got_round_inbetween, got_round_of_32, got_round_of_16, got_quater_final, got_semi_final, got_final, description)
-values('ONEGROUPFIVETEAMS', 1, 5, false, false, false, false, false, true, 'eine gruppe mit fuenf teams')
+-- INSERT INTO modes (name, number_of_groups, number_of_teams, got_round_inbetween, got_round_of_32, got_round_of_16, got_quater_final, got_semi_final, got_final, description)
+-- values('ONEGROUPFIVETEAMS', 1, 5, false, false, false, false, false, true, 'eine gruppe mit fuenf teams')
