@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { BeerpongState } from '../store/beerpong/game.state';
-import Match from '../api/match.interface';
-import TeamUpdate from '../api/team-update.interface';
-import { GameRequest } from '../api/game-request';
+import {Match} from '../api/match.interface';
+import {TeamUpdate} from '../api/team-update.interface';
+import { NewTournament } from '../api/game-request';
 import Group from '../api/group.interface';
-import Team from '../api/team.interface';
+import {Team} from '../api/team.interface';
 import { GameState } from '../models/game-state.model';
 
 @Injectable({
@@ -17,8 +17,8 @@ export class ConfigurationService {
 
   constructor(public httpClient: HttpClient) { }
 
-  CreateGame(game: GameRequest) {
-    return this.httpClient.post<GameRequest>(this.url+"/game", game).pipe()
+  CreateGame(game: NewTournament) {
+    return this.httpClient.post<NewTournament>(this.url+"/game", game).pipe()
   }
 
   GetGame(url: string) {

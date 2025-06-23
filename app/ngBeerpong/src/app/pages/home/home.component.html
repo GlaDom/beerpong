@@ -56,10 +56,6 @@
                     </p-tag>
                 </div>
                 <div class="flex flex-row justify-between">
-                    <span>Modus</span>
-                    <p-tag [value]="getGameMode(lastGame.game.mode)" severity="info"></p-tag>
-                </div>
-                <div class="flex flex-row justify-between">
                     <span>Schiedsrichter</span>
                     @if (lastGame.game.referee?.length === 0) {
                     <p-tag value="Keine Schiedsrichter" severity="info"></p-tag>

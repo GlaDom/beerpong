@@ -7,7 +7,6 @@ import { PanelModule } from 'primeng/panel';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { async, Observable } from 'rxjs';
-import Game from '../../api/game.interface';
 import { selectLastGame } from '../../store/beerpong/beerpong.selectors';
 import { RankingComponent } from "../../components/ranking/ranking.component";
 import { GameState } from '../../models/game-state.model';
@@ -16,7 +15,7 @@ import { TagModule } from 'primeng/tag';
 import { Router, RouterLink } from '@angular/router';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import Team from '../../api/team.interface';
+import {Team} from '../../api/team.interface';
 import { ConfigurationService } from '../../services/configuration.service';
 
 @Component({
@@ -48,8 +47,8 @@ export class HomeComponent {
     this.lastGame$.subscribe((game: GameState) => {
       if (game.game.user_sub !== '') {
         this.lastGame = game;
-        if (game && game.game && game.game.teams.length > 0) {
-          this.sortedTeams = Array.from(game.game.teams);
+        if (game && game.game && game.game.groups.length > 0) {
+          this.sortedTeams = Array.from(game.game.groups[0].teams);
           this.sortedTeams = this.configService.sortTeamsByPointsAndCupDifference(this.sortedTeams);
         }
         console.log('Last game loaded:', game);

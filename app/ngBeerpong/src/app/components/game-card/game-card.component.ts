@@ -4,12 +4,12 @@ import { DividerModule } from 'primeng/divider';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { ChipModule } from 'primeng/chip';
 import { ButtonModule } from 'primeng/button';
-import Match from '../../api/match.interface';
+import {Match} from '../../api/match.interface';
 import { FormControl, FormGroup, FormsModule, NgModel, ReactiveFormsModule, Validators } from '@angular/forms';
 import { BeerpongState } from '../../store/beerpong/game.state';
 import { Store } from '@ngrx/store';
 import { setToastStatus, updateMatch, updateTeams } from '../../store/beerpong/beerpong.actions';
-import TeamUpdate from '../../api/team-update.interface';
+import {TeamUpdate} from '../../api/team-update.interface';
 import { TagModule } from 'primeng/tag';
 import { DatePipe } from '@angular/common';
 import { numericValidator } from '../../shared/validators/numeric-validator';
@@ -34,13 +34,14 @@ export class GameCardComponent implements OnInit {
 
   @Input()
   match: Match = {
-    game_id: 0,
+    tournament_id: 0,
     type: '',
     group_number: '',
     home_team: '',
     away_team: '',
     points_home: 0,
     points_away: 0,
+    start_time: '',
   }
 
   points = new FormGroup({
@@ -86,7 +87,7 @@ export class GameCardComponent implements OnInit {
       if(typeof this.points_home?.value === 'number' && typeof this.points_away?.value === 'number') {
         updateTeamPoints = this.match.points_home===0 || this.match.points_away===0
       }
-      if(this.match.group_number != '' && this.match.game_id != 0) {
+      if(this.match.group_number != '' && this.match.tournament_id != 0) {
         let m: Match = this.getCopyOfMatch(this.match)
         if(typeof this.points_home?.value === 'number') {
           m.points_home = this.points_home.value
@@ -111,7 +112,7 @@ export class GameCardComponent implements OnInit {
       pa = this.points_away.value
     }
     let newMatch: Match = {
-      game_id: m.game_id,
+      tournament_id: m.tournament_id,
       match_id: m.match_id,
       type: m.type,
       group_number: m.group_number,
@@ -130,7 +131,7 @@ export class GameCardComponent implements OnInit {
     let retval: TeamUpdate[] = []
     // Auswaertsteam
     let teamOne: TeamUpdate = {
-      game_id: match.game_id,
+      tournament_id: match.tournament_id,
       team_name: match.away_team,
       group_name: match.group_number,
       points_to_add: 0,
@@ -139,7 +140,7 @@ export class GameCardComponent implements OnInit {
     }
     // Heimteam
     let teamTwo: TeamUpdate = {
-      game_id: match.game_id,
+      tournament_id: match.tournament_id,
       team_name: match.home_team,
       group_name: match.group_number,
       points_to_add: 0,

@@ -4,7 +4,7 @@ import { GameplanCardComponent } from "../../gameplan-card/gameplan-card.compone
 import { FieldsetModule } from 'primeng/fieldset';
 import { NgFor, NgIf } from '@angular/common';
 import Group from '../../../api/group.interface';
-import Match from '../../../api/match.interface';
+import {Match} from '../../../api/match.interface';
 
 @Component({
     selector: 'app-gameplan-s-gf-t',

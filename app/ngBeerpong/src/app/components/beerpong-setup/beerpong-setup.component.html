@@ -1,6 +1,6 @@
 <p-stepper [value]="1">
     <p-step-list>
-        <p-step [value]="1">Spielmodus</p-step>
+        <p-step [value]="1">Spieleinstellungen</p-step>
         <p-step [value]="2">Mannschaften</p-step>
         <p-step [value]="3">Zeit & Schiedsrichter</p-step>
         <p-step [value]="4">Spieluebersicht</p-step>
@@ -10,19 +10,52 @@
             <ng-template pTemplate="content" let-activateCallback="activateCallback" let-index="index">
                 <div class="grid grid-cols-8 gap-4">
                     <div class="col-span-4 col-start-2 col-end-7">
-                        <p-panel header="Waehlen Sie einen Spielmodus">
-                            <div class="flex flex-col gap-3">
-                                <form [formGroup]="buttonsFormGroup">
-                                    <div class="flex flex-row gap-2">
-                                        <p-toggleButton formControlName="buttonOne" (onChange)="toggleSelectButton(0)" onLabel="{{buttonLabelSixGroups}}" offLabel="{{buttonLabelSixGroups}}"></p-toggleButton>
-                                        <p-toggleButton formControlName="buttonTwo" (onChange)="toggleSelectButton(1)" onLabel="{{buttonLabelOneGroup}}" offLabel="{{buttonLabelOneGroup}}"></p-toggleButton>
+                        <form [formGroup]="gameForm">
+                            <p-panel header="Spieleinstellungen">
+                                <div class="flex flex-col gap-3 w-full">
+                                    <div class="flex gap-10 justify-between items-center">
+                                        <span>Anzahl an Gruppen:</span>
+                                        <p-select [options]="groupOptions" formControlName="amountOfGroups"></p-select>
                                     </div>
-                                </form>
-                            </div>
-                        </p-panel>
+                                    <div class="flex gap-10 justify-between items-center">
+                                        <span>Anzahl an Teams:</span>
+                                        <p-select [options]="teamOptions" formControlName="amountOfTeams"></p-select>
+                                    </div>
+                                    <div class="flex gap-10 justify-between items-center">
+                                        <span>Anzahl an Qualifizierten Teams:</span>
+                                        <p-select [options]="qualifiedTeamsOptions" formControlName="numberOfQualifiedTeams"></p-select>
+                                    </div>
+                                    <div class="flex gap-10 justify-between items-center">
+                                        <span>K.O. - Runde:</span>
+                                        <p-toggleswitch formControlName="koStage"/>
+                                    </div>
+                                    <div class="flex gap-10 justify-between items-center">
+                                        <span>Spiel um Platz 3:</span>
+                                        <p-toggleswitch formControlName="includeThirdPlaceMatch"/>
+                                    </div>
+                                    <div class="flex gap-10 justify-between items-center">
+                                        <span>Zeit pro Spiel:</span>
+                                        <p-inputNumber placeholder="Spielzeit (in m)" inputId="integeronly" formControlName="gameTime" />
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <span>Schiedsrichter</span>
+                                        <p-toggle-switch formControlName="withReferees"/>
+                                    </div>
+                                    <div class="flex flex-row gap-2">
+                                        @if (gameForm.get('withReferees')?.value) {
+                                            <!-- <h1>Tragen Sie ihre Schiedsrichter ein (Kommasepariert):</h1> -->
+                                            <input placeholder="(Franz, Kevin, ...)" type="text" pInputText  />
+                                        }
+                                    </div>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span>Beginn des Turniers:</span>
+                                    <p-calendar placeholder="yyyy/mm/dd hh:mm" [showTime]="true" hourFormat="24" dateFormat="yy/mm/dd" />
+                                </div>
+                            </p-panel>
+                        </form>
                         <div class="flex pt-4 justify-content-end">
                             <p-button 
-                                [disabled]="playMode === undefined"
                                 label="Next" 
                                 icon="pi pi-arrow-right" 
                                 iconPos="right" 
@@ -83,23 +116,6 @@
                         <p-panel header="Zusatzinformationen">
                             <div class="flex flex-col h-12rem">
                                 <div>
-                                    <form [formGroup]="refereeFormGroup">
-                                        <div class="flex flex-col gap-4">
-                                            <h1>Tragen Sie ihre Spielzeit pro Spiel ein (in Minuten):</h1>
-                                            <p-inputNumber placeholder="Spielzeit" inputId="integeronly" formControlName="gameTime" />
-                                            <h1>Tragen Sie die Startuhrzeit ein:</h1>
-                                            <p-calendar placeholder="yyyy/mm/dd hh:mm" [showTime]="true" hourFormat="24" dateFormat="yy/mm/dd" formControlName="date" />
-                                            <div class="flex flex-col gap-2">
-                                                <div class="flex flex-row gap-2">
-                                                    <p-toggle-switch formControlName="checked"/>
-                                                    <h1>Tragen Sie ihre Schiedsrichter ein (Kommasepariert):</h1>
-                                                </div>
-                                                @if (refereeFormGroup.get('checked')?.value) {
-                                                    <input placeholder="Schiedsrichter" type="text" pInputText formControlName="referees" />
-                                                }
-                                            </div>
-                                        </div>
-                                    </form>
                                 </div>
                             </div>
                         </p-panel>
@@ -109,7 +125,6 @@
                                 icon="pi pi-arrow-left" 
                                 (onClick)="activateCallback(2)" />
                             <p-button 
-                                [disabled]="!refereeFormGroup.valid"
                                 label="Next" 
                                 icon="pi pi-arrow-right" 
                                 iconPos="right" 
@@ -147,19 +162,19 @@
                             </div>
                             <p-panel header="Spieleinstellungen">
                                 <div class="flex flex-col gap-2">
-                                    @if (refereeFormGroup.get('checked')?.value) {
+                                    @if (gameForm.get('withReferees')?.value) {
                                         <div class="flex flex-row justify-between">
                                             <span class="w-1/6">Schiedsrichter: </span>
-                                            <span>{{refereeFormGroup.get('referees')?.value}}</span>
+                                            <span>{{gameForm.get('referees')?.value}}</span>
                                         </div>
                                     }
                                     <div class="flex flex-row justify-between">
                                         <span>Spielzeit: </span>
-                                        <span>{{refereeFormGroup.get('gameTime')?.value}} Minuten</span>
+                                        <span>{{gameForm.get('gameTime')?.value}} Minuten</span>
                                     </div>
                                     <div class="flex flex-row justify-between">
                                         <span>Startzeitpunkt: </span>
-                                        <span>{{refereeFormGroup.get('date')?.value | date:'medium'}}</span>
+                                        <span>{{gameForm.get('startTime')?.value | date:'medium'}}</span>
                                     </div>
                                 </div>
                             </p-panel>

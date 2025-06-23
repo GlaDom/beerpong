@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { GameCardComponent } from '../../components/game-card/game-card.component';
 import { ModeOGfTComponent } from '../../components/admin-space-components/mode-o-gf-t/mode-o-gf-t.component';
 import { ConfigurationService } from '../../services/configuration.service';
-import Match from '../../api/match.interface';
+import {Match} from '../../api/match.interface';
 import { NgFor, NgIf } from '@angular/common';
 import { Store } from '@ngrx/store';
 import { BeerpongState, Status } from '../../store/beerpong/game.state';
@@ -20,7 +20,7 @@ import { BeerpongSetupComponent } from '../../components/beerpong-setup/beerpong
 import { Observable } from 'rxjs';
 import { RankingComponent } from '../../components/ranking/ranking.component';
 import Group from '../../api/group.interface';
-import Team from '../../api/team.interface';
+import {Team} from '../../api/team.interface';
 import { AuthService } from '../../services/auth/auth.service';
 import { ModeSGfTComponent } from "../../components/admin-space-components/mode-s-gf-t/mode-s-gf-t.component";
 import { GameState } from '../../models/game-state.model';
@@ -77,8 +77,7 @@ export class AdminSpaceComponent implements OnInit {
     ngOnInit(): void {
       this.game$.subscribe((game) => {
         if(game.currentGame.matches.length>0) {
-          this.gameMode = game.currentGame.game.mode
-          this.gameId = game.currentGame.groups[0].teams[0].game_id
+          this.gameId = game.currentGame.groups[0].tournament_id
           this.matches = game.currentGame.matches
           this.groups = game.currentGame.groups
           this.showRanking = game.showRanking

@@ -9,12 +9,16 @@ export const initialState: BeerpongState = {
     lastGame: {
         game: {
             user_sub: "",
-            mode: 0,
             amount_of_teams: 0,
             is_finished: false,
             game_time: 0,
             referee: [],
-            teams: []
+            groups: [],
+            got_ko_stage: false,
+            got_stage_in_between: false,
+            number_of_qualified_teams: 0,
+            include_third_place_match: false,
+            start_time: ""
         },
         groups: [],
         matches: []
@@ -22,12 +26,16 @@ export const initialState: BeerpongState = {
     currentGame: {
         game: {
             user_sub: "",
-            mode: 0,
             amount_of_teams: 0,
             is_finished: false,
             game_time: 0,
             referee: [],
-            teams: []
+            groups: [],
+            got_ko_stage: false,
+            got_stage_in_between: false,
+            number_of_qualified_teams: 0,
+            include_third_place_match: false,
+            start_time: ""
         },
         groups: [],
         matches: []
@@ -65,12 +73,16 @@ export const beerpongReducer = createReducer(initialState,
             lastGame: {
                 game: {
                     user_sub: "",
-                    mode: 0,
                     amount_of_teams: 0,
                     is_finished: false,
                     game_time: 0,
                     referee: [],
-                    teams: []
+                    groups: [],
+                    got_ko_stage: false,
+                    got_stage_in_between: false,
+                    number_of_qualified_teams: 0,
+                    include_third_place_match: false,
+                    start_time: ""
                 },
                 groups: [],
                 matches: []
@@ -78,12 +90,16 @@ export const beerpongReducer = createReducer(initialState,
             currentGame: {
                 game: {
                     user_sub: "",
-                    mode: 0,
                     amount_of_teams: 0,
                     is_finished: false,
                     game_time: 0,
                     referee: [],
-                    teams: []
+                    groups: [],
+                    got_ko_stage: false,
+                    got_stage_in_between: false,
+                    number_of_qualified_teams: 0,
+                    include_third_place_match: false,
+                    start_time: ""
                 },
                 groups: [],
                 matches: []

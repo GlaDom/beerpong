@@ -2,16 +2,15 @@
 
 import { createAction, props } from "@ngrx/store";
 import { BeerpongState, Status } from "./game.state";
-import Match from "../../api/match.interface";
-import Team from "../../api/team.interface";
-import TeamUpdate from "../../api/team-update.interface";
-import Game from "../../api/game.interface";
-import { GameRequest } from "../../api/game-request";
+import {Match} from "../../api/match.interface";
+import { Team } from "../../api/team.interface";
+import { TeamUpdate } from "../../api/team-update.interface";
+import { NewTournament } from "../../api/game-request";
 import { GameState } from "../../models/game-state.model";
 
 
 //CREATE_GAME
-export const createGame = createAction('[Admin-space Component] Create Game', props<{game: GameRequest}>())
+export const createGame = createAction('[Admin-space Component] Create Game', props<{game: NewTournament}>())
 export const createGameSuccess = createAction('[Admin-space Component] Create Game Success', props<{game: GameState}>())
 //LOAD_GAME
 export const loadGame = createAction('[App Component] Load Game')

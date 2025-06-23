@@ -2,7 +2,7 @@ import { Component, Input } from '@angular/core';
 import { CardModule } from 'primeng/card';
 import { ChipModule } from 'primeng/chip';
 import { DividerModule } from 'primeng/divider';
-import Match from '../../api/match.interface';
+import {Match} from '../../api/match.interface';
 import { TagModule } from 'primeng/tag';
 import { DatePipe } from '@angular/common';
 
