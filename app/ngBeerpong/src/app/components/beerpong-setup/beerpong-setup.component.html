@@ -15,7 +15,7 @@
                                 <div class="flex flex-col gap-3 w-full">
                                     <div class="flex gap-10 justify-between items-center">
                                         <span>Anzahl an Gruppen:</span>
-                                        <p-select [options]="groupOptions" formControlName="amountOfGroups"></p-select>
+                                        <p-select [options]="groupOptions" formControlName="amountOfGroups" (onChange)="updateGroupNumber($event)"></p-select>
                                     </div>
                                     <div class="flex gap-10 justify-between items-center">
                                         <span>Anzahl an Teams:</span>
@@ -44,13 +44,13 @@
                                     <div class="flex flex-row gap-2">
                                         @if (gameForm.get('withReferees')?.value) {
                                             <!-- <h1>Tragen Sie ihre Schiedsrichter ein (Kommasepariert):</h1> -->
-                                            <input placeholder="(Franz, Kevin, ...)" type="text" pInputText  />
+                                            <input placeholder="(Franz, Kevin, ...)" type="text" pInputText  formControlName="referees"/>
                                         }
                                     </div>
                                 </div>
                                 <div class="flex justify-between items-center">
                                     <span>Beginn des Turniers:</span>
-                                    <p-calendar placeholder="yyyy/mm/dd hh:mm" [showTime]="true" hourFormat="24" dateFormat="yy/mm/dd" />
+                                    <p-calendar placeholder="yyyy/mm/dd hh:mm" [showTime]="true" hourFormat="24" dateFormat="yy/mm/dd" formControlName="gameStart"/>
                                 </div>
                             </p-panel>
                         </form>
@@ -84,9 +84,6 @@
                                                    Teamname ist bereits vergeben!
                                                 </div>
                                                 <input formControlName="team2" [ngClass]="{'ng-invalid': groupForm.get('team2')?.hasError('notUnique')}" pInputText placeholder="Mannschaft 2" class="my-1"/>
-                                                <input formControlName="team3" [ngClass]="{'ng-invalid': groupForm.get('team3')?.hasError('notUnique')}" pInputText placeholder="Mannschaft 3" class="my-1"/>
-                                                <input formControlName="team4" [ngClass]="{'ng-invalid': groupForm.get('team4')?.hasError('notUnique')}" pInputText placeholder="Mannschaft 4" class="my-1"/>
-                                                <input formControlName="team5" [ngClass]="{'ng-invalid': groupForm.get('team5')?.hasError('notUnique')}" pInputText placeholder="Mannschaft 5" class="my-1"/>
                                             </div>
                                         </p-card>
                                     </div>

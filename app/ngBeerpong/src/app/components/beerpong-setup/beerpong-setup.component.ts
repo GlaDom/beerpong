@@ -11,7 +11,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { StepperModule } from 'primeng/stepper';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { CalendarModule } from 'primeng/calendar';
-import {Team} from '../../api/team.interface';
+import { Team } from '../../api/team.interface';
 import { DemoTeams } from './demo-teams';
 import { BeerpongState } from '../../store/beerpong/game.state';
 import { Store } from '@ngrx/store';
@@ -24,33 +24,33 @@ import { Observable } from 'rxjs';
 import { UserState } from '../../store/user/user.state';
 import { selectUserState } from '../../store/user/user.selectors';
 import { uniqueTeamNamesValidator } from '../../shared/validators/duplicate-team-names-validator';
-import { SelectModule } from 'primeng/select';
+import { SelectChangeEvent, SelectModule } from 'primeng/select';
 import { NewTournament } from '../../api/game-request';
 
 @Component({
-    selector: 'app-beerpong-setup',
-    templateUrl: './beerpong-setup.component.html',
-    styleUrl: './beerpong-setup.component.css',
-    imports: [
-        ButtonModule,
-        CardModule,
-        StepsModule,
-        ToggleButtonModule,
-        NgFor,
-        InputTextModule,
-        DividerModule,
-        ReactiveFormsModule,
-        StepperModule,
-        InputNumberModule,
-        CalendarModule,
-        FormsModule,
-        PanelModule,
-        ToggleSwitchModule,
-        DatePipe,
-        TooltipModule,
-        CommonModule,
-        SelectModule
-    ]
+  selector: 'app-beerpong-setup',
+  templateUrl: './beerpong-setup.component.html',
+  styleUrl: './beerpong-setup.component.css',
+  imports: [
+    ButtonModule,
+    CardModule,
+    StepsModule,
+    ToggleButtonModule,
+    NgFor,
+    InputTextModule,
+    DividerModule,
+    ReactiveFormsModule,
+    StepperModule,
+    InputNumberModule,
+    CalendarModule,
+    FormsModule,
+    PanelModule,
+    ToggleSwitchModule,
+    DatePipe,
+    TooltipModule,
+    CommonModule,
+    SelectModule
+  ]
 })
 export class BeerpongSetupComponent implements OnInit {
   // user
@@ -68,7 +68,7 @@ export class BeerpongSetupComponent implements OnInit {
   groupNames: string[] = ["A", "B", "C", "D", "E", "F"]
   teamsSet: boolean = false;
 
-  public groupOptions: Number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]; 
+  public groupOptions: Number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
   public teamOptions: Number[] = [3, 4, 5];
   public qualifiedTeamsOptions: Number[] = [1, 2];
 
@@ -80,7 +80,16 @@ export class BeerpongSetupComponent implements OnInit {
     this.gameForm = this.fb.group({
       amountOfGroups: this.fb.control<number | null>(1, [Validators.required]),
       amountOfTeams: this.fb.control<number | null>(3, [Validators.required]),
-      groups: this.fb.array([], uniqueTeamNamesValidator()),
+      groups: this.fb.array([
+        this.fb.group({
+          groupName: this.fb.control<string | null>('A', [Validators.required]),
+          teams: this.fb.array([
+            new FormControl<string | null>(null, [Validators.required]),
+            new FormControl<string | null>(null, [Validators.required]),
+            new FormControl<string | null>(null, [Validators.required]),
+          ])
+        })
+      ], uniqueTeamNamesValidator()),
       gameTime: this.fb.control<number | null>(null, [Validators.required]),
       gameStart: this.fb.control<Date | null>(null, [Validators.required]),
       koStage: this.fb.control<boolean>(false),
@@ -92,7 +101,7 @@ export class BeerpongSetupComponent implements OnInit {
 
     this.userDetails$ = this.userstore.select(selectUserState)
   }
-    
+
   ngOnInit(): void {
     this.userDetails$.subscribe(this.userObserver)
   }
@@ -105,8 +114,44 @@ export class BeerpongSetupComponent implements OnInit {
     return this.gameForm.controls["amountOfGroups"] as FormControl;
   }
 
+  get amountOfTeams(): FormControl {
+    return this.gameForm.controls["amountOfTeams"] as FormControl;
+  }
+
   get gameTime(): FormControl {
     return this.gameForm.controls["gameTime"] as FormControl;
+  }
+
+  public updateGroupNumber(event: SelectChangeEvent): void {
+    console.log(event.value);
+    this.groups.clear();
+    for (let i = 0; i < event.value; i++) {
+      this.groups.push(
+        this.fb.group({
+          groupName: this.fb.control<string | null>(this.groupNames[i], [Validators.required]),
+          teams: this.fb.array([])
+        })
+      )
+    }
+    this.groups.controls.forEach(group => {
+      // Add number of teams to each group
+      for (let j = 0; j < this.amountOfTeams.value!; j++) {
+        (group.get('teams') as FormArray).push(new FormControl<string | null>(null, [Validators.required]));
+      }
+    })
+  }
+
+  public updateTeamNumber(event: SelectChangeEvent): void {
+    const teamCount = event.value;
+    this.groups.controls.forEach(group => {
+      const teamsArray = group.get('teams') as FormArray;
+      // Clear existing teams
+      teamsArray.clear();
+      // Add new number of teams
+      for (let j = 0; j < teamCount; j++) {
+        teamsArray.push(new FormControl<string | null>(null, [Validators.required]));
+      }
+    })
   }
 
   startGame(): void {
@@ -136,7 +181,7 @@ export class BeerpongSetupComponent implements OnInit {
       },
     }
 
-    this.beerpongstore.dispatch(createGame({game: newGame}))
+    this.beerpongstore.dispatch(createGame({ game: newGame }))
 
     console.log(newGame)
   }
@@ -145,7 +190,7 @@ export class BeerpongSetupComponent implements OnInit {
     let retval: Team[] = []
     console.log(this.groups.value)
     let groups: any = this.groups.value
-    for(let i=0; i<groups.length;i++) {
+    for (let i = 0; i < groups.length; i++) {
       let newTeams: Team[] = []
       newTeams.push(this.getNewTeam(groups[i].name, groups[i].team1))
       newTeams.push(this.getNewTeam(groups[i].name, groups[i].team2))
@@ -167,10 +212,10 @@ export class BeerpongSetupComponent implements OnInit {
       cup_difference: 0,
       rank: 0
     }
-    if(retval.team_name=='') {
+    if (retval.team_name == '') {
       retval.team_name = this.getRandomTeamName()
     }
-    return retval 
+    return retval
   }
 
   getRandomTeamName(): string {
@@ -180,7 +225,7 @@ export class BeerpongSetupComponent implements OnInit {
 
   fillGroupsWithTeamNames(): void {
     let groups: any = this.groups.value
-    for(let i=0; i<groups.length;i++) {
+    for (let i = 0; i < groups.length; i++) {
       groups[i].team1 = this.getRandomTeamName()
       groups[i].team2 = this.getRandomTeamName()
       groups[i].team3 = this.getRandomTeamName()
