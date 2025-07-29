@@ -106,8 +106,12 @@ export class BeerpongSetupComponent implements OnInit {
     this.userDetails$.subscribe(this.userObserver)
   }
 
-  get groups(): FormArray {
+  get groupsFormArray(): FormArray {
     return this.gameForm.controls["groups"] as FormArray;
+  }
+
+  public getTeamsFromArray(groupIndex: number): FormArray {
+    return this.groupsFormArray.at(groupIndex).get('teams') as FormArray;
   }
 
   get amountOfGroups(): FormControl {
@@ -124,16 +128,16 @@ export class BeerpongSetupComponent implements OnInit {
 
   public updateGroupNumber(event: SelectChangeEvent): void {
     console.log(event.value);
-    this.groups.clear();
+    this.groupsFormArray.clear();
     for (let i = 0; i < event.value; i++) {
-      this.groups.push(
+      this.groupsFormArray.push(
         this.fb.group({
           groupName: this.fb.control<string | null>(this.groupNames[i], [Validators.required]),
           teams: this.fb.array([])
         })
       )
     }
-    this.groups.controls.forEach(group => {
+    this.groupsFormArray.controls.forEach(group => {
       // Add number of teams to each group
       for (let j = 0; j < this.amountOfTeams.value!; j++) {
         (group.get('teams') as FormArray).push(new FormControl<string | null>(null, [Validators.required]));
@@ -143,7 +147,7 @@ export class BeerpongSetupComponent implements OnInit {
 
   public updateTeamNumber(event: SelectChangeEvent): void {
     const teamCount = event.value;
-    this.groups.controls.forEach(group => {
+    this.groupsFormArray.controls.forEach(group => {
       const teamsArray = group.get('teams') as FormArray;
       // Clear existing teams
       teamsArray.clear();
@@ -188,8 +192,8 @@ export class BeerpongSetupComponent implements OnInit {
 
   getTeamsForGame(): Team[] {
     let retval: Team[] = []
-    console.log(this.groups.value)
-    let groups: any = this.groups.value
+    console.log(this.groupsFormArray.value)
+    let groups: any = this.groupsFormArray.value
     for (let i = 0; i < groups.length; i++) {
       let newTeams: Team[] = []
       newTeams.push(this.getNewTeam(groups[i].name, groups[i].team1))
@@ -224,7 +228,7 @@ export class BeerpongSetupComponent implements OnInit {
   }
 
   fillGroupsWithTeamNames(): void {
-    let groups: any = this.groups.value
+    let groups: any = this.groupsFormArray.value
     for (let i = 0; i < groups.length; i++) {
       groups[i].team1 = this.getRandomTeamName()
       groups[i].team2 = this.getRandomTeamName()
@@ -232,8 +236,8 @@ export class BeerpongSetupComponent implements OnInit {
       groups[i].team4 = this.getRandomTeamName()
       groups[i].team5 = this.getRandomTeamName()
     }
-    this.groups.setValue(groups)
-    console.log(this.groups)
+    this.groupsFormArray.setValue(groups)
+    console.log(this.groupsFormArray)
   }
 
 }
