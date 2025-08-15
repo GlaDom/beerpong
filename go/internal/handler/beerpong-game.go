@@ -126,12 +126,11 @@ func (h *beerpongTournamentHandler) GetTournament(c *gin.Context) {
 
 func (h *beerpongTournamentHandler) GetLastTournament(c *gin.Context) {
 	// get sub from context
-	// sub := requestvalidation.GetClaimString(c, "sub")
-	// if sub == "" {
-	// 	c.JSON(http.StatusBadRequest, gin.H{"error": "missing sub"})
-	// 	return
-	// }
-	sub := "user123"
+	sub := requestvalidation.GetClaimString(c, "sub")
+	if sub == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "missing sub"})
+		return
+	}
 
 	game, err := h.General.GetLastGameBySub(sub)
 	if err != nil {
