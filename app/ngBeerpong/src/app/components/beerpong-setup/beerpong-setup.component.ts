@@ -26,6 +26,8 @@ import { selectUserState } from '../../store/user/user.selectors';
 import { uniqueTeamNamesValidator } from '../../shared/validators/duplicate-team-names-validator';
 import { SelectChangeEvent, SelectModule } from 'primeng/select';
 import { NewTournament } from '../../api/game-request';
+import GroupModel from '../../form-models/group.model';
+import Group from '../../api/group.interface';
 
 @Component({
   selector: 'app-beerpong-setup',
@@ -172,16 +174,16 @@ export class BeerpongSetupComponent implements OnInit {
     let newGame: NewTournament = {
       tournament: {
         user_sub: this.userSub,
-        amount_of_teams: 0,
+        amount_of_teams: this.gameForm.get('amountOfTeams')?.value,
         is_finished: false,
         game_time: this.gameForm.get('gameTime')?.value,
         start_time: this.gameForm.get('startTime')?.value,
         referee: referees!,
-        groups: [],
-        got_ko_stage: false,
-        got_stage_in_between: false,
-        number_of_qualified_teams: 0,
-        include_third_place_match: false
+        groups: this.getGroupsForNewGame(),
+        got_ko_stage: this.gameForm.get('koStage')?.value,
+        got_stage_in_between: this.gameForm.get('includeThirdPlaceMatch')?.value,
+        number_of_qualified_teams: this.gameForm.get('numberOfQualifiedTeams')?.value,
+        include_third_place_match: this.gameForm.get('includeThirdPlaceMatch')?.value,
       },
     }
 
@@ -190,21 +192,21 @@ export class BeerpongSetupComponent implements OnInit {
     console.log(newGame)
   }
 
-  getTeamsForGame(): Team[] {
-    let retval: Team[] = []
-    console.log(this.groupsFormArray.value)
-    let groups: any = this.groupsFormArray.value
-    for (let i = 0; i < groups.length; i++) {
-      let newTeams: Team[] = []
-      newTeams.push(this.getNewTeam(groups[i].name, groups[i].team1))
-      newTeams.push(this.getNewTeam(groups[i].name, groups[i].team2))
-      newTeams.push(this.getNewTeam(groups[i].name, groups[i].team3))
-      newTeams.push(this.getNewTeam(groups[i].name, groups[i].team4))
-      newTeams.push(this.getNewTeam(groups[i].name, groups[i].team5))
-      retval.push(...newTeams)
-    }
-    return retval
-  }
+  // getTeamsForGame(): Team[] {
+  //   let retval: Team[] = []
+  //   console.log(this.groupsFormArray.value)
+  //   let groups: any = this.groupsFormArray.value
+  //   for (let i = 0; i < groups.length; i++) {
+  //     let newTeams: Team[] = []
+  //     newTeams.push(this.getNewTeam(groups[i].name, groups[i].team1))
+  //     newTeams.push(this.getNewTeam(groups[i].name, groups[i].team2))
+  //     newTeams.push(this.getNewTeam(groups[i].name, groups[i].team3))
+  //     newTeams.push(this.getNewTeam(groups[i].name, groups[i].team4))
+  //     newTeams.push(this.getNewTeam(groups[i].name, groups[i].team5))
+  //     retval.push(...newTeams)
+  //   }
+  //   return retval
+  // }
 
   getNewTeam(grouName: string, teamName: string): Team {
     let retval: Team = {
@@ -228,16 +230,31 @@ export class BeerpongSetupComponent implements OnInit {
   }
 
   fillGroupsWithTeamNames(): void {
-    let groups: any = this.groupsFormArray.value
-    for (let i = 0; i < groups.length; i++) {
-      groups[i].team1 = this.getRandomTeamName()
-      groups[i].team2 = this.getRandomTeamName()
-      groups[i].team3 = this.getRandomTeamName()
-      groups[i].team4 = this.getRandomTeamName()
-      groups[i].team5 = this.getRandomTeamName()
-    }
-    this.groupsFormArray.setValue(groups)
+    this.groupsFormArray.controls.forEach(groupControl => {
+      const teamsArray = groupControl.get('teams') as FormArray;
+      teamsArray.controls.forEach(teamControl => {
+        teamControl.setValue(this.getRandomTeamName());
+      });
+    });
     console.log(this.groupsFormArray)
   }
 
+  private getGroupsForNewGame(): Group[] {
+    let groups: Group[] = [];
+    this.groupsFormArray.controls.forEach((groupControl, index) => {
+      const groupName = groupControl.get('groupName')?.value;
+      const teamsArray = groupControl.get('teams') as FormArray;
+      const teams: Team[] = teamsArray.controls.map(teamControl => ({
+        team_name: teamControl.value || this.getRandomTeamName(),
+        group_name: groupName,
+        points: 0,
+        cups_hit: 0,
+        cups_get: 0,
+        cup_difference: 0,
+        rank: 0
+      }));
+      groups.push({ group_name: groupName, teams: teams});
+    });
+    return groups;
+  }
 }

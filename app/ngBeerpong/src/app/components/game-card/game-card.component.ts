@@ -112,6 +112,7 @@ export class GameCardComponent implements OnInit {
       pa = this.points_away.value
     }
     let newMatch: Match = {
+      id: m.id,
       tournament_id: m.tournament_id,
       match_id: m.match_id,
       type: m.type,

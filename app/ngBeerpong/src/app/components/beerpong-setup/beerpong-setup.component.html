@@ -18,7 +18,7 @@
                                     </div>
                                     <div class="flex gap-10 justify-between items-center">
                                         <span>Anzahl an Teams:</span>
-                                        <p-select [options]="teamOptions" formControlName="amountOfTeams"></p-select>
+                                        <p-select [options]="teamOptions" formControlName="amountOfTeams" (onChange)="updateTeamNumber($event)"></p-select>
                                     </div>
                                     <div class="flex gap-10 justify-between items-center">
                                         <span>Anzahl an Qualifizierten Teams:</span>
@@ -142,7 +142,7 @@
                                     </div>
                                     <div class="flex flex-row justify-between">
                                         <span>Startzeitpunkt: </span>
-                                        <span>{{gameForm.get('startTime')?.value | date:'medium'}}</span>
+                                        <span>{{gameForm.get('gameStart')?.value | date:'medium'}}</span>
                                     </div>
                                 </div>
                             </p-panel>

@@ -18,52 +18,50 @@ export class ConfigurationService {
   constructor(public httpClient: HttpClient) { }
 
   CreateGame(game: NewTournament) {
-    return this.httpClient.post<NewTournament>(this.url+"/game", game).pipe()
+    return this.httpClient.post<NewTournament>(this.url+"/tournament", game).pipe()
   }
 
   GetGame(url: string) {
-    return this.httpClient.get<BeerpongState>(this.url+"/game").pipe()
+    return this.httpClient.get<BeerpongState>(this.url+"/tournament").pipe()
   }
 
   GetLastGame(url: string) {
-    return this.httpClient.get<GameState>(this.url+"/game/last").pipe()
+    return this.httpClient.get<GameState>(this.url+"/tournament/last").pipe()
   }
 
   UpdateMatch(match: Match) {
-    return this.httpClient.put<Match>(this.url+"/game/matches", match).pipe()
+    return this.httpClient.put<Match>(this.url+"/tournament/matches", match).pipe()
   }
 
   UpdateMatchesRoundOfSixteen(gameId: number) {
-    return this.httpClient.put<string>(this.url+"/game/matches/round-of-sixteen/id="+gameId, null).pipe()
+    return this.httpClient.put<string>(this.url+"/tournament/matches/round-of-sixteen/id="+gameId, null).pipe()
   }
 
   UpdateMatchesQuaterfinals(gameId: number) {
-    return this.httpClient.put<string>(this.url+"/game/matches/quaterfinals/id="+gameId, null).pipe()
+    return this.httpClient.put<string>(this.url+"/tournament/matches/quaterfinals/id="+gameId, null).pipe()
   }
 
   UpdateMatchesSemifinals(gameId: number) {
-    return this.httpClient.put<string>(this.url+"/game/matches/semifinals/id="+gameId, null).pipe()
+    return this.httpClient.put<string>(this.url+"/tournament/matches/semifinals/id="+gameId, null).pipe()
   }
 
   UpdateMatchesFinal(gameId: number, gameMode: number) {
-    return this.httpClient.put<string>(this.url+"/game/matches/final/id="+gameId+"?mode="+gameMode, null).pipe()
+    return this.httpClient.put<string>(this.url+"/tournament/matches/final/id="+gameId+"?mode="+gameMode, null).pipe()
   }
 
   UpdateTeams(teams: TeamUpdate[]) {
-    return this.httpClient.put<TeamUpdate[]>(this.url+"/game/teams", {teams: teams}).pipe()
+    return this.httpClient.put<TeamUpdate[]>(this.url+"/tournament/teams", {teams: teams}).pipe()
   }
 
   FinishGame(gameId: number) {
     console.log(gameId)
-    return this.httpClient.put<string>(this.url+"/game/id="+gameId, null).pipe()
+    return this.httpClient.put<string>(this.url+"/tournament/id="+gameId, null).pipe()
   }
 
   sortMatches(matches: Match[]): Match[][] {
     let retval: Match[][] = [[], [], [], [], [], []]
     for(let i = 0;i<matches.length;i++) {
-      if(matches[i].type!=='regular') {
-        break
-      }
+      console.log(matches[i])
       switch(matches[i].group_number) {
         case "A": {
           retval[0].push(matches[i]);
@@ -96,6 +94,9 @@ export class ConfigurationService {
           break
       }
     }
+    retval.forEach((group) => {
+      group.sort((a, b) => a.match_id! - b.match_id!);
+    })
     return retval
   }
 

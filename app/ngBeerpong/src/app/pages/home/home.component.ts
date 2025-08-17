@@ -45,10 +45,10 @@ export class HomeComponent {
   ngOnInit(): void {
     this.beerpongStore.dispatch(loadLastGame())
     this.lastGame$.subscribe((game: GameState) => {
-      if (game.game.user_sub !== '') {
+      if (game.tournament.user_sub !== '') {
         this.lastGame = game;
-        if (game && game.game && game.game.groups.length > 0) {
-          this.sortedTeams = Array.from(game.game.groups[0].teams);
+        if (game && game.tournament && game.tournament.groups.length > 0) {
+          this.sortedTeams = Array.from(game.tournament.groups[0].teams);
           this.sortedTeams = this.configService.sortTeamsByPointsAndCupDifference(this.sortedTeams);
         }
         console.log('Last game loaded:', game);
@@ -71,7 +71,7 @@ export class HomeComponent {
     // This method can be used to navigate to different routes if needed
     // For example, you can use the Angular Router to navigate
     // this.router.navigate([path]);
-    if (this.lastGame && !this.lastGame.game.is_finished) {
+    if (this.lastGame && !this.lastGame.tournament.is_finished) {
       this.confirmationService.confirm({
             message: 'Ein Spiel ist noch aktiv. Möchtest du das aktuelle Spiel beenden und ein neues Spiel starten?',
             header: 'Achtung',
@@ -88,7 +88,7 @@ export class HomeComponent {
             },
             accept: () => {
                 this.messageService.add({ severity: 'info', summary: 'Confirmed', detail: 'Aktuelles Spiel wird beendet' });
-                this.beerpongStore.dispatch(finishGame({ gameId: this.lastGame.game.id! }));
+                this.beerpongStore.dispatch(finishGame({ gameId: this.lastGame.tournament.id! }));
                 this.router.navigate([path]);
             },
             reject: () => {
@@ -106,7 +106,7 @@ export class HomeComponent {
   }
 
   public continueGame(): string {
-    if (this.lastGame && !this.lastGame.game.is_finished) {
+    if (this.lastGame && !this.lastGame.tournament.is_finished) {
       return '';
     } else {
       return 'text-gray-500'

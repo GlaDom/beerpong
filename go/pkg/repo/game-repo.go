@@ -27,10 +27,81 @@ func NewGameRepo(dbConnectionString string) *Gamerepo {
 }
 
 func (gr *Gamerepo) CreateTournament(t *models.NewTournament) error {
-	if tx := gr.db.Create(&t.Tournament); tx.Error != nil {
-		return tx.Error
-	}
-	return nil
+	// if tx := gr.db.Create(&t.Tournament); tx.Error != nil {
+	// 	return tx.Error
+	// }
+	// return nil
+	return gr.db.Transaction(func(tx *gorm.DB) error {
+		// Tournament ID zurücksetzen (falls gesetzt)
+		t.Tournament.ID = 0
+
+		// 1. Erst Tournament ohne Groups erstellen
+		if err := tx.Omit("Groups").Create(&t.Tournament).Error; err != nil {
+			return err
+		}
+
+		// 2. Dann Groups mit korrekter tournament_id erstellen
+		for i := range t.Tournament.Groups {
+			// Tournament ID setzen
+			t.Tournament.Groups[i].TournamentID = t.Tournament.ID
+			// Group ID zurücksetzen
+			t.Tournament.Groups[i].GroupID = 0
+
+			// Teams temporär speichern
+			teams := t.Tournament.Groups[i].Teams
+			t.Tournament.Groups[i].Teams = nil
+
+			// Group ohne Teams erstellen
+			if err := tx.Create(&t.Tournament.Groups[i]).Error; err != nil {
+				return err
+			}
+
+			// 3. Teams mit korrekten IDs erstellen
+			for j := range teams {
+				teams[j].TournamentID = t.Tournament.ID
+				teams[j].GroupID = t.Tournament.Groups[i].GroupID
+				// Team ID zurücksetzen
+				teams[j].ID = 0
+			}
+
+			// Teams erstellen
+			if len(teams) > 0 {
+				if err := tx.Create(&teams).Error; err != nil {
+					return err
+				}
+			}
+
+			// Teams wieder zurück in die Group setzen (für Response)
+			t.Tournament.Groups[i].Teams = teams
+		}
+
+		// 4. Andere Associations falls vorhanden (Matches, Referees)
+		// if len(t.Tournament.Matches) > 0 {
+		// 	for i := range t.Tournament.Matches {
+		// 		t.Tournament.Matches[i].TournamentID = t.Tournament.ID
+		// 		// IDs zurücksetzen, damit GORM neue generiert
+		// 		t.Tournament.Matches[i].ID = 0
+		// 		// MatchID manuell setzen (beginnend bei 1 für jedes Tournament)
+		// 		t.Tournament.Matches[i].MatchID = i + 1
+		// 	}
+		// 	if err := tx.Create(&t.Tournament.Matches).Error; err != nil {
+		// 		return err
+		// 	}
+		// }
+
+		if len(t.Tournament.Referee) > 0 {
+			for i := range t.Tournament.Referee {
+				t.Tournament.Referee[i].TournamentID = t.Tournament.ID
+				// ID zurücksetzen, damit GORM neue generiert
+				t.Tournament.Referee[i].ID = 0
+			}
+			if err := tx.Create(&t.Tournament.Referee).Error; err != nil {
+				return err
+			}
+		}
+
+		return nil
+	})
 }
 
 func (gr *Gamerepo) CreateMatches(matches []*models.Match) error {
@@ -97,7 +168,7 @@ func (gr *Gamerepo) GetTeamByTournamentID(tournamentId int, teamName string, gro
 }
 
 func (gr *Gamerepo) UpdateTeam(t *models.Team) error {
-	tx := gr.db.Where("group_id=? and team_name=?", t.GroupID, t.TeamName).Save(&t)
+	tx := gr.db.Where("tournament_id=? and team_name=?", t.TournamentID, t.TeamName).Save(&t)
 	return tx.Error
 }
 

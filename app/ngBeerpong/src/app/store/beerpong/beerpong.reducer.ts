@@ -7,7 +7,7 @@ import { GameState } from "../../models/game-state.model";
 
 export const initialState: BeerpongState = {
     lastGame: {
-        game: {
+        tournament: {
             user_sub: "",
             amount_of_teams: 0,
             is_finished: false,
@@ -18,13 +18,12 @@ export const initialState: BeerpongState = {
             got_stage_in_between: false,
             number_of_qualified_teams: 0,
             include_third_place_match: false,
-            start_time: ""
+            start_time: "",
+            matches: []
         },
-        groups: [],
-        matches: []
     },
     currentGame: {
-        game: {
+        tournament: {
             user_sub: "",
             amount_of_teams: 0,
             is_finished: false,
@@ -35,10 +34,9 @@ export const initialState: BeerpongState = {
             got_stage_in_between: false,
             number_of_qualified_teams: 0,
             include_third_place_match: false,
-            start_time: ""
+            start_time: "",
+            matches: []
         },
-        groups: [],
-        matches: []
     },
     toastStatus: 'notset',
     isLoading: false,
@@ -71,7 +69,7 @@ export const beerpongReducer = createReducer(initialState,
     on(loadGameFailure, (state) => {
         let initalGameState: BeerpongState = {
             lastGame: {
-                game: {
+                tournament: {
                     user_sub: "",
                     amount_of_teams: 0,
                     is_finished: false,
@@ -82,13 +80,12 @@ export const beerpongReducer = createReducer(initialState,
                     got_stage_in_between: false,
                     number_of_qualified_teams: 0,
                     include_third_place_match: false,
-                    start_time: ""
+                    start_time: "",
+                    matches: []
                 },
-                groups: [],
-                matches: []
             },
             currentGame: {
-                game: {
+                tournament: {
                     user_sub: "",
                     amount_of_teams: 0,
                     is_finished: false,
@@ -99,10 +96,9 @@ export const beerpongReducer = createReducer(initialState,
                     got_stage_in_between: false,
                     number_of_qualified_teams: 0,
                     include_third_place_match: false,
-                    start_time: ""
+                    start_time: "",
+                    matches: []
                 },
-                groups: [],
-                matches: []
             },
             toastStatus: 'notset',
             isLoading: false,
@@ -130,7 +126,7 @@ export const beerpongReducer = createReducer(initialState,
         return state
     }),
     on(updateMatchSuccess, (state, {match}) => {
-        let matches = state.currentGame.matches.map(m => Object.assign({} , m))
+        let matches = state.currentGame.tournament.matches!.map(m => Object.assign({} , m))
         matches.map(m => {
             // console.log(m)
             if(m.home_team==match.home_team && m.away_team == match.away_team) {
@@ -149,7 +145,7 @@ export const beerpongReducer = createReducer(initialState,
         return state
     }),
     on(updateTeamsSuccess, (state, {teams}) => {
-        let groups = state.currentGame.groups.map(m => Object.assign({}, m))
+        let groups = state.currentGame.tournament.groups.map(m => Object.assign({}, m))
         //search for correct group
         let group = groups.filter(g => g.group_name==teams[0].group_name)
         //exclude old teams form group

@@ -82,14 +82,15 @@ func (g *General) UpdateMatches(match models.Match) error {
 	return g.GameRepo.UpdateMatches(&match)
 }
 
-func (g *General) GetTeamByGameID(gameID int, teamName string, groupName string) (models.Team, error) {
-	return g.GameRepo.GetTeamByTournamentID(gameID, teamName, groupName)
+func (g *General) GetTeamByTournamentID(tournamentID int, teamName string, groupName string) (models.Team, error) {
+	return g.GameRepo.GetTeamByTournamentID(tournamentID, teamName, groupName)
 }
 
 func (g *General) GetUpdatedTeam(currentTeam *models.Team, newTeam *models.TeamUpdate) *models.Team {
 	retval := &models.Team{
 		ID:            currentTeam.ID,
 		GroupID:       currentTeam.GroupID,
+		TournamentID:  currentTeam.TournamentID,
 		GroupName:     currentTeam.GroupName,
 		TeamName:      currentTeam.TeamName,
 		Points:        currentTeam.Points + newTeam.PointsToAdd,

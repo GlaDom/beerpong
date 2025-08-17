@@ -4,7 +4,7 @@ import { inject } from '@angular/core';
 
 export const authHeaderInterceptor: HttpInterceptorFn = (req, next) => {
   const token = inject(AuthService).authToken;
-  console.log('auth header interceptor hit');
+  console.log('auth header interceptor hit', token);
   if (token) {
     req = req.clone({
       setHeaders: {

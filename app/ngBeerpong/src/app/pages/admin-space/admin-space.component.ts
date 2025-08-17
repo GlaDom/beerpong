@@ -76,12 +76,13 @@ export class AdminSpaceComponent implements OnInit {
 
     ngOnInit(): void {
       this.game$.subscribe((game) => {
-        if(game.currentGame.matches.length>0) {
-          this.gameId = game.currentGame.groups[0].tournament_id
-          this.matches = game.currentGame.matches
-          this.groups = game.currentGame.groups
+        if(game.currentGame.tournament.matches!.length>0) {
+          this.gameId = game.currentGame.tournament.groups[0].tournament_id
+          this.matches = game.currentGame.tournament.matches!
+          this.groups = game.currentGame.tournament.groups
           this.showRanking = game.showRanking
           this.regularMatches = this.configService.filterMatches('regular', this.matches)
+          console.log(this.matches)
           this.sortedMatches = this.configService.sortMatches(this.matches)
           this.roundOfsixteen = this.configService.filterMatches('round_of_16', this.matches)
           this.quaterFinalMatches = this.configService.filterMatches('quaterfinal', this.matches)
@@ -90,8 +91,8 @@ export class AdminSpaceComponent implements OnInit {
           
           this.checkForToastMessage(game.toastStatus)
         } else {
-          this.matches = game.currentGame.matches
-          this.groups = game.currentGame.groups
+          this.matches = game.currentGame.tournament.matches!
+          this.groups = game.currentGame.tournament.groups
           this.showRanking = game.showRanking
         }
         this.isLoading = game.isLoading

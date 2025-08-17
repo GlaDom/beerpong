@@ -60,9 +60,9 @@ export class GameplanComponent implements OnInit {
   ngOnInit(): void {
     this.game$.subscribe((game) => {
       console.log(game)
-      if(game.currentGame.groups && game.currentGame.groups.length > 0) {
-        this.groups = game.currentGame.groups
-        this.matches = game.currentGame.matches
+      if(game.currentGame.tournament.groups && game.currentGame.tournament.groups.length > 0) {
+        this.groups = game.currentGame.tournament.groups
+        this.matches = game.currentGame.tournament.matches!
         this.showRanking = game.showRanking
         this.regularMatches = this.configService.sortMatches(this.matches);
         this.roundOfsixteen = this.configService.filterMatches('round_of_16', this.matches)
