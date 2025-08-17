@@ -54,6 +54,9 @@ export class ModeSGfTComponent {
   @Input()
   semiFinalMatches: Match[] = [];
 
+  @Input()
+  thirdPlaceMatch: Match[] = [];
+
   @Input() 
   finalMatches: Match[] = [];
 

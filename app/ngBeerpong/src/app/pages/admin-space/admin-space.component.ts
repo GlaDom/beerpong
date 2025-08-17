@@ -58,6 +58,7 @@ export class AdminSpaceComponent implements OnInit {
     roundOfsixteen: Match[] = [];
     quaterFinalMatches: Match[] = [];
     semiFinalMatches: Match[] = [];
+    thirdPlaceMatch: Match[] = [];
     finalMatch: Match[] = [];
 
     //booleans
@@ -85,8 +86,9 @@ export class AdminSpaceComponent implements OnInit {
           console.log(this.matches)
           this.sortedMatches = this.configService.sortMatches(this.matches)
           this.roundOfsixteen = this.configService.filterMatches('round_of_16', this.matches)
-          this.quaterFinalMatches = this.configService.filterMatches('quaterfinal', this.matches)
-          this.semiFinalMatches = this.configService.filterMatches('semifinal', this.matches)
+          this.quaterFinalMatches = this.configService.filterMatches('quaterFinal', this.matches)
+          this.semiFinalMatches = this.configService.filterMatches('semiFinal', this.matches)
+          this.thirdPlaceMatch = this.configService.filterMatches('Spiel um Platz 3', this.matches)
           this.finalMatch = this.configService.filterMatches('final', this.matches)
           
           this.checkForToastMessage(game.toastStatus)
