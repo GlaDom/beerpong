@@ -61,7 +61,6 @@ export class ConfigurationService {
   sortMatches(matches: Match[]): Match[][] {
     let retval: Match[][] = [[], [], [], [], [], []]
     for(let i = 0;i<matches.length;i++) {
-      console.log(matches[i])
       switch(matches[i].group_number) {
         case "A": {
           retval[0].push(matches[i]);

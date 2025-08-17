@@ -13,12 +13,13 @@ import Group from '../../../api/group.interface';
 import { ConfigurationService } from '../../../services/configuration.service';
 import { RankingComponent } from '../../ranking/ranking.component';
 import { ConfirmationService, MessageService } from 'primeng/api';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 @Component({
     selector: 'app-mode-s-gf-t',
     templateUrl: './mode-s-gf-t.component.html',
     styleUrl: './mode-s-gf-t.component.css',
-    imports: [FieldsetModule, TabViewModule, NgFor, GameCardComponent, ButtonModule, NgIf, RankingComponent]
+    imports: [FieldsetModule, TabViewModule, NgFor, GameCardComponent, ButtonModule, NgIf, RankingComponent, ConfirmDialogModule]
 })
 export class ModeSGfTComponent {
 

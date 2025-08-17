@@ -20,16 +20,16 @@ func (rr *RoundRobin) GenerateOptimalRoundRobinTournament(teams []models.Team, m
 		teamNames[i] = team.TeamName
 	}
 	// Erst alle möglichen Matches generieren
-	allMatches := generateAllMatches(teamNames, matchDuration, groupNumber, startTime)
+	allMatches := generateAllMatches(teamNames, groupNumber)
 
 	// Dann optimal anordnen
-	optimizedMatches := optimizeMatchOrder(allMatches, teamNames)
+	optimizedMatches := optimizeMatchOrder(allMatches, teamNames, matchDuration, startTime)
 
 	return optimizedMatches
 }
 
 // generateAllMatches erstellt alle möglichen Paarungen
-func generateAllMatches(teams []string, matchDuration time.Duration, groupNumber string, startTime time.Time) []models.Match {
+func generateAllMatches(teams []string, groupNumber string) []models.Match {
 	var matches []models.Match
 	matchID := 1
 
@@ -41,8 +41,6 @@ func generateAllMatches(teams []string, matchDuration time.Duration, groupNumber
 				GroupNumber: groupNumber,
 				PointsHome:  0,
 				PointsAway:  0,
-				StartTime:   startTime.Add(matchDuration * time.Duration(i)),
-				EndTime:     startTime.Add(matchDuration * time.Duration(i+1)),
 				Type:        "regular",
 			}
 			matches = append(matches, match)
@@ -54,7 +52,7 @@ func generateAllMatches(teams []string, matchDuration time.Duration, groupNumber
 }
 
 // optimizeMatchOrder verwendet einen Greedy-Algorithmus für optimale Verteilung
-func optimizeMatchOrder(matches []models.Match, teams []string) []models.Match {
+func optimizeMatchOrder(matches []models.Match, teams []string, matchDuration time.Duration, startTime time.Time) []models.Match {
 	var orderedMatches []models.Match
 	remainingMatches := make([]models.Match, len(matches))
 	copy(remainingMatches, matches)
@@ -80,6 +78,17 @@ func optimizeMatchOrder(matches []models.Match, teams []string) []models.Match {
 
 		// Match aus verbleibenden entfernen
 		remainingMatches = append(remainingMatches[:bestMatchIndex], remainingMatches[bestMatchIndex+1:]...)
+	}
+
+	for i := range orderedMatches {
+		// Setze Start- und Endzeit für jedes Match
+		if i == 0 {
+			orderedMatches[i].StartTime = startTime
+			orderedMatches[i].EndTime = orderedMatches[i].StartTime.Add(time.Minute * matchDuration)
+		} else {
+			orderedMatches[i].StartTime = orderedMatches[i-1].EndTime
+			orderedMatches[i].EndTime = orderedMatches[i].StartTime.Add(time.Minute * matchDuration)
+		}
 	}
 
 	return orderedMatches
@@ -125,100 +134,3 @@ func abs(x int) int {
 	}
 	return x
 }
-
-// GenerateSequentialSchedule fügt Startzeiten hinzu
-// func GenerateSequentialSchedule(tournament models.Tournament, startTime time.Time, breakBetweenMatches int) models.Tournament {
-// 	currentTime := startTime
-
-// 	for i := range models.Tournament.Matches {
-// 		models.Tournament.Matches[i].StartTime = currentTime
-// 		currentTime = currentTime.Add(time.Duration(models.Tournament.Matches[i].Duration+breakBetweenMatches) * time.Minute)
-// 	}
-
-// 	return models.Tournament
-// }
-
-// AnalyzeScheduleQuality analysiert wie gut die Pausenverteilung ist
-// func AnalyzeScheduleQuality(tournament models.Tournament) map[string]interface{} {
-// 	teamLastPlayed := make(map[string]int)
-// 	for _, team := range models.Tournament.Teams {
-// 		teamLastPlayed[team] = -999
-// 	}
-
-// 	var pauses []int
-// 	consecutiveGames := 0
-// 	maxConsecutive := 0
-
-// 	for i, match := range models.Tournament.Matches {
-// 		team1LastPlayed := teamLastPlayed[match.Team1]
-// 		team2LastPlayed := teamLastPlayed[match.Team2]
-
-// 		// Prüfe auf direkt aufeinanderfolgende Spiele
-// 		if i > 0 {
-// 			if team1LastPlayed == i-1 || team2LastPlayed == i-1 {
-// 				consecutiveGames++
-// 				if consecutiveGames > maxConsecutive {
-// 					maxConsecutive = consecutiveGames
-// 				}
-// 			} else {
-// 				consecutiveGames = 0
-// 			}
-// 		}
-
-// 		// Sammle Pausenlängen
-// 		if team1LastPlayed >= 0 {
-// 			pauses = append(pauses, i-team1LastPlayed-1)
-// 		}
-// 		if team2LastPlayed >= 0 {
-// 			pauses = append(pauses, i-team2LastPlayed-1)
-// 		}
-
-// 		// Update letzte Spielzeit
-// 		teamLastPlayed[match.Team1] = i
-// 		teamLastPlayed[match.Team2] = i
-// 	}
-
-// 	// Berechne Durchschnittspause
-// 	avgPause := 0.0
-// 	if len(pauses) > 0 {
-// 		sum := 0
-// 		for _, pause := range pauses {
-// 			sum += pause
-// 		}
-// 		avgPause = float64(sum) / float64(len(pauses))
-// 	}
-
-// 	return map[string]interface{}{
-// 		"consecutiveGames": consecutiveGames,
-// 		"maxConsecutive":   maxConsecutive,
-// 		"averagePause":     avgPause,
-// 		"totalPauses":      len(pauses),
-// 		"shortPauses":      countShortPauses(pauses),
-// 	}
-// }
-
-// func countShortPauses(pauses []int) int {
-// 	count := 0
-// 	for _, pause := range pauses {
-// 		if pause == 0 { // 0 = direktes Folge-Spiel
-// 			count++
-// 		}
-// 	}
-// 	return count
-// }
-
-// GetTeamSchedule zeigt wann jedes Team spielt
-// func GetTeamSchedule(tournament models.Tournament) map[string][]int {
-// 	schedule := make(map[string][]int)
-
-// 	for _, team := range tournament.Teams {
-// 		schedule[team] = []int{}
-// 	}
-
-// 	for i, match := range tournament.Matches {
-// 		schedule[match.Team1] = append(schedule[match.Team1], i+1)
-// 		schedule[match.Team2] = append(schedule[match.Team2], i+1)
-// 	}
-
-// 	return schedule
-// }

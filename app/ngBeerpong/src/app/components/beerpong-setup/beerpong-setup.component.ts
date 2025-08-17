@@ -177,7 +177,7 @@ export class BeerpongSetupComponent implements OnInit {
         amount_of_teams: this.gameForm.get('amountOfTeams')?.value,
         is_finished: false,
         game_time: this.gameForm.get('gameTime')?.value,
-        start_time: this.gameForm.get('startTime')?.value,
+        start_time: this.gameForm.get('gameStart')?.value,
         referee: referees!,
         groups: this.getGroupsForNewGame(),
         got_ko_stage: this.gameForm.get('koStage')?.value,
