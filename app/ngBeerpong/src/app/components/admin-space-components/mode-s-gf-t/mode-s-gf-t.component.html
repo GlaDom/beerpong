@@ -3,42 +3,34 @@
     <p-tabView>
         <p-tabPanel header="Gruppen A-C">
             <div class="flex">
-                <div class="flex flex-col flex-1">
-                    <ng-container *ngFor="let m of sortedMatches[0]">
-                        <app-game-card [match]="m"></app-game-card>
-                    </ng-container>
-                </div>
-                <div class="flex flex-col flex-1">
-                    <ng-container *ngFor="let m of sortedMatches[1]">
-                        <app-game-card [match]="m"></app-game-card>
-                    </ng-container>
-                </div>
-                <div class="flex flex-col flex-1">
-                    <ng-container *ngFor="let m of sortedMatches[2]">
-                        <app-game-card [match]="m"></app-game-card>
-                    </ng-container>
-                </div>
+                @if(groups.length <= 3) {
+                    @for(g of groups; track $index; let i = $index) {
+                        <div class="flex flex-col flex-1 w-full">
+                            <ng-container *ngFor="let m of sortedMatches[i]">
+                                <app-game-card [match]="m" class="w-full"></app-game-card>
+                            </ng-container>
+                        </div>
+                    }
+                } @else {
+                    @for(g of groups.slice(0, 3); track $index; let i = $index) {
+                        <div class="flex flex-col flex-1 w-full">
+                            <ng-container *ngFor="let m of sortedMatches[i]">
+                                <app-game-card [match]="m" class="w-full"></app-game-card>
+                            </ng-container>
+                        </div>
+                    }
+                }
             </div>
         </p-tabPanel>
         <ng-container *ngIf="groups.length > 3">
             <p-tabPanel header="Gruppen D-F">
-                <div class="flex">
-                    <div class="flex flex-col flex-1">
-                        <ng-container *ngFor="let m of sortedMatches[3]">
-                            <app-game-card [match]="m"></app-game-card>
+               @for(g of groups.slice(3, groups.length); track $index; let i = $index) {
+                    <div class="flex flex-col flex-1 w-full">
+                        <ng-container *ngFor="let m of sortedMatches[i]">
+                            <app-game-card [match]="m" class="w-full"></app-game-card>
                         </ng-container>
                     </div>
-                    <div class="flex flex-col flex-1">
-                        <ng-container *ngFor="let m of sortedMatches[4]">
-                            <app-game-card [match]="m"></app-game-card>
-                        </ng-container>
-                    </div>
-                    <div class="flex flex-col flex-1">
-                        <ng-container *ngFor="let m of sortedMatches[5]">
-                            <app-game-card [match]="m"></app-game-card>
-                        </ng-container>
-                    </div>
-                </div>
+                }
             </p-tabPanel>
         </ng-container>
     </p-tabView>
