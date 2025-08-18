@@ -98,15 +98,17 @@ func (kg *KoRoundGenerator) generateAllKOMatches(koTeams int, startTime time.Tim
 
 		// Für nächste Runde vorbereiten
 		matchID += len(roundMatches)
-		currentTime = currentTime.Add(time.Duration(len(roundMatches)) *
-			(gameDuration))
+		currentTime = currentTime.Add(gameDuration)
 		currentRoundSlots = nextRoundSlots
 		roundNumber++
 	}
 
 	// Spiel um Platz 3 hinzufügen
 	if includeThirdPlace && koTeams >= 4 {
-		thirdPlaceMatch := kg.createThirdPlaceMatch(matchID, currentTime, gameDuration, tournamentID)
+		thirdPlaceMatch := kg.createThirdPlaceMatch(matchID, currentTime.Add(gameDuration*-1), gameDuration, tournamentID)
+		// Start- und Endzeit fuer Finalmatch setzen
+		allMatches[len(allMatches)-1].StartTime = thirdPlaceMatch.EndTime
+		allMatches[len(allMatches)-1].EndTime = thirdPlaceMatch.EndTime.Add(gameDuration)
 		allMatches = append(allMatches, thirdPlaceMatch)
 	}
 
@@ -168,8 +170,7 @@ func (kg *KoRoundGenerator) generateRoundMatches(slots []string, roundName strin
 	var nextRoundSlots []string
 
 	for i := 0; i < len(slots); i += 2 {
-		matchTime := startTime.Add(time.Duration(i/2) *
-			(gameDuration))
+		matchTime := startTime // Alle Matches beginnen zur selben Zeit
 
 		var homeTeam, awayTeam string
 		if i < len(slots) {

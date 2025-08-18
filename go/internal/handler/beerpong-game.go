@@ -67,7 +67,7 @@ func (h *beerpongTournamentHandler) CreateGame(c *gin.Context) {
 			tournament.Tournament.Groups,
 			tournament.Tournament.NumberOfQualifiedTeams,
 			tournament.Tournament.IncludeThirdPlaceMatch,
-			tournament.Tournament.GameTime,
+			tournament.Tournament.GameTime*time.Minute,
 			tournament.Tournament.Matches[len(tournament.Tournament.Matches)-1].EndTime,
 		)
 		if err != nil {
