@@ -20,25 +20,27 @@
                 </div>
             </div>
         </p-tabPanel>
-        <p-tabPanel header="Gruppen D-F">
-            <div class="flex">
-                <div class="flex flex-col flex-1">
-                    <ng-container *ngFor="let m of sortedMatches[3]">
-                        <app-game-card [match]="m"></app-game-card>
-                    </ng-container>
+        <ng-container *ngIf="groups.length > 3">
+            <p-tabPanel header="Gruppen D-F">
+                <div class="flex">
+                    <div class="flex flex-col flex-1">
+                        <ng-container *ngFor="let m of sortedMatches[3]">
+                            <app-game-card [match]="m"></app-game-card>
+                        </ng-container>
+                    </div>
+                    <div class="flex flex-col flex-1">
+                        <ng-container *ngFor="let m of sortedMatches[4]">
+                            <app-game-card [match]="m"></app-game-card>
+                        </ng-container>
+                    </div>
+                    <div class="flex flex-col flex-1">
+                        <ng-container *ngFor="let m of sortedMatches[5]">
+                            <app-game-card [match]="m"></app-game-card>
+                        </ng-container>
+                    </div>
                 </div>
-                <div class="flex flex-col flex-1">
-                    <ng-container *ngFor="let m of sortedMatches[4]">
-                        <app-game-card [match]="m"></app-game-card>
-                    </ng-container>
-                </div>
-                <div class="flex flex-col flex-1">
-                    <ng-container *ngFor="let m of sortedMatches[5]">
-                        <app-game-card [match]="m"></app-game-card>
-                    </ng-container>
-                </div>
-            </div>
-        </p-tabPanel>
+            </p-tabPanel>
+        </ng-container>
     </p-tabView>
     <div class="flex flex-row-reverse mt-5">
         <p-button (onClick)="updateRoundOfSixteen()" label="Gruppenphase abschliessen"></p-button>
