@@ -11,7 +11,7 @@ import { Store } from '@ngrx/store';
 import { setToastStatus, updateMatch, updateTeams } from '../../store/beerpong/beerpong.actions';
 import {TeamUpdate} from '../../api/team-update.interface';
 import { TagModule } from 'primeng/tag';
-import { DatePipe } from '@angular/common';
+import { DatePipe, NgIf } from '@angular/common';
 import { numericValidator } from '../../shared/validators/numeric-validator';
 
 @Component({
@@ -26,6 +26,7 @@ import { numericValidator } from '../../shared/validators/numeric-validator';
         TagModule,
         DatePipe,
         ReactiveFormsModule,
+        NgIf,
     ],
     templateUrl: './game-card.component.html',
     styleUrl: './game-card.component.css'
@@ -43,6 +44,9 @@ export class GameCardComponent implements OnInit {
     points_away: 0,
     start_time: '',
   }
+
+  @Input()
+  showGroupName: boolean = true;
 
   points = new FormGroup({
     points_home: new FormControl<number>({value: 0, disabled: false}, [Validators.required, numericValidator()]),

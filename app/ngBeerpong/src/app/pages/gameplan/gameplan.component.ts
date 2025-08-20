@@ -66,8 +66,8 @@ export class GameplanComponent implements OnInit {
         this.showRanking = game.showRanking
         this.regularMatches = this.configService.sortMatches(this.matches);
         this.roundOfsixteen = this.configService.filterMatches('round_of_16', this.matches)
-        this.quaterFinals = this.configService.filterMatches('quaterfinal', this.matches)
-        this.semiFinals = this.configService.filterMatches('semifinal', this.matches)
+        this.quaterFinals = this.configService.filterMatches('quaterFinal', this.matches)
+        this.semiFinals = this.configService.filterMatches('semiFinal', this.matches)
         this.final = this.configService.filterMatches('final', this.matches)      
       }
       this.isLoading = game.isLoading

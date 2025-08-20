@@ -63,27 +63,39 @@ export class ConfigurationService {
     for(let i = 0;i<matches.length;i++) {
       switch(matches[i].group_number) {
         case "A": {
-          retval[0].push(matches[i]);
+          if (matches[i].type === "regular") {
+            retval[0].push(matches[i]);
+          }
           break;
         }
         case "B": {
-          retval[1].push(matches[i]);
+          if (matches[i].type === "regular") {
+            retval[1].push(matches[i]);
+          }
           break;
         }
         case "C": {
-          retval[2].push(matches[i]);
+          if (matches[i].type === "regular") {
+            retval[2].push(matches[i]);
+          }
           break;
         }
         case "D": {
-          retval[3].push(matches[i]);
+          if (matches[i].type === "regular") {
+            retval[3].push(matches[i]);
+          }
           break;
         }
         case "E": {
-          retval[4].push(matches[i]);
+          if (matches[i].type === "regular") {
+            retval[4].push(matches[i]);
+          }
           break;
         }
         case "F": {
-          retval[5].push(matches[i]);
+          if (matches[i].type === "regular") {
+            retval[5].push(matches[i]);
+          }
           break;
         }
         case "": {
