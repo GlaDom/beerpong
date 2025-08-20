@@ -75,20 +75,6 @@ func (gr *Gamerepo) CreateTournament(t *models.NewTournament) error {
 			t.Tournament.Groups[i].Teams = teams
 		}
 
-		// 4. Andere Associations falls vorhanden (Matches, Referees)
-		// if len(t.Tournament.Matches) > 0 {
-		// 	for i := range t.Tournament.Matches {
-		// 		t.Tournament.Matches[i].TournamentID = t.Tournament.ID
-		// 		// IDs zurücksetzen, damit GORM neue generiert
-		// 		t.Tournament.Matches[i].ID = 0
-		// 		// MatchID manuell setzen (beginnend bei 1 für jedes Tournament)
-		// 		t.Tournament.Matches[i].MatchID = i + 1
-		// 	}
-		// 	if err := tx.Create(&t.Tournament.Matches).Error; err != nil {
-		// 		return err
-		// 	}
-		// }
-
 		if len(t.Tournament.Referee) > 0 {
 			for i := range t.Tournament.Referee {
 				t.Tournament.Referee[i].TournamentID = t.Tournament.ID

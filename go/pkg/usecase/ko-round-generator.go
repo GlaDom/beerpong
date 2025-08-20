@@ -184,7 +184,7 @@ func (kg *KoRoundGenerator) generateRoundMatches(slots []string, roundName strin
 			TournamentID: tournamentID,
 			MatchID:      startMatchID + i/2,
 			Type:         roundName,
-			GroupNumber:  "K.O. Rund",
+			GroupNumber:  getGroupNumberForKoRound(homeTeam, roundName),
 			HomeTeam:     homeTeam,
 			AwayTeam:     awayTeam,
 			StartTime:    matchTime,
@@ -207,7 +207,7 @@ func (kg *KoRoundGenerator) createThirdPlaceMatch(matchID int, startTime time.Ti
 		TournamentID: tournamentID,
 		MatchID:      matchID,
 		Type:         "Spiel um Platz 3",
-		GroupNumber:  "K.O.-Phase",
+		GroupNumber:  getGroupNumberForKoRound("Verlierer Halbfinale 1", "Spiel um Platz 3"),
 		HomeTeam:     "Verlierer Halbfinale 1",
 		AwayTeam:     "Verlierer Halbfinale 2",
 		StartTime:    startTime,
@@ -283,4 +283,18 @@ func UpdateKOMatchWithResult(matches []models.Match, completedMatchID int, winne
 	}
 
 	return matches
+}
+
+func getGroupNumberForKoRound(homeTeam, roundName string) string {
+	if roundName == "final" {
+		return "A"
+	} else if roundName == "semiFinal" && homeTeam[len(homeTeam)-1:] == "1" {
+		return "A"
+	} else if roundName == "semiFinal" && homeTeam[len(homeTeam)-1:] == "3" {
+		return "B"
+	} else if roundName == "Spiel um Platz 3" {
+		return "A"
+	}
+	// Annahme: Gruppe ist am Ende des Teamnamens
+	return homeTeam[len(homeTeam)-1:]
 }
