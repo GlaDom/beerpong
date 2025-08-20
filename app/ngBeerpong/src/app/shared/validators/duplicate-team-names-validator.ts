@@ -5,35 +5,37 @@ export function uniqueTeamNamesValidator(): ValidatorFn {
     const names: string[] = [];
     const controls = (formArray as FormArray).controls;
 
+    // Sammle alle Teamnamen aus allen Gruppen
     controls.forEach(group => {
-      for (let i = 1; i <= 5; i++) {
-        const ctrl = group.get('team' + i);
-        const name = (ctrl?.value || '').trim().toLowerCase();
+      const teamsArray = group.get('teams') as FormArray;
+      teamsArray?.controls.forEach(teamControl => {
+        const name = (teamControl.value || '').trim().toLowerCase();
         if (name) {
           names.push(name);
         }
-      }
+      });
     });
 
+    // Finde Duplikate
     const duplicates = names.filter((name, idx) => names.indexOf(name) !== idx);
-    // Set error on each duplicate field
+
+    // Setze Fehler auf die jeweiligen TeamControls
     controls.forEach(group => {
-      for (let i = 1; i <= 5; i++) {
-        const ctrl = group.get('team' + i);
-        if (!ctrl) continue;
-        const name = (ctrl.value || '').trim().toLowerCase();
+      const teamsArray = group.get('teams') as FormArray;
+      teamsArray?.controls.forEach(teamControl => {
+        const name = (teamControl.value || '').trim().toLowerCase();
         if (name && duplicates.includes(name)) {
-          ctrl.setErrors({ notUnique: true });
+          teamControl.setErrors({ notUnique: true });
         } else {
-          // Nur das eigene notUnique-Error entfernen, andere Errors bleiben erhalten
-          if (ctrl.errors) {
-            const { notUnique, ...rest } = ctrl.errors;
-            ctrl.setErrors(Object.keys(rest).length ? rest : null);
+          // Entferne nur das notUnique-Error, andere Fehler bleiben erhalten
+          if (teamControl.errors) {
+            const { notUnique, ...rest } = teamControl.errors;
+            teamControl.setErrors(Object.keys(rest).length ? rest : null);
           }
         }
-      }
+      });
     });
 
     return duplicates.length > 0 ? { notUnique: true } : null;
   };
-}
+};
