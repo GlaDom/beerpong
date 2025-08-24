@@ -83,7 +83,6 @@ export class AdminSpaceComponent implements OnInit {
           this.groups = game.currentGame.tournament.groups
           this.showRanking = game.showRanking
           this.regularMatches = this.configService.filterMatches('regular', this.matches)
-          console.log(this.matches)
           this.sortedMatches = this.configService.sortMatches(this.matches)
           this.roundOfsixteen = this.configService.filterMatches('round_of_16', this.matches)
           this.quaterFinalMatches = this.configService.filterMatches('quaterFinal', this.matches)

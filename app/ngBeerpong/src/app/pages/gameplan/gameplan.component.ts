@@ -61,7 +61,7 @@ export class GameplanComponent implements OnInit {
     this.game$.subscribe((game) => {
       console.log(game)
       if(game.currentGame.tournament.groups && game.currentGame.tournament.groups.length > 0) {
-        this.groups = game.currentGame.tournament.groups
+        this.groups = this.configService.sortTeamsInGroups(game.currentGame.tournament.groups);
         this.matches = game.currentGame.tournament.matches!
         this.showRanking = game.showRanking
         this.regularMatches = this.configService.sortMatches(this.matches);

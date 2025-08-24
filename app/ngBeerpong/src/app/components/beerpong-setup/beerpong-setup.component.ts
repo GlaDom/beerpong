@@ -28,6 +28,7 @@ import { SelectChangeEvent, SelectModule } from 'primeng/select';
 import { NewTournament } from '../../api/game-request';
 import GroupModel from '../../form-models/group.model';
 import Group from '../../api/group.interface';
+import { MessageModule } from 'primeng/message';
 
 @Component({
   selector: 'app-beerpong-setup',
@@ -51,7 +52,8 @@ import Group from '../../api/group.interface';
     DatePipe,
     TooltipModule,
     CommonModule,
-    SelectModule
+    SelectModule,
+    MessageModule
   ]
 })
 export class BeerpongSetupComponent implements OnInit {

@@ -80,7 +80,25 @@
                                         <!-- Verschachteltes FormArray: Teams-->
                                          <div formArrayName="teams" class="flex flex-col gap-4">
                                             <div *ngFor="let team of getTeamsFromArray(groupIndex).controls; let teamIndex = index">
-                                                <input [formControlName]="teamIndex" pInputText placeholder="Mannschaft {{teamIndex + 1}}" class="w-full"/>
+                                                <input pInputText [formControlName]="teamIndex" pInputText placeholder="Mannschaft {{teamIndex + 1}}" class="w-full"/>
+                                                @if(team.invalid && (team.dirty || team.touched)) {
+                                                    <div class="mt-1">
+                                                        <p-message severity="error" size="small" variant="simple">
+                                                            @if (team.hasError('required')) {
+                                                                Teamname is Required.
+                                                            }
+                                                            @if (team.hasError('notUnique')) {
+                                                                Teamname ist schon vergeben.
+                                                            }
+                                                        </p-message>
+                                                    </div>
+                                                    <!-- <div class="text-red-600 text-sm mt-1" *ngIf="team.errors?.['required']">
+                                                        Mannschaftsname ist erforderlich.
+                                                    </div>
+                                                    <div class="text-red-600 text-sm mt-1" *ngIf="team.errors?.['notUnique']">
+                                                        Mannschaftsname muss einzigartig sein.
+                                                    </div> -->
+                                                }
                                             </div>
                                          </div>
                                     </p-card>

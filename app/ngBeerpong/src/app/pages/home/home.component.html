@@ -68,8 +68,12 @@
                     }
                 </div>
                 <div class="flex flex-row justify-between">
+                    <span>Anzahl Gruppen</span>
+                    <p-tag [value]="lastGame.tournament.groups.length.toString()" severity="secondary"></p-tag>
+                </div>
+                <div class="flex flex-row justify-between">
                     <span>Anzahl Teams</span>
-                    <p-tag [value]="lastGame.tournament.amount_of_teams.toString()" severity="success"></p-tag>
+                    <p-tag [value]="lastGame.tournament.amount_of_teams.toString()" severity="danger"></p-tag>
                 </div>
             </div>
             <hr />

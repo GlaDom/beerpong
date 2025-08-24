@@ -158,4 +158,16 @@ export class ConfigurationService {
     });
     return teams
   }
+
+  sortTeamsInGroups(groups: Group[]): Group[] {
+    return groups.map(group => ({
+      ...group,
+      teams: [...group.teams].sort((a, b) => {
+        if (a.points === b.points) {
+          return b.cup_difference - a.cup_difference;
+        }
+        return b.points - a.points;
+      })
+    }));
+  }
 }
