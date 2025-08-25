@@ -1,5 +1,4 @@
-import { Component, Signal } from '@angular/core';
-import { AuthService } from '@auth0/auth0-angular';
+import { Component } from '@angular/core';
 import { BeerpongState } from '../../store/beerpong/game.state';
 import { Store } from '@ngrx/store';
 import { finishGame, loadGame, loadLastGame } from '../../store/beerpong/beerpong.actions';

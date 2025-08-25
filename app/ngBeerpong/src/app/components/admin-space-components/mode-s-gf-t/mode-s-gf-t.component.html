@@ -114,7 +114,7 @@
 </ng-container>
 <ng-container *ngIf="showRanking">
     <div class="">
-        <app-ranking [teams]="getRanking()">
+        <app-ranking [teams]="getRanking()" [rankinkSize]="getRanking().length">
             <div class="flex gap-3 mt-1">
                 <p-button label="Zurueck" (onClick)="backToAdminSpace()"></p-button>
                 <p-button label="Spiel beenden" (onClick)="confirmGameFinish($event)"></p-button>
