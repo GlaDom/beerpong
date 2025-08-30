@@ -16,7 +16,6 @@ export class AuthGuardService implements CanActivate {
 
   constructor(
     private authService: AuthService,
-    private router: Router
   ) {}
 
   canActivate(
@@ -24,14 +23,24 @@ export class AuthGuardService implements CanActivate {
     state: RouterStateSnapshot
   ): Observable<boolean> {
     console.log('Authguradservice hit fuer url: ', state.url)
+    sessionStorage.setItem('redirectUrl', state.url);
     return this.authService.isAuthenticated$.pipe(
       switchMap(loggedIn => {
         console.log('authguardservice check', loggedIn);
         
         if (loggedIn) {
-          return of(true);
+          console.log('logged in, restore user state')
+          // Versuche, den Benutzerstatus wiederherzustellen
+          return this.authService.restoreUserState().pipe(
+            map(restored => {
+              if (!restored) {
+                this.authService.login();
+              }
+              return restored; // true wenn wiederhergestellt, false wenn Login-Redirect
+            })
+          );
         } else {
-          console.log('try to restore user state')
+          console.log('not logged in, try to restore user state')
           // Versuche, den Benutzerstatus wiederherzustellen
           return this.authService.restoreUserState().pipe(
             map(restored => {

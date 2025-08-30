@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { GameplanCardComponent } from '../../gameplan-card/gameplan-card.component';
 import { NgFor, NgIf } from '@angular/common';
-import Match from '../../../api/match.interface';
+import {Match} from '../../../api/match.interface';
 import { FieldsetModule } from 'primeng/fieldset';
 import { GroupCardComponent } from '../../group-card/group-card.component';
 import Group from '../../../api/group.interface';

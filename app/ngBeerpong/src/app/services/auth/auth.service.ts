@@ -22,6 +22,7 @@ export class AuthService {
     private store: Store<UserState>,
     private router: Router
   ) {
+    console.log('AuthService initialized');
     this.isAuthenticated$ = this.oauthService.isAuthenticated$;
     this.oauthService.user$.subscribe(user => {
       if(user) {

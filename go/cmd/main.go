@@ -68,28 +68,29 @@ func main() {
 
 	gameRepo := repo.NewGameRepo(psqlInfo)
 	general := usecase.NewGeneral(gameRepo)
-	beerpongGameHandler := handler.NewBeerpongGameHandler(
+	beerpongGameHandler := handler.NewBeerpongTournamentHandler(
 		*general,
 		*usecase.NewSixGroupsFiveTeams(gameRepo, *general),
 		*usecase.NewOneGroupFiveTeams(gameRepo, *general),
+		gameRepo,
 	)
 
 	configuration.Auth0Config.TokenLifetime = time.Duration(1 * time.Hour)
 	v1 := router.Group("/api/v1")
 	v1.Use(requestvalidation.NewAuth0Middleware(*configuration.Auth0Config))
 	{
-		v1.POST("/game", beerpongGameHandler.CreateGame)
-		v1.GET("/game", beerpongGameHandler.GetGame)
-		v1.GET("/game/last", beerpongGameHandler.GetLastGame)
-		v1.PUT("/game/:id", beerpongGameHandler.FinishGame)
+		v1.POST("/tournament", beerpongGameHandler.CreateGame)
+		v1.GET("/tournament", beerpongGameHandler.GetTournament)
+		v1.GET("/tournament/last", beerpongGameHandler.GetLastTournament)
+		v1.PUT("/tournament/:id", beerpongGameHandler.FinishTournament)
 		// router.DELETE(apiPrefix+"/games/:id", gameRepo.DeleteGame)
 
-		v1.PUT("/game/matches", beerpongGameHandler.UpdateMatches)
-		v1.PUT("/game/matches/round-of-sixteen/:id", beerpongGameHandler.UpdateGameRoundOf16)
-		v1.PUT("/game/matches/quaterfinals/:id", beerpongGameHandler.UpdateGameQuaterFinals)
-		v1.PUT("/game/matches/semifinals/:id", beerpongGameHandler.UpdateGameSemiFinals)
-		v1.PUT("/game/matches/final/:id", beerpongGameHandler.UpdateGameFinal)
-		v1.PUT("/game/teams", beerpongGameHandler.UpdateTeams)
+		v1.PUT("/tournament/matches", beerpongGameHandler.UpdateMatches)
+		v1.PUT("/tournament/matches/round-of-sixteen/:id", beerpongGameHandler.UpdateTournamentRoundOf16)
+		v1.PUT("/tournament/matches/quaterfinals/:id", beerpongGameHandler.UpdateTournamentQuaterFinals)
+		v1.PUT("/tournament/matches/semifinals/:id", beerpongGameHandler.UpdateTournamentSemiFinals)
+		v1.PUT("/tournament/matches/final/:id", beerpongGameHandler.UpdateTournamentFinal)
+		v1.PUT("/tournament/teams", beerpongGameHandler.UpdateTeams)
 	}
 	router.Run(":8082")
 

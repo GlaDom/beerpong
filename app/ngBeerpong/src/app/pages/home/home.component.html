@@ -29,7 +29,7 @@
                 <div class="font-bold text-2xl w-full">
                     <div class="flex flex-row justify-between">
                         <span>Ergebnis des letzten Turnieres</span>
-                        @if (lastGame && !lastGame.game.is_finished) {
+                        @if (lastGame && !lastGame.tournament.is_finished) {
                             <div class="flex items-center gap-2 text-lg">
                                 <span class="relative flex h-3 w-3">
                                     <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
@@ -52,28 +52,28 @@
                 <div class="flex flex-row justify-between">
                     <span>Datum</span>
                     <p-tag severity="secondary">
-                        <span>{{lastGame.game.created_at | date:'dd.MM.yyyy hh:mm'}}</span>
+                        <span>{{lastGame.tournament.created_at | date:'dd.MM.yyyy hh:mm'}}</span>
                     </p-tag>
                 </div>
                 <div class="flex flex-row justify-between">
-                    <span>Modus</span>
-                    <p-tag [value]="getGameMode(lastGame.game.mode)" severity="info"></p-tag>
-                </div>
-                <div class="flex flex-row justify-between">
                     <span>Schiedsrichter</span>
-                    @if (lastGame.game.referee?.length === 0) {
+                    @if (lastGame.tournament.referee?.length === 0) {
                     <p-tag value="Keine Schiedsrichter" severity="info"></p-tag>
                     } @else {
                     <div class="flex gap-2">
-                        @for (referee of lastGame.game.referee; track $index) {
+                        @for (referee of lastGame.tournament.referee; track $index) {
                         <p-tag [value]="referee.name" severity="info"></p-tag>
                         }
                     </div>
                     }
                 </div>
                 <div class="flex flex-row justify-between">
+                    <span>Anzahl Gruppen</span>
+                    <p-tag [value]="lastGame.tournament.groups.length.toString()" severity="secondary"></p-tag>
+                </div>
+                <div class="flex flex-row justify-between">
                     <span>Anzahl Teams</span>
-                    <p-tag [value]="lastGame.game.amount_of_teams.toString()" severity="success"></p-tag>
+                    <p-tag [value]="lastGame.tournament.amount_of_teams.toString()" severity="danger"></p-tag>
                 </div>
             </div>
             <hr />

@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { TableModule } from 'primeng/table';
-import Match from '../../api/match.interface';
+import {Match} from '../../api/match.interface';
 import { TagModule } from 'primeng/tag';
 import { DatePipe, NgIf } from '@angular/common';
 import { FieldsetModule } from 'primeng/fieldset';

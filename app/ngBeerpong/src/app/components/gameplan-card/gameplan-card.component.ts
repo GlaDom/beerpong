@@ -2,9 +2,9 @@ import { Component, Input } from '@angular/core';
 import { CardModule } from 'primeng/card';
 import { ChipModule } from 'primeng/chip';
 import { DividerModule } from 'primeng/divider';
-import Match from '../../api/match.interface';
+import {Match} from '../../api/match.interface';
 import { TagModule } from 'primeng/tag';
-import { DatePipe } from '@angular/common';
+import { DatePipe, NgIf } from '@angular/common';
 
 @Component({
     selector: 'app-gameplan-card',
@@ -13,7 +13,8 @@ import { DatePipe } from '@angular/common';
         ChipModule,
         DividerModule,
         TagModule,
-        DatePipe
+        DatePipe,
+        NgIf
     ],
     templateUrl: './gameplan-card.component.html',
     styleUrl: './gameplan-card.component.css'
@@ -21,6 +22,9 @@ import { DatePipe } from '@angular/common';
 export class GameplanCardComponent {
   @Input()
   match?: Match;
+
+  @Input()
+  showGroupName: boolean = true;
 
   constructor() {}
 

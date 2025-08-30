@@ -1,7 +1,5 @@
 package models
 
-type GameResponse struct {
-	Game    Game    `json:"game"`
-	Groups  []Group `json:"groups"`
-	Matches []Match `json:"matches"`
+type TournamentResponse struct {
+	Tournament Tournament `json:"tournament"`
 }

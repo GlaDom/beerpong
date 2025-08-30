@@ -22,22 +22,22 @@
                 @if (!showRanking && !isLoading) {
                     @if (groups.length>1) {
                         <app-gameplan-s-gf-t [regularMatches]="regularMatches" [roundOfSixteenMatches]="roundOfsixteen" [quarterFinalMatches]="quaterFinals" [semiFinalMatches]="semiFinals" [semiFinalMatches]="semiFinals" [finalMatches]="final" [groups]="groups"></app-gameplan-s-gf-t>
-                    } @else if (groups.length===1) {
-                        <app-gameplan-o-gf-t [regularMatches]="regularMatches[0]" [finalMatches]="final" [groups]="groups"></app-gameplan-o-gf-t>
                     } @else {
                         <div class="flex flex-col items-center justify-center h-full">
                             <p>Es ist derzeit kein Spiel aktiv</p>
                         </div>
                     }
                 }
-                <!-- <ng-container *ngIf="showRanking">
-                    <app-ranking [teams]="getBestEightTeams()"></app-ranking>
-                </ng-container> -->
             </div>
         </div>
-    } @else {
+    } @else if (showTableView) {
         <div class="m-4">
             <app-table-view [regularMatches]="regularMatches" [roundOfSixteenMatches]="roundOfsixteen" [quarterFinalMatches]="quaterFinals" [semiFinalMatches]="semiFinals" [finalMatches]="final"></app-table-view>
         </div>
-    }
+    } 
+    <!-- @if (showRanking && !isLoading) {
+        <div class="m-4">
+            <app-ranking [teams]="getBestEightTeams()" [rankinkSize]="8"></app-ranking>
+        </div>
+    } -->
 </div>

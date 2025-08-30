@@ -1,5 +1,4 @@
-import { Component, Signal } from '@angular/core';
-import { AuthService } from '@auth0/auth0-angular';
+import { Component } from '@angular/core';
 import { BeerpongState } from '../../store/beerpong/game.state';
 import { Store } from '@ngrx/store';
 import { finishGame, loadGame, loadLastGame } from '../../store/beerpong/beerpong.actions';
@@ -7,7 +6,6 @@ import { PanelModule } from 'primeng/panel';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { async, Observable } from 'rxjs';
-import Game from '../../api/game.interface';
 import { selectLastGame } from '../../store/beerpong/beerpong.selectors';
 import { RankingComponent } from "../../components/ranking/ranking.component";
 import { GameState } from '../../models/game-state.model';
@@ -16,7 +14,7 @@ import { TagModule } from 'primeng/tag';
 import { Router, RouterLink } from '@angular/router';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import Team from '../../api/team.interface';
+import {Team} from '../../api/team.interface';
 import { ConfigurationService } from '../../services/configuration.service';
 
 @Component({
@@ -46,10 +44,10 @@ export class HomeComponent {
   ngOnInit(): void {
     this.beerpongStore.dispatch(loadLastGame())
     this.lastGame$.subscribe((game: GameState) => {
-      if (game.game.user_sub !== '') {
+      if (game.tournament.user_sub !== '') {
         this.lastGame = game;
-        if (game && game.game && game.game.teams.length > 0) {
-          this.sortedTeams = Array.from(game.game.teams);
+        if (game && game.tournament && game.tournament.groups.length > 0) {
+          this.sortedTeams = Array.from(game.tournament.groups[0].teams);
           this.sortedTeams = this.configService.sortTeamsByPointsAndCupDifference(this.sortedTeams);
         }
         console.log('Last game loaded:', game);
@@ -72,7 +70,7 @@ export class HomeComponent {
     // This method can be used to navigate to different routes if needed
     // For example, you can use the Angular Router to navigate
     // this.router.navigate([path]);
-    if (this.lastGame && !this.lastGame.game.is_finished) {
+    if (this.lastGame && !this.lastGame.tournament.is_finished) {
       this.confirmationService.confirm({
             message: 'Ein Spiel ist noch aktiv. Möchtest du das aktuelle Spiel beenden und ein neues Spiel starten?',
             header: 'Achtung',
@@ -89,7 +87,7 @@ export class HomeComponent {
             },
             accept: () => {
                 this.messageService.add({ severity: 'info', summary: 'Confirmed', detail: 'Aktuelles Spiel wird beendet' });
-                this.beerpongStore.dispatch(finishGame({ gameId: this.lastGame.game.id! }));
+                this.beerpongStore.dispatch(finishGame({ gameId: this.lastGame.tournament.id! }));
                 this.router.navigate([path]);
             },
             reject: () => {
@@ -107,7 +105,7 @@ export class HomeComponent {
   }
 
   public continueGame(): string {
-    if (this.lastGame && !this.lastGame.game.is_finished) {
+    if (this.lastGame && !this.lastGame.tournament.is_finished) {
       return '';
     } else {
       return 'text-gray-500'

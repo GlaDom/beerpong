@@ -1,28 +1,60 @@
 <p-stepper [value]="1">
     <p-step-list>
-        <p-step [value]="1">Spielmodus</p-step>
+        <p-step [value]="1">Spieleinstellungen</p-step>
         <p-step [value]="2">Mannschaften</p-step>
-        <p-step [value]="3">Zeit & Schiedsrichter</p-step>
-        <p-step [value]="4">Spieluebersicht</p-step>
+        <p-step [value]="3">Spieluebersicht</p-step>
     </p-step-list>
     <p-step-panels>
         <p-step-panel [value]="1">
             <ng-template pTemplate="content" let-activateCallback="activateCallback" let-index="index">
                 <div class="grid grid-cols-8 gap-4">
-                    <div class="col-span-4 col-start-2 col-end-7">
-                        <p-panel header="Waehlen Sie einen Spielmodus">
-                            <div class="flex flex-col gap-3">
-                                <form [formGroup]="buttonsFormGroup">
-                                    <div class="flex flex-row gap-2">
-                                        <p-toggleButton formControlName="buttonOne" (onChange)="toggleSelectButton(0)" onLabel="{{buttonLabelSixGroups}}" offLabel="{{buttonLabelSixGroups}}"></p-toggleButton>
-                                        <p-toggleButton formControlName="buttonTwo" (onChange)="toggleSelectButton(1)" onLabel="{{buttonLabelOneGroup}}" offLabel="{{buttonLabelOneGroup}}"></p-toggleButton>
+                    <div class="col-span-4 col-start-3 col-end-7">
+                        <form [formGroup]="gameForm">
+                            <p-panel>
+                                <div class="flex flex-col gap-3 w-full">
+                                    <div class="flex gap-10 justify-between items-center">
+                                        <span>Anzahl an Gruppen:</span>
+                                        <p-select [options]="groupOptions" formControlName="amountOfGroups" (onChange)="updateGroupNumber($event)"></p-select>
                                     </div>
-                                </form>
-                            </div>
-                        </p-panel>
+                                    <div class="flex gap-10 justify-between items-center">
+                                        <span>Anzahl an Teams:</span>
+                                        <p-select [options]="teamOptions" formControlName="amountOfTeams" (onChange)="updateTeamNumber($event)"></p-select>
+                                    </div>
+                                    <div class="flex gap-10 justify-between items-center">
+                                        <span>Anzahl an Qualifizierten Teams:</span>
+                                        <p-select [options]="qualifiedTeamsOptions" formControlName="numberOfQualifiedTeams"></p-select>
+                                    </div>
+                                    <div class="flex gap-10 justify-between items-center">
+                                        <span>K.O. - Runde:</span>
+                                        <p-toggleswitch formControlName="koStage"/>
+                                    </div>
+                                    <div class="flex gap-10 justify-between items-center">
+                                        <span>Spiel um Platz 3:</span>
+                                        <p-toggleswitch formControlName="includeThirdPlaceMatch"/>
+                                    </div>
+                                    <div class="flex gap-10 justify-between items-center">
+                                        <span>Zeit pro Spiel:</span>
+                                        <p-inputNumber placeholder="Spielzeit (in m)" inputId="integeronly" formControlName="gameTime" />
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <span>Schiedsrichter</span>
+                                        <p-toggle-switch formControlName="withReferees"/>
+                                    </div>
+                                    <div class="flex flex-row gap-2">
+                                        @if (gameForm.get('withReferees')?.value) {
+                                            <!-- <h1>Tragen Sie ihre Schiedsrichter ein (Kommasepariert):</h1> -->
+                                            <input placeholder="(Franz, Kevin, ...)" type="text" pInputText  formControlName="referees"/>
+                                        }
+                                    </div>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span>Beginn des Turniers:</span>
+                                    <p-calendar placeholder="yyyy/mm/dd hh:mm" [showTime]="true" hourFormat="24" dateFormat="yy/mm/dd" formControlName="gameStart"/>
+                                </div>
+                            </p-panel>
+                        </form>
                         <div class="flex pt-4 justify-content-end">
                             <p-button 
-                                [disabled]="playMode === undefined"
                                 label="Next" 
                                 icon="pi pi-arrow-right" 
                                 iconPos="right" 
@@ -35,30 +67,43 @@
         <p-step-panel [value]="2">
             <ng-template pTemplate="content" let-activateCallback="activateCallback" let-index="index">
                 <div class="grid grid-cols-8 gap-4">
-                    <div class="col-span-4 col-start-2 col-end-7">
+                    <div class="col-span-4 col-start-3 col-end-7">
                         <form [formGroup]="gameForm">
                             <div class="flex justify-between my-4 text-xl">
                                 <h1>Tragen Sie ihre Mannschaften ein</h1>
                                 <p-button pTooltip="Random teamnames" tooltipPosition="left" pTooltip="Zufaellige Mannschaftesnamen" label="" icon="pi pi-sparkles" size="small" severity="primary" (onClick)="fillGroupsWithTeamNames()"/>
                             </div>
-                            <ng-container formArrayName="groups">
-                                <ng-container *ngFor="let groupForm of groups.controls; let i=index">
-                                    <div class="my-1" [formGroupName]="i">
-                                        <p-card header="Gruppe {{groupForm.get('name')?.value}}">
-                                            <div class="flex flex-col">
-                                                <input formControlName="team1" [ngClass]="{'ng-invalid': groupForm.get('team1')?.hasError('notUnique')}" pInputText placeholder="Mannschaft 1" class="my-1"/>
-                                                <div *ngIf="groupForm.get('team1')?.hasError('notUnique')" class="text-red-500 text-xs ml-2">
-                                                   Teamname ist bereits vergeben!
-                                                </div>
-                                                <input formControlName="team2" [ngClass]="{'ng-invalid': groupForm.get('team2')?.hasError('notUnique')}" pInputText placeholder="Mannschaft 2" class="my-1"/>
-                                                <input formControlName="team3" [ngClass]="{'ng-invalid': groupForm.get('team3')?.hasError('notUnique')}" pInputText placeholder="Mannschaft 3" class="my-1"/>
-                                                <input formControlName="team4" [ngClass]="{'ng-invalid': groupForm.get('team4')?.hasError('notUnique')}" pInputText placeholder="Mannschaft 4" class="my-1"/>
-                                                <input formControlName="team5" [ngClass]="{'ng-invalid': groupForm.get('team5')?.hasError('notUnique')}" pInputText placeholder="Mannschaft 5" class="my-1"/>
+                            <!-- Hauptlevel - Gruppen -->
+                            <div formArrayName="groups" class="flex flex-col gap-8">
+                                <div *ngFor="let group of groupsFormArray.controls; let groupIndex = index" [formGroupName]="groupIndex">
+                                    <p-card header="Gruppe {{group.get('groupName')?.value}}">
+                                        <!-- Verschachteltes FormArray: Teams-->
+                                         <div formArrayName="teams" class="flex flex-col gap-4">
+                                            <div *ngFor="let team of getTeamsFromArray(groupIndex).controls; let teamIndex = index">
+                                                <input pInputText [formControlName]="teamIndex" pInputText placeholder="Mannschaft {{teamIndex + 1}}" class="w-full"/>
+                                                @if(team.invalid && (team.dirty || team.touched)) {
+                                                    <div class="mt-1">
+                                                        <p-message severity="error" size="small" variant="simple">
+                                                            @if (team.hasError('required')) {
+                                                                Teamname is Required.
+                                                            }
+                                                            @if (team.hasError('notUnique')) {
+                                                                Teamname ist schon vergeben.
+                                                            }
+                                                        </p-message>
+                                                    </div>
+                                                    <!-- <div class="text-red-600 text-sm mt-1" *ngIf="team.errors?.['required']">
+                                                        Mannschaftsname ist erforderlich.
+                                                    </div>
+                                                    <div class="text-red-600 text-sm mt-1" *ngIf="team.errors?.['notUnique']">
+                                                        Mannschaftsname muss einzigartig sein.
+                                                    </div> -->
+                                                }
                                             </div>
-                                        </p-card>
-                                    </div>
-                                </ng-container>
-                            </ng-container>
+                                         </div>
+                                    </p-card>
+                                </div>
+                            </div>
                         </form>
                         <div class="flex pt-4 justify-content-between gap-2">
                             <p-button 
@@ -77,89 +122,45 @@
             </ng-template>
         </p-step-panel>
         <p-step-panel [value]="3">
-            <ng-template pTemplate="content" let-prevCallback="prevCallback" let-activateCallback="activateCallback" let-index="index">
-                <div class="grid grid-cols-8 gap-4">
-                    <div class="col-span-4 col-start-2 col-end-7">
-                        <p-panel header="Zusatzinformationen">
-                            <div class="flex flex-col h-12rem">
-                                <div>
-                                    <form [formGroup]="refereeFormGroup">
-                                        <div class="flex flex-col gap-4">
-                                            <h1>Tragen Sie ihre Spielzeit pro Spiel ein (in Minuten):</h1>
-                                            <p-inputNumber placeholder="Spielzeit" inputId="integeronly" formControlName="gameTime" />
-                                            <h1>Tragen Sie die Startuhrzeit ein:</h1>
-                                            <p-calendar placeholder="yyyy/mm/dd hh:mm" [showTime]="true" hourFormat="24" dateFormat="yy/mm/dd" formControlName="date" />
-                                            <div class="flex flex-col gap-2">
-                                                <div class="flex flex-row gap-2">
-                                                    <p-toggle-switch formControlName="checked"/>
-                                                    <h1>Tragen Sie ihre Schiedsrichter ein (Kommasepariert):</h1>
-                                                </div>
-                                                @if (refereeFormGroup.get('checked')?.value) {
-                                                    <input placeholder="Schiedsrichter" type="text" pInputText formControlName="referees" />
-                                                }
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </p-panel>
-                        <div class="flex pt-4 justify-content-between gap-2">
-                            <p-button 
-                                label="Back" 
-                                icon="pi pi-arrow-left" 
-                                (onClick)="activateCallback(2)" />
-                            <p-button 
-                                [disabled]="!refereeFormGroup.valid"
-                                label="Next" 
-                                icon="pi pi-arrow-right" 
-                                iconPos="right" 
-                                (onClick)="activateCallback(4)" />
-                        </div>
-                    </div>
-                </div>
-            </ng-template>
-        </p-step-panel>
-        <p-step-panel [value]="4">
             <ng-template pTemplate="content" let-activateCallback="activateCallback" let-index="index">
                 <div class="grid grid-cols-8 gap-4">
-                    <div class="col-span-4 col-start-2 col-end-7">
+                    <div class="col-span-4 col-start-3">
                         <div class="flex flex-col gap-4">
                             <div>
                                 <form [formGroup]="gameForm">
-                                    <div class="flex flex-row gap-2">
-                                        <ng-container formArrayName="groups">
-                                            <ng-container *ngFor="let groupForm of groups.controls; let i=index">
+                                    <div>
+                                        <div formArrayName="groups">
+                                            <div *ngFor="let group of groupsFormArray.controls; let groupIndex = index" [formGroupName]="groupIndex" class="w-full">
                                                 <div class="my-1 flex-1">
-                                                    <p-card header="Gruppe {{groupForm.get('name')?.value}}">
-                                                        <div class="flex flex-col">
-                                                            <span class="my-1">1. {{groupForm.get('team1')?.value}}</span>
-                                                            <span class="my-1">2. {{groupForm.get('team2')?.value}}</span>
-                                                            <span class="my-1">3. {{groupForm.get('team3')?.value}}</span>
-                                                            <span class="my-1">4. {{groupForm.get('team4')?.value}}</span>
-                                                            <span class="my-1">5. {{groupForm.get('team5')?.value}}</span>
+                                                    <p-card header="Gruppe {{group.get('groupName')?.value}}">
+                                                        <div formArrayName="teams">
+                                                            <div *ngFor="let team of getTeamsFromArray(groupIndex).controls; let teamIndex = index" class="w-full">
+                                                                <span>{{teamIndex + 1}}. </span>
+                                                                <span class="my-1">{{team.value}}</span>
+                                                            </div>
                                                         </div>
                                                     </p-card>
                                                 </div>
-                                            </ng-container>
-                                        </ng-container>
+                                            </div>
+                                        </div>
                                     </div>
                                 </form>
                             </div>
                             <p-panel header="Spieleinstellungen">
                                 <div class="flex flex-col gap-2">
-                                    @if (refereeFormGroup.get('checked')?.value) {
+                                    @if (gameForm.get('withReferees')?.value) {
                                         <div class="flex flex-row justify-between">
                                             <span class="w-1/6">Schiedsrichter: </span>
-                                            <span>{{refereeFormGroup.get('referees')?.value}}</span>
+                                            <span>{{gameForm.get('referees')?.value}}</span>
                                         </div>
                                     }
                                     <div class="flex flex-row justify-between">
                                         <span>Spielzeit: </span>
-                                        <span>{{refereeFormGroup.get('gameTime')?.value}} Minuten</span>
+                                        <span>{{gameForm.get('gameTime')?.value}} Minuten</span>
                                     </div>
                                     <div class="flex flex-row justify-between">
                                         <span>Startzeitpunkt: </span>
-                                        <span>{{refereeFormGroup.get('date')?.value | date:'medium'}}</span>
+                                        <span>{{gameForm.get('gameStart')?.value | date:'medium'}}</span>
                                     </div>
                                 </div>
                             </p-panel>

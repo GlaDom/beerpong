@@ -1,16 +1,19 @@
 <p-toast></p-toast>
-<div class="m-8 grid grid-cols-12"> 
-    <div class="col-span-12 mb-4">
-        <ng-container *ngIf="!isLoading && matches && matches.length > 0">
-            <ng-container *ngIf="groups.length>1">
-                <app-mode-s-gf-t [groups]="groups" [showRanking]="this.showRanking" [gameId]="gameId" [gameMode]="gameMode" [sortedMatches]="sortedMatches" [roundOfsixteen]="roundOfsixteen" [quaterFinalMatches]="quaterFinalMatches" [semiFinalMatches]="semiFinalMatches" [finalMatches]="finalMatch"></app-mode-s-gf-t>
-            </ng-container>
-            <ng-container *ngIf="groups.length===1">
-                <app-mode-o-gf-t [groups]="groups" [showRanking]="this.showRanking" [gameMode]="this.gameMode" [regularMatches]="regularMatches" [finalMatches]="finalMatch"></app-mode-o-gf-t>
-            </ng-container>
-        </ng-container>
-        <ng-container *ngIf="!isLoading && matches && matches.length===0 && !showRanking">
-            <app-beerpong-setup></app-beerpong-setup>
-        </ng-container>
+<div class="m-8 grid grid-cols-12 h-full"> 
+    <div class="col-span-12 mb-4 h-full">
+        @if (isLoading) {
+            <div class="flex h-full justify-center">
+                <div class="flex flex-col justify-center items-center gap-4">
+                    <p-progressSpinner styleClass="w-2rem h-2rem" strokeWidth="4" animationDuration="1s"></p-progressSpinner>
+                    <p>Lade Daten...</p>
+                </div>
+            </div>
+        } @else {
+            @if (matches && matches.length > 0) {
+                <app-mode-s-gf-t [groups]="groups" [showRanking]="this.showRanking" [gameId]="gameId" [gameMode]="gameMode" [sortedMatches]="sortedMatches" [roundOfsixteen]="roundOfsixteen" [quaterFinalMatches]="quaterFinalMatches" [semiFinalMatches]="semiFinalMatches" [thirdPlaceMatch]="thirdPlaceMatch" [finalMatches]="finalMatch"></app-mode-s-gf-t>
+            } @else if (matches.length === 0 && !showRanking) {
+                <app-beerpong-setup></app-beerpong-setup>
+            }
+        }
     </div>
 </div>

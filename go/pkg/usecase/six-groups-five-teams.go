@@ -9,41 +9,26 @@ import (
 	"github.com/gladom/beerpong/pkg/models"
 )
 
-type IGamerepo interface {
-	GetGameBySub(string) (*models.GameResponse, error)
-	GetLastGameBySub(string) (*models.GameResponse, error)
-	GetGameByID(string) (*models.Game, error)
-	CreateGame(*models.NewGame) error
-	GetTeamsByGameID(int) ([]models.Team, error)
-	GetTeamByGameID(int, string, string) (models.Team, error)
-	GetMatchesByGameType(int, string) ([]models.Match, error)
-	GetMatchesByGameID(int) ([]models.Match, error)
-	CreateMatches([]*models.Match) error
-	UpdateMatches(*models.Match) error
-	UpdateTeam(*models.Team) error
-	UpdateGame(*models.Game) error
-}
-
 type SixGroupsFiveTeams struct {
 	General  General
-	GameRepo IGamerepo
+	GameRepo ITournamentrepo
 }
 
-func NewSixGroupsFiveTeams(gr IGamerepo, g General) *SixGroupsFiveTeams {
+func NewSixGroupsFiveTeams(gr ITournamentrepo, g General) *SixGroupsFiveTeams {
 	return &SixGroupsFiveTeams{
 		GameRepo: gr,
 		General:  g,
 	}
 }
 
-func (s *SixGroupsFiveTeams) GenerateGamePlan(game *models.NewGame) error {
+func (s *SixGroupsFiveTeams) GenerateGamePlan(tournament *models.NewTournament) error {
 	//save new game
-	err := s.GameRepo.CreateGame(game)
+	err := s.GameRepo.CreateTournament(tournament)
 	if err != nil {
 		return err
 	}
 	//calculate matches for game
-	matches := s.calculateMatchesPerGroup(game.Game.Teams, game.Game.ID, game.Game.Referee, game.Game.StartTime, game.Game.GameTime)
+	matches := s.calculateMatchesPerGroup(tournament.Tournament.Groups[0].Teams, tournament.Tournament.ID, tournament.Tournament.Referee, tournament.Tournament.StartTime, tournament.Tournament.GameTime)
 	err = s.GameRepo.CreateMatches(matches)
 	if err != nil {
 		return err
@@ -56,7 +41,7 @@ func (s *SixGroupsFiveTeams) UpdateMatchesRoundOfSixteen(gameId int) error {
 		return fmt.Errorf("matches not finished yet")
 	}
 	//get teams of game
-	teams, err := s.GameRepo.GetTeamsByGameID(gameId)
+	teams, err := s.GameRepo.GetTeamsByTournamentID(gameId)
 	if err != nil {
 		return err
 	}
@@ -74,7 +59,7 @@ func (s *SixGroupsFiveTeams) UpdateMatchesRoundOfSixteen(gameId int) error {
 		groups[i].Teams = groups[i].Teams[:2]
 	}
 	//alle round_of_16 matches holen
-	matches, err := s.GameRepo.GetMatchesByGameType(gameId, "round_of_16")
+	matches, err := s.GameRepo.GetMatchesByTournamentType(gameId, "round_of_16")
 	if err != nil {
 		return err
 	}
@@ -96,12 +81,12 @@ func (s *SixGroupsFiveTeams) UpdateMatchesQuaterFinals(gameId int) error {
 		return fmt.Errorf("matches not finished yet")
 	}
 	//get matches of round of 16
-	roundOfSixteen, err := s.GameRepo.GetMatchesByGameType(gameId, "round_of_16")
+	roundOfSixteen, err := s.GameRepo.GetMatchesByTournamentType(gameId, "round_of_16")
 	if err != nil {
 		return err
 	}
 	//get matches of quaterfinals
-	quaterfinals, err := s.GameRepo.GetMatchesByGameType(gameId, "quaterfinal")
+	quaterfinals, err := s.GameRepo.GetMatchesByTournamentType(gameId, "quaterfinal")
 	if err != nil {
 		return err
 	}
@@ -135,12 +120,12 @@ func (s *SixGroupsFiveTeams) UpdateMatchesSemiFinal(gameId int) error {
 		return fmt.Errorf("matches not finished yet")
 	}
 	//get quaterfinals
-	quaterFinals, err := s.GameRepo.GetMatchesByGameType(gameId, "quaterfinal")
+	quaterFinals, err := s.GameRepo.GetMatchesByTournamentType(gameId, "quaterfinal")
 	if err != nil {
 		return err
 	}
 	//get semifinals
-	semiFinals, err := s.GameRepo.GetMatchesByGameType(gameId, "semifinal")
+	semiFinals, err := s.GameRepo.GetMatchesByTournamentType(gameId, "semifinal")
 	if err != nil {
 		return err
 	}
@@ -170,12 +155,12 @@ func (s *SixGroupsFiveTeams) UpdateMatchesFinal(gameId int) error {
 		return fmt.Errorf("matches not finished yet")
 	}
 	//get semifinals
-	semifinal, err := s.GameRepo.GetMatchesByGameType(gameId, "semifinal")
+	semifinal, err := s.GameRepo.GetMatchesByTournamentType(gameId, "semifinal")
 	if err != nil {
 		return err
 	}
 	//get final
-	final, err := s.GameRepo.GetMatchesByGameType(gameId, "final")
+	final, err := s.GameRepo.GetMatchesByTournamentType(gameId, "final")
 	if err != nil {
 		return err
 	}
@@ -266,29 +251,29 @@ func (s *SixGroupsFiveTeams) calculateMatchesPerGroup(teams []models.Team, gameI
 	startOfRoundOf16 := startTime.Add(playTime * 10)
 
 	//add round of 16
-	matches = append(matches, &models.Match{GameID: gameId, Type: "round_of_16", GroupNumber: "A", HomeTeam: "2. Gruppe A", AwayTeam: "2. Gruppe C", PointsHome: 0, PointsAway: 0, StartTime: startOfRoundOf16, EndTime: startOfRoundOf16.Add(playTime)})
-	matches = append(matches, &models.Match{GameID: gameId, Type: "round_of_16", GroupNumber: "B", HomeTeam: "1. Gruppe B", AwayTeam: "3. Gruppe B/E/F", PointsHome: 0, PointsAway: 0, StartTime: startOfRoundOf16, EndTime: startOfRoundOf16.Add(playTime)})
-	matches = append(matches, &models.Match{GameID: gameId, Type: "round_of_16", GroupNumber: "C", HomeTeam: "1. Gruppe D", AwayTeam: "3. Gruppe A/C/D", PointsHome: 0, PointsAway: 0, StartTime: startOfRoundOf16, EndTime: startOfRoundOf16.Add(playTime)})
-	matches = append(matches, &models.Match{GameID: gameId, Type: "round_of_16", GroupNumber: "D", HomeTeam: "1. Gruppe A", AwayTeam: "3. Gruppe A/B/F", PointsHome: 0, PointsAway: 0, StartTime: startOfRoundOf16, EndTime: startOfRoundOf16.Add(playTime)})
-	matches = append(matches, &models.Match{GameID: gameId, Type: "round_of_16", GroupNumber: "E", HomeTeam: "1. Gruppe C", AwayTeam: "3. Gruppe C/D/E", PointsHome: 0, PointsAway: 0, StartTime: startOfRoundOf16, EndTime: startOfRoundOf16.Add(playTime)})
-	matches = append(matches, &models.Match{GameID: gameId, Type: "round_of_16", GroupNumber: "F", HomeTeam: "1. Gruppe F", AwayTeam: "2. Gruppe E", PointsHome: 0, PointsAway: 0, StartTime: startOfRoundOf16, EndTime: startOfRoundOf16.Add(playTime)})
-	matches = append(matches, &models.Match{GameID: gameId, Type: "round_of_16", GroupNumber: "A", HomeTeam: "1. Gruppe E", AwayTeam: "2. Gruppe D", PointsHome: 0, PointsAway: 0, StartTime: startOfRoundOf16.Add(playTime), EndTime: startOfRoundOf16.Add(playTime * 2)})
-	matches = append(matches, &models.Match{GameID: gameId, Type: "round_of_16", GroupNumber: "B", HomeTeam: "1. Gruppe B", AwayTeam: "2. Gruppe F", PointsHome: 0, PointsAway: 0, StartTime: startOfRoundOf16.Add(playTime), EndTime: startOfRoundOf16.Add(playTime * 2)})
+	matches = append(matches, &models.Match{TournamentID: gameId, Type: "round_of_16", GroupNumber: "A", HomeTeam: "2. Gruppe A", AwayTeam: "2. Gruppe C", PointsHome: 0, PointsAway: 0, StartTime: startOfRoundOf16, EndTime: startOfRoundOf16.Add(playTime)})
+	matches = append(matches, &models.Match{TournamentID: gameId, Type: "round_of_16", GroupNumber: "B", HomeTeam: "1. Gruppe B", AwayTeam: "3. Gruppe B/E/F", PointsHome: 0, PointsAway: 0, StartTime: startOfRoundOf16, EndTime: startOfRoundOf16.Add(playTime)})
+	matches = append(matches, &models.Match{TournamentID: gameId, Type: "round_of_16", GroupNumber: "C", HomeTeam: "1. Gruppe D", AwayTeam: "3. Gruppe A/C/D", PointsHome: 0, PointsAway: 0, StartTime: startOfRoundOf16, EndTime: startOfRoundOf16.Add(playTime)})
+	matches = append(matches, &models.Match{TournamentID: gameId, Type: "round_of_16", GroupNumber: "D", HomeTeam: "1. Gruppe A", AwayTeam: "3. Gruppe A/B/F", PointsHome: 0, PointsAway: 0, StartTime: startOfRoundOf16, EndTime: startOfRoundOf16.Add(playTime)})
+	matches = append(matches, &models.Match{TournamentID: gameId, Type: "round_of_16", GroupNumber: "E", HomeTeam: "1. Gruppe C", AwayTeam: "3. Gruppe C/D/E", PointsHome: 0, PointsAway: 0, StartTime: startOfRoundOf16, EndTime: startOfRoundOf16.Add(playTime)})
+	matches = append(matches, &models.Match{TournamentID: gameId, Type: "round_of_16", GroupNumber: "F", HomeTeam: "1. Gruppe F", AwayTeam: "2. Gruppe E", PointsHome: 0, PointsAway: 0, StartTime: startOfRoundOf16, EndTime: startOfRoundOf16.Add(playTime)})
+	matches = append(matches, &models.Match{TournamentID: gameId, Type: "round_of_16", GroupNumber: "A", HomeTeam: "1. Gruppe E", AwayTeam: "2. Gruppe D", PointsHome: 0, PointsAway: 0, StartTime: startOfRoundOf16.Add(playTime), EndTime: startOfRoundOf16.Add(playTime * 2)})
+	matches = append(matches, &models.Match{TournamentID: gameId, Type: "round_of_16", GroupNumber: "B", HomeTeam: "1. Gruppe B", AwayTeam: "2. Gruppe F", PointsHome: 0, PointsAway: 0, StartTime: startOfRoundOf16.Add(playTime), EndTime: startOfRoundOf16.Add(playTime * 2)})
 
 	startOfQuaterFinals := startOfRoundOf16.Add(playTime * 2)
 	//add quarterfinals
-	matches = append(matches, &models.Match{GameID: gameId, Type: "quaterfinal", GroupNumber: "A", HomeTeam: "Sieger 1. Achtelfinale", AwayTeam: "Sieger 3. Achtelfinale", PointsHome: 0, PointsAway: 0, StartTime: startOfQuaterFinals, EndTime: startOfQuaterFinals.Add((playTime))})
-	matches = append(matches, &models.Match{GameID: gameId, Type: "quaterfinal", GroupNumber: "B", HomeTeam: "Sieger 2. Achtelfinale", AwayTeam: "Sieger 6. Achtelfinale", PointsHome: 0, PointsAway: 0, StartTime: startOfQuaterFinals, EndTime: startOfQuaterFinals.Add((playTime))})
-	matches = append(matches, &models.Match{GameID: gameId, Type: "quaterfinal", GroupNumber: "C", HomeTeam: "Sieger 5. Achtelfinale", AwayTeam: "Sieger 7. Achtelfinale", PointsHome: 0, PointsAway: 0, StartTime: startOfQuaterFinals, EndTime: startOfQuaterFinals.Add((playTime))})
-	matches = append(matches, &models.Match{GameID: gameId, Type: "quaterfinal", GroupNumber: "D", HomeTeam: "Sieger 4. Achtelfinale", AwayTeam: "Sieger 8. Achtelfinale", PointsHome: 0, PointsAway: 0, StartTime: startOfQuaterFinals, EndTime: startOfQuaterFinals.Add((playTime))})
+	matches = append(matches, &models.Match{TournamentID: gameId, Type: "quaterfinal", GroupNumber: "A", HomeTeam: "Sieger 1. Achtelfinale", AwayTeam: "Sieger 3. Achtelfinale", PointsHome: 0, PointsAway: 0, StartTime: startOfQuaterFinals, EndTime: startOfQuaterFinals.Add((playTime))})
+	matches = append(matches, &models.Match{TournamentID: gameId, Type: "quaterfinal", GroupNumber: "B", HomeTeam: "Sieger 2. Achtelfinale", AwayTeam: "Sieger 6. Achtelfinale", PointsHome: 0, PointsAway: 0, StartTime: startOfQuaterFinals, EndTime: startOfQuaterFinals.Add((playTime))})
+	matches = append(matches, &models.Match{TournamentID: gameId, Type: "quaterfinal", GroupNumber: "C", HomeTeam: "Sieger 5. Achtelfinale", AwayTeam: "Sieger 7. Achtelfinale", PointsHome: 0, PointsAway: 0, StartTime: startOfQuaterFinals, EndTime: startOfQuaterFinals.Add((playTime))})
+	matches = append(matches, &models.Match{TournamentID: gameId, Type: "quaterfinal", GroupNumber: "D", HomeTeam: "Sieger 4. Achtelfinale", AwayTeam: "Sieger 8. Achtelfinale", PointsHome: 0, PointsAway: 0, StartTime: startOfQuaterFinals, EndTime: startOfQuaterFinals.Add((playTime))})
 
 	startOfSemiFinals := startOfQuaterFinals.Add(playTime)
 	//add semifinals
-	matches = append(matches, &models.Match{GameID: gameId, Type: "semifinal", GroupNumber: "A", HomeTeam: "Sieger 1. Viertelfinale", AwayTeam: "Sieger 2. Viertelfinale", PointsHome: 0, PointsAway: 0, StartTime: startOfSemiFinals, EndTime: startOfSemiFinals.Add(playTime)})
-	matches = append(matches, &models.Match{GameID: gameId, Type: "semifinal", GroupNumber: "B", HomeTeam: "Sieger 3. Viertelfinale", AwayTeam: "Sieger 4. Viertelfinale", PointsHome: 0, PointsAway: 0, StartTime: startOfSemiFinals, EndTime: startOfSemiFinals.Add(playTime)})
+	matches = append(matches, &models.Match{TournamentID: gameId, Type: "semifinal", GroupNumber: "A", HomeTeam: "Sieger 1. Viertelfinale", AwayTeam: "Sieger 2. Viertelfinale", PointsHome: 0, PointsAway: 0, StartTime: startOfSemiFinals, EndTime: startOfSemiFinals.Add(playTime)})
+	matches = append(matches, &models.Match{TournamentID: gameId, Type: "semifinal", GroupNumber: "B", HomeTeam: "Sieger 3. Viertelfinale", AwayTeam: "Sieger 4. Viertelfinale", PointsHome: 0, PointsAway: 0, StartTime: startOfSemiFinals, EndTime: startOfSemiFinals.Add(playTime)})
 
 	//add final
-	matches = append(matches, &models.Match{GameID: gameId, Type: "final", GroupNumber: "A", HomeTeam: "Sieger 1. Halbfinale", AwayTeam: "Sieger 2. Halbfinale", PointsHome: 0, PointsAway: 0, StartTime: startOfSemiFinals.Add(playTime), EndTime: startOfSemiFinals.Add((playTime * 2))})
+	matches = append(matches, &models.Match{TournamentID: gameId, Type: "final", GroupNumber: "A", HomeTeam: "Sieger 1. Halbfinale", AwayTeam: "Sieger 2. Halbfinale", PointsHome: 0, PointsAway: 0, StartTime: startOfSemiFinals.Add(playTime), EndTime: startOfSemiFinals.Add((playTime * 2))})
 
 	return matches
 }
@@ -305,13 +290,13 @@ func generateSchedule(teams []models.Team, gameId int, group string, referees []
 	for i := 0; i < numTeams; i++ {
 		for j := i + 1; j < numTeams; j++ {
 			match := &models.Match{
-				GameID:      gameId,
-				Type:        "regular",
-				GroupNumber: group,
-				HomeTeam:    teams[i].TeamName,
-				AwayTeam:    teams[j].TeamName,
-				PointsHome:  0,
-				PointsAway:  0,
+				TournamentID: gameId,
+				Type:         "regular",
+				GroupNumber:  group,
+				HomeTeam:     teams[i].TeamName,
+				AwayTeam:     teams[j].TeamName,
+				PointsHome:   0,
+				PointsAway:   0,
 			}
 			allMatches = append(allMatches, match)
 		}

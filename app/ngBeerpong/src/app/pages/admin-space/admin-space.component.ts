@@ -1,9 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { GameCardComponent } from '../../components/game-card/game-card.component';
 import { ModeOGfTComponent } from '../../components/admin-space-components/mode-o-gf-t/mode-o-gf-t.component';
 import { ConfigurationService } from '../../services/configuration.service';
-import Match from '../../api/match.interface';
-import { NgFor, NgIf } from '@angular/common';
+import {Match} from '../../api/match.interface';
+import { NgIf } from '@angular/common';
 import { Store } from '@ngrx/store';
 import { BeerpongState, Status } from '../../store/beerpong/game.state';
 import { selectBeerpongState } from '../../store/beerpong/beerpong.selectors';
@@ -15,20 +14,17 @@ import { ToastModule } from 'primeng/toast';
 import { ConfirmationService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog'
 import { MessageService } from 'primeng/api';
-import { finishGame, loadGame, setShowRanking, updateMatchesFinal, updateMatchesQuaterFinals, updateMatchesRoundOfSixteen, updateMatchesSemiFinals } from '../../store/beerpong/beerpong.actions';
+import { finishGame, loadGame, setShowRanking } from '../../store/beerpong/beerpong.actions';
 import { BeerpongSetupComponent } from '../../components/beerpong-setup/beerpong-setup.component';
 import { Observable } from 'rxjs';
-import { RankingComponent } from '../../components/ranking/ranking.component';
 import Group from '../../api/group.interface';
-import Team from '../../api/team.interface';
-import { AuthService } from '../../services/auth/auth.service';
+import {Team} from '../../api/team.interface';
 import { ModeSGfTComponent } from "../../components/admin-space-components/mode-s-gf-t/mode-s-gf-t.component";
-import { GameState } from '../../models/game-state.model';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 @Component({
     selector: 'app-game-plan',
     imports: [
-        NgIf,
         TabViewModule,
         ButtonModule,
         PanelModule,
@@ -36,8 +32,8 @@ import { GameState } from '../../models/game-state.model';
         ToastModule,
         BeerpongSetupComponent,
         ConfirmDialogModule,
-        ModeOGfTComponent,
-        ModeSGfTComponent
+        ModeSGfTComponent,
+        ProgressSpinnerModule
     ],
     providers: [
         MessageService,
@@ -58,11 +54,12 @@ export class AdminSpaceComponent implements OnInit {
     roundOfsixteen: Match[] = [];
     quaterFinalMatches: Match[] = [];
     semiFinalMatches: Match[] = [];
+    thirdPlaceMatch: Match[] = [];
     finalMatch: Match[] = [];
 
     //booleans
     isLoading: boolean = true;
-    showRanking: boolean = false;
+    showRanking: boolean | undefined;
 
     constructor(
       private configService: ConfigurationService,
@@ -76,26 +73,25 @@ export class AdminSpaceComponent implements OnInit {
 
     ngOnInit(): void {
       this.game$.subscribe((game) => {
-        if(game.currentGame.matches.length>0) {
-          this.gameMode = game.currentGame.game.mode
-          this.gameId = game.currentGame.groups[0].teams[0].game_id
-          this.matches = game.currentGame.matches
-          this.groups = game.currentGame.groups
+        if(game.currentGame.tournament.matches!.length>0) {
+          this.gameId = game.currentGame.tournament.groups[0].tournament_id
+          this.matches = game.currentGame.tournament.matches!
+          this.groups = game.currentGame.tournament.groups
           this.showRanking = game.showRanking
           this.regularMatches = this.configService.filterMatches('regular', this.matches)
           this.sortedMatches = this.configService.sortMatches(this.matches)
           this.roundOfsixteen = this.configService.filterMatches('round_of_16', this.matches)
-          this.quaterFinalMatches = this.configService.filterMatches('quaterfinal', this.matches)
-          this.semiFinalMatches = this.configService.filterMatches('semifinal', this.matches)
+          this.quaterFinalMatches = this.configService.filterMatches('quaterFinal', this.matches)
+          this.semiFinalMatches = this.configService.filterMatches('semiFinal', this.matches)
+          this.thirdPlaceMatch = this.configService.filterMatches('Spiel um Platz 3', this.matches)
           this.finalMatch = this.configService.filterMatches('final', this.matches)
-          
+          this.isLoading = game.isLoading
           this.checkForToastMessage(game.toastStatus)
         } else {
-          this.matches = game.currentGame.matches
-          this.groups = game.currentGame.groups
+          this.matches = game.currentGame.tournament.matches!
+          this.groups = game.currentGame.tournament.groups
           this.showRanking = game.showRanking
         }
-        this.isLoading = game.isLoading
       })
     }
 

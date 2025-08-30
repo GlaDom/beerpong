@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import Match from '../../../api/match.interface';
+import {Match} from '../../../api/match.interface';
 import { GameCardComponent } from '../../game-card/game-card.component';
 import { TabViewModule } from 'primeng/tabview';
 import { NgFor, NgIf } from '@angular/common';
@@ -8,7 +8,7 @@ import { FieldsetModule } from 'primeng/fieldset';
 import { BeerpongState } from '../../../store/beerpong/game.state';
 import { Store } from '@ngrx/store';
 import { finishGame, setShowRanking, updateMatchesFinal } from '../../../store/beerpong/beerpong.actions';
-import Team from '../../../api/team.interface';
+import {Team} from '../../../api/team.interface';
 import { RankingComponent } from '../../ranking/ranking.component';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ConfigurationService } from '../../../services/configuration.service';
@@ -63,7 +63,7 @@ export class ModeOGfTComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.gameId = this.regularMatches[0].game_id
+    this.gameId = this.regularMatches[0].tournament_id
   }
 
   updateFinal(): void {

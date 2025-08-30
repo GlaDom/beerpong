@@ -1,17 +1,30 @@
 // team.interface.ts
 
-interface Team {
+// interface Team {
+//   id?: number;
+//   game_id?: number;
+//   team_name: string;
+//   group_name: string;
+//   points: number;
+//   cups_hit: number;
+//   cups_get: number;
+//   cup_difference: number;
+//   rank: number;
+//   created_at?: Date;
+// }
+
+// export default Team;
+
+// Team Interface
+export interface Team {
   id?: number;
-  game_id?: number;
+  group_id?: number;
   team_name: string;
   group_name: string;
   points: number;
+  rank: number;
   cups_hit: number;
   cups_get: number;
   cup_difference: number;
-  rank: number;
-  created_at?: Date;
+  created_at?: string; // ISO 8601 date string
 }
-
-export default Team;
-  

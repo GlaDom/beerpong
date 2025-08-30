@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { BeerpongState } from '../store/beerpong/game.state';
-import Match from '../api/match.interface';
-import TeamUpdate from '../api/team-update.interface';
-import { GameRequest } from '../api/game-request';
+import {Match} from '../api/match.interface';
+import {TeamUpdate} from '../api/team-update.interface';
+import { NewTournament } from '../api/game-request';
 import Group from '../api/group.interface';
-import Team from '../api/team.interface';
+import {Team} from '../api/team.interface';
 import { GameState } from '../models/game-state.model';
 
 @Injectable({
@@ -17,76 +17,85 @@ export class ConfigurationService {
 
   constructor(public httpClient: HttpClient) { }
 
-  CreateGame(game: GameRequest) {
-    return this.httpClient.post<GameRequest>(this.url+"/game", game).pipe()
+  CreateGame(game: NewTournament) {
+    return this.httpClient.post<NewTournament>(this.url+"/tournament", game).pipe()
   }
 
   GetGame(url: string) {
-    return this.httpClient.get<BeerpongState>(this.url+"/game").pipe()
+    return this.httpClient.get<BeerpongState>(this.url+"/tournament").pipe()
   }
 
   GetLastGame(url: string) {
-    return this.httpClient.get<GameState>(this.url+"/game/last").pipe()
+    return this.httpClient.get<GameState>(this.url+"/tournament/last").pipe()
   }
 
   UpdateMatch(match: Match) {
-    return this.httpClient.put<Match>(this.url+"/game/matches", match).pipe()
+    return this.httpClient.put<Match>(this.url+"/tournament/matches", match).pipe()
   }
 
   UpdateMatchesRoundOfSixteen(gameId: number) {
-    return this.httpClient.put<string>(this.url+"/game/matches/round-of-sixteen/id="+gameId, null).pipe()
+    return this.httpClient.put<string>(this.url+"/tournament/matches/round-of-sixteen/id="+gameId, null).pipe()
   }
 
   UpdateMatchesQuaterfinals(gameId: number) {
-    return this.httpClient.put<string>(this.url+"/game/matches/quaterfinals/id="+gameId, null).pipe()
+    return this.httpClient.put<string>(this.url+"/tournament/matches/quaterfinals/id="+gameId, null).pipe()
   }
 
   UpdateMatchesSemifinals(gameId: number) {
-    return this.httpClient.put<string>(this.url+"/game/matches/semifinals/id="+gameId, null).pipe()
+    return this.httpClient.put<string>(this.url+"/tournament/matches/semifinals/id="+gameId, null).pipe()
   }
 
   UpdateMatchesFinal(gameId: number, gameMode: number) {
-    return this.httpClient.put<string>(this.url+"/game/matches/final/id="+gameId+"?mode="+gameMode, null).pipe()
+    return this.httpClient.put<string>(this.url+"/tournament/matches/final/id="+gameId+"?mode="+gameMode, null).pipe()
   }
 
   UpdateTeams(teams: TeamUpdate[]) {
-    return this.httpClient.put<TeamUpdate[]>(this.url+"/game/teams", {teams: teams}).pipe()
+    return this.httpClient.put<TeamUpdate[]>(this.url+"/tournament/teams", {teams: teams}).pipe()
   }
 
   FinishGame(gameId: number) {
     console.log(gameId)
-    return this.httpClient.put<string>(this.url+"/game/id="+gameId, null).pipe()
+    return this.httpClient.put<string>(this.url+"/tournament/id="+gameId, null).pipe()
   }
 
   sortMatches(matches: Match[]): Match[][] {
     let retval: Match[][] = [[], [], [], [], [], []]
     for(let i = 0;i<matches.length;i++) {
-      if(matches[i].type!=='regular') {
-        break
-      }
       switch(matches[i].group_number) {
         case "A": {
-          retval[0].push(matches[i]);
+          if (matches[i].type === "regular") {
+            retval[0].push(matches[i]);
+          }
           break;
         }
         case "B": {
-          retval[1].push(matches[i]);
+          if (matches[i].type === "regular") {
+            retval[1].push(matches[i]);
+          }
           break;
         }
         case "C": {
-          retval[2].push(matches[i]);
+          if (matches[i].type === "regular") {
+            retval[2].push(matches[i]);
+          }
           break;
         }
         case "D": {
-          retval[3].push(matches[i]);
+          if (matches[i].type === "regular") {
+            retval[3].push(matches[i]);
+          }
           break;
         }
         case "E": {
-          retval[4].push(matches[i]);
+          if (matches[i].type === "regular") {
+            retval[4].push(matches[i]);
+          }
           break;
         }
         case "F": {
-          retval[5].push(matches[i]);
+          if (matches[i].type === "regular") {
+            retval[5].push(matches[i]);
+          }
           break;
         }
         case "": {
@@ -96,6 +105,9 @@ export class ConfigurationService {
           break
       }
     }
+    retval.forEach((group) => {
+      group.sort((a, b) => a.match_id! - b.match_id!);
+    })
     return retval
   }
 
@@ -145,5 +157,17 @@ export class ConfigurationService {
       return b.points - a.points;
     });
     return teams
+  }
+
+  sortTeamsInGroups(groups: Group[]): Group[] {
+    return groups.map(group => ({
+      ...group,
+      teams: [...group.teams].sort((a, b) => {
+        if (a.points === b.points) {
+          return b.cup_difference - a.cup_difference;
+        }
+        return b.points - a.points;
+      })
+    }));
   }
 }

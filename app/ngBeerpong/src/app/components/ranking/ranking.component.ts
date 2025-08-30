@@ -3,7 +3,7 @@ import { CardModule } from 'primeng/card';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
-import Team from '../../api/team.interface';
+import {Team} from '../../api/team.interface';
 import { CommonModule } from '@angular/common';
 
 @Component({

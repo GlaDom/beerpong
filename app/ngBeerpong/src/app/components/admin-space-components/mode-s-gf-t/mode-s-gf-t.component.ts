@@ -4,21 +4,22 @@ import { FieldsetModule } from 'primeng/fieldset';
 import { TabViewModule } from 'primeng/tabview';
 import { GameCardComponent } from '../../game-card/game-card.component';
 import { ButtonModule } from 'primeng/button';
-import Match from '../../../api/match.interface';
+import {Match} from '../../../api/match.interface';
 import { Store } from '@ngrx/store';
 import { BeerpongState } from '../../../store/beerpong/game.state';
 import { updateMatchesRoundOfSixteen, updateMatchesQuaterFinals, updateMatchesSemiFinals, updateMatchesFinal, finishGame, setShowRanking } from '../../../store/beerpong/beerpong.actions';
-import Team from '../../../api/team.interface';
+import {Team} from '../../../api/team.interface';
 import Group from '../../../api/group.interface';
 import { ConfigurationService } from '../../../services/configuration.service';
 import { RankingComponent } from '../../ranking/ranking.component';
 import { ConfirmationService, MessageService } from 'primeng/api';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 @Component({
     selector: 'app-mode-s-gf-t',
     templateUrl: './mode-s-gf-t.component.html',
     styleUrl: './mode-s-gf-t.component.css',
-    imports: [FieldsetModule, TabViewModule, NgFor, GameCardComponent, ButtonModule, NgIf, RankingComponent]
+    imports: [FieldsetModule, TabViewModule, NgFor, GameCardComponent, ButtonModule, NgIf, RankingComponent, ConfirmDialogModule]
 })
 export class ModeSGfTComponent {
 
@@ -30,7 +31,7 @@ export class ModeSGfTComponent {
   ) {}
 
   @Input()
-  showRanking: boolean = false;
+  showRanking: boolean  | undefined;
 
   @Input()
   groups: Group[] = [];
@@ -52,6 +53,9 @@ export class ModeSGfTComponent {
 
   @Input()
   semiFinalMatches: Match[] = [];
+
+  @Input()
+  thirdPlaceMatch: Match[] = [];
 
   @Input() 
   finalMatches: Match[] = [];
