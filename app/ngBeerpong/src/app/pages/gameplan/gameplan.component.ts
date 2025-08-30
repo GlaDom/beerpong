@@ -3,7 +3,7 @@ import { DividerModule } from 'primeng/divider';
 import { BeerpongState } from '../../store/beerpong/game.state';
 import { Store } from '@ngrx/store';
 import {Match} from '../../api/match.interface';
-import { selectBeerpongState } from '../../store/beerpong/beerpong.selectors';
+import { selectBeerpongState, selectShowRanking } from '../../store/beerpong/beerpong.selectors';
 import { ConfigurationService } from '../../services/configuration.service';
 import Group from '../../api/group.interface';
 import { FieldsetModule } from 'primeng/fieldset';
@@ -17,6 +17,7 @@ import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
 import { loadGame } from '../../store/beerpong/beerpong.actions';
+import { RankingComponent } from '../../components/ranking/ranking.component';
 
 @Component({
     selector: 'app-gameplan',
@@ -26,6 +27,7 @@ import { loadGame } from '../../store/beerpong/beerpong.actions';
         GameplanOGfTComponent,
         GameplanSGfTComponent,
         TableViewComponent,
+        RankingComponent,
         CardModule,
         ButtonModule,
         FormsModule,
@@ -37,6 +39,7 @@ import { loadGame } from '../../store/beerpong/beerpong.actions';
 export class GameplanComponent implements OnInit {
 
   game$: Observable<BeerpongState>;
+  showRanking$: Observable<boolean | undefined>;
   groups: Group[] = [];
   matches: Match[] = [];
   regularMatches: Match[][] = [];
@@ -47,13 +50,14 @@ export class GameplanComponent implements OnInit {
 
   public showTableView = false;
   public isLoading: boolean = true;
-  public showRanking: boolean = false;
+  public showRanking: boolean | undefined;
 
   constructor(
     private configService: ConfigurationService,
     private beerpongstore: Store<BeerpongState>
   ){
     this.game$ = this.beerpongstore.select(selectBeerpongState)
+    this.showRanking$ = this.beerpongstore.select(selectShowRanking)
     this.beerpongstore.dispatch(loadGame())
   }
 
@@ -71,6 +75,10 @@ export class GameplanComponent implements OnInit {
         this.final = this.configService.filterMatches('final', this.matches)      
       }
       this.isLoading = game.isLoading
+    })
+    this.showRanking$.subscribe((show) => {
+      console.log("Show Ranking: ", show)
+      this.showRanking = show
     })
   }
 

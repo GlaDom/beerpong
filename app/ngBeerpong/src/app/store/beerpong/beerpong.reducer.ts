@@ -63,7 +63,7 @@ export const beerpongReducer = createReducer(initialState,
             currentGame: game,
             toastStatus: newToastState,
             isLoading: false,
-            showRanking: false
+            // showRanking: false
         }
     }),
     on(loadGameFailure, (state) => {

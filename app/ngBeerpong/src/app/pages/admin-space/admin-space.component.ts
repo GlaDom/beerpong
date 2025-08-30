@@ -59,7 +59,7 @@ export class AdminSpaceComponent implements OnInit {
 
     //booleans
     isLoading: boolean = true;
-    showRanking: boolean = false;
+    showRanking: boolean | undefined;
 
     constructor(
       private configService: ConfigurationService,

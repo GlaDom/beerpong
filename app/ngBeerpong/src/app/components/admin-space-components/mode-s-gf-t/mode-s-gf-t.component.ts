@@ -31,7 +31,7 @@ export class ModeSGfTComponent {
   ) {}
 
   @Input()
-  showRanking: boolean = false;
+  showRanking: boolean  | undefined;
 
   @Input()
   groups: Group[] = [];

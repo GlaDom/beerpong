@@ -102,9 +102,13 @@ export class GameCardComponent implements OnInit {
         this.beerpongstore.dispatch(updateMatch({match: m}))
         let teamsToUpdate = this.getTeamsToUpdate(m, updateTeamPoints)
         this.beerpongstore.dispatch(updateTeams({teams: teamsToUpdate}))
+        this.points_home?.disable()
+        this.points_away?.disable()
       }
     } else {
       this.label = 'primary'
+      this.points_home?.enable()
+      this.points_away?.enable()
     }
   }
 

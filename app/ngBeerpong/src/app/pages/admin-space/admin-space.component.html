@@ -9,9 +9,9 @@
                 </div>
             </div>
         } @else {
-            @if (matches && matches.length > 0 && !showRanking) {
+            @if (matches && matches.length > 0) {
                 <app-mode-s-gf-t [groups]="groups" [showRanking]="this.showRanking" [gameId]="gameId" [gameMode]="gameMode" [sortedMatches]="sortedMatches" [roundOfsixteen]="roundOfsixteen" [quaterFinalMatches]="quaterFinalMatches" [semiFinalMatches]="semiFinalMatches" [thirdPlaceMatch]="thirdPlaceMatch" [finalMatches]="finalMatch"></app-mode-s-gf-t>
-            } @else {
+            } @else if (matches.length === 0 && !showRanking) {
                 <app-beerpong-setup></app-beerpong-setup>
             }
         }

@@ -10,3 +10,8 @@ export const selectLastGame = createSelector(
   selectBeerpongState,
   (state: BeerpongState) => state.lastGame
 );
+
+export const selectShowRanking = createSelector(
+  selectBeerpongState,
+  (state: BeerpongState) => state.showRanking
+)

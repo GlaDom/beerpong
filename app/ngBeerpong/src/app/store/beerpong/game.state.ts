@@ -26,5 +26,5 @@ export interface BeerpongState {
     // matches: Match[],
     toastStatus: Status,
     isLoading: boolean,
-    showRanking: boolean
+    showRanking?: boolean
 }
