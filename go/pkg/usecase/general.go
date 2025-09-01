@@ -6,6 +6,10 @@ import (
 	"github.com/gladom/beerpong/pkg/models"
 )
 
+const (
+	quaterFinal = "quaterFinal"
+)
+
 type General struct {
 	GameRepo ITournamentrepo
 }
@@ -113,18 +117,61 @@ func (ge *General) UpdateGame(g *models.Tournament) error {
 	return ge.GameRepo.UpdateTournament(g)
 }
 
-func (g *General) matchesAreFinished(gameId int, matchType string) bool {
-	//get matches
-	matches, err := g.GameRepo.GetMatchesByTournamentType(gameId, matchType)
+func (g *General) CalculateMatchesForKORound(tournamentId int, groups []models.Group) ([]*models.Match, error) {
+	// Versuche, die RoundOfSixteen-Matches zu holen
+	roundOfSixteen, err := g.GameRepo.GetRoundOfSixteenMatches(tournamentId, "roundOfSixteen")
 	if err != nil {
-		return false
+		return nil, err
 	}
-	for _, m := range matches {
-		if m.PointsHome != 0 || m.PointsAway != 0 {
-			continue
-		} else {
-			return false
+
+	var koMatches []*models.Match
+
+	if len(roundOfSixteen) > 0 {
+		// Hole die Gruppensieger
+		var groupWinners []models.Team
+		for _, group := range groups {
+			if len(group.Teams) == 0 {
+				continue
+			}
+			// Annahme: Teams sind nach Punkten/CupDifference sortiert, erster ist Sieger
+			groupWinner := group.Teams[0]
+			groupWinners = append(groupWinners, groupWinner)
 		}
+
+		// Befülle die RoundOfSixteen-Matches mit den Gruppensiegern
+		for i, match := range roundOfSixteen {
+			if i < len(groupWinners) {
+				match.HomeTeam = groupWinners[i].TeamName
+			}
+			koMatches = append(koMatches, match)
+		}
+		return koMatches, nil
 	}
-	return true
+
+	// Falls keine RoundOfSixteen-Matches, versuche QuaterFinals
+	quaterFinals, err := g.GameRepo.GetQuaterFinalMatches(tournamentId, quaterFinal)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(quaterFinals) > 0 {
+		var groupWinners []models.Team
+		for _, group := range groups {
+			if len(group.Teams) == 0 {
+				continue
+			}
+			groupWinner := group.Teams[0]
+			groupWinners = append(groupWinners, groupWinner)
+		}
+
+		for i, match := range quaterFinals {
+			if i < len(groupWinners) {
+				match.HomeTeam = groupWinners[i].TeamName
+			}
+			koMatches = append(koMatches, match)
+		}
+		return koMatches, nil
+	}
+
+	return nil, nil
 }
