@@ -56,20 +56,20 @@
                 }
               ],
               "outputHashing": "all",
-              "fileReplacements":[
-                  {
-                     "replace":"ngBeerpong/src/environments/environment.ts",
-                     "with":"ngBeerpong/src/environments/environment.production.ts"
-                  }
-               ]
+              "fileReplacements": [
+                {
+                  "replace": "ngBeerpong/src/environments/environment.ts",
+                  "with": "ngBeerpong/src/environments/environment.production.ts"
+                }
+              ]
             },
             "staging": {
-              "fileReplacements":[
-                  {
-                     "replace":"ngBeerpong/src/environments/environment.ts",
-                     "with":"ngBeerpong/src/environments/environment.staging.ts"
-                  }
-               ]
+              "fileReplacements": [
+                {
+                  "replace": "ngBeerpong/src/environments/environment.ts",
+                  "with": "ngBeerpong/src/environments/environment.staging.ts"
+                }
+              ]
             },
             "development": {
               "optimization": false,

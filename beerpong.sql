@@ -32,6 +32,7 @@ CREATE TABLE referees (
 CREATE TABLE teams (
   id SERIAL PRIMARY KEY,
   group_id INTEGER,
+  tournament_id INTEGER,
   team_name VARCHAR(255),
   group_name VARCHAR(255),
   points INTEGER,
@@ -40,8 +41,11 @@ CREATE TABLE teams (
   cups_get INTEGER,
   cup_difference INTEGER,
   created_at TIMESTAMP,
-  FOREIGN KEY (group_id) REFERENCES groups(group_id)
+  FOREIGN KEY (group_id) REFERENCES groups(group_id),
+  FOREIGN KEY (tournament_id) REFERENCES tournaments(id)
 );
+
+CREATE UNIQUE INDEX idx_tournament_team ON teams (tournament_id, team_name);
 
 CREATE TABLE matches (
   id SERIAL PRIMARY KEY,
