@@ -70,8 +70,6 @@ func main() {
 	general := usecase.NewGeneral(gameRepo)
 	beerpongGameHandler := handler.NewBeerpongTournamentHandler(
 		*general,
-		*usecase.NewSixGroupsFiveTeams(gameRepo, *general),
-		*usecase.NewOneGroupFiveTeams(gameRepo, *general),
 		gameRepo,
 	)
 

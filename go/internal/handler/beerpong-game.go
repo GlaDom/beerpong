@@ -3,7 +3,6 @@ package handler
 import (
 	"fmt"
 	"net/http"
-	"strconv"
 	"strings"
 	"time"
 
@@ -20,17 +19,13 @@ type ITournamentService interface {
 
 type beerpongTournamentHandler struct {
 	General          usecase.General
-	SixGFiveT_Mode   usecase.SixGroupsFiveTeams
-	OneGFiveT_Mode   usecase.OneGroupFiveTeams
 	RoundRobin       *usecase.RoundRobin
 	KoStageGenerator *usecase.KoRoundGenerator
 	GameRepo         *repo.Gamerepo
 }
 
-func NewBeerpongTournamentHandler(g usecase.General, sixGfiveT usecase.SixGroupsFiveTeams, oneGfiveT usecase.OneGroupFiveTeams, r *repo.Gamerepo) *beerpongTournamentHandler {
+func NewBeerpongTournamentHandler(g usecase.General, r *repo.Gamerepo) *beerpongTournamentHandler {
 	return &beerpongTournamentHandler{
-		SixGFiveT_Mode:   sixGfiveT,
-		OneGFiveT_Mode:   oneGfiveT,
 		General:          g,
 		RoundRobin:       usecase.NewRoundRobin(),
 		KoStageGenerator: usecase.NewKoRoundGenerator(),
@@ -211,18 +206,13 @@ func (h *beerpongTournamentHandler) UpdateTournamentRoundOf16(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "missing game id"})
 		return
 	}
-	idValue := strings.Split(id, "=")
-	gameId, err := strconv.Atoi(idValue[1])
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err})
-		return
-	}
+	// idValue := strings.Split(id, "=")
+	// gameId, err := strconv.Atoi(idValue[1])
+	// if err != nil {
+	// 	c.JSON(http.StatusBadRequest, gin.H{"error": err})
+	// 	return
+	// }
 
-	err = h.SixGFiveT_Mode.UpdateMatchesRoundOfSixteen(gameId)
-	if err != nil {
-		c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
-		return
-	}
 	c.JSON(http.StatusOK, nil)
 }
 
@@ -240,18 +230,13 @@ func (h *beerpongTournamentHandler) UpdateTournamentQuaterFinals(c *gin.Context)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "missing game id"})
 		return
 	}
-	idValue := strings.Split(id, "=")
-	gameId, err := strconv.Atoi(idValue[1])
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err})
-		return
-	}
+	// idValue := strings.Split(id, "=")
+	// gameId, err := strconv.Atoi(idValue[1])
+	// if err != nil {
+	// 	c.JSON(http.StatusBadRequest, gin.H{"error": err})
+	// 	return
+	// }
 
-	err = h.SixGFiveT_Mode.UpdateMatchesQuaterFinals(gameId)
-	if err != nil {
-		c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
-		return
-	}
 	c.JSON(http.StatusOK, nil)
 }
 
@@ -269,18 +254,13 @@ func (h *beerpongTournamentHandler) UpdateTournamentSemiFinals(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "missing game id"})
 		return
 	}
-	idValue := strings.Split(id, "=")
-	gameId, err := strconv.Atoi(idValue[1])
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
+	// idValue := strings.Split(id, "=")
+	// gameId, err := strconv.Atoi(idValue[1])
+	// if err != nil {
+	// 	c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	// 	return
+	// }
 
-	err = h.SixGFiveT_Mode.UpdateMatchesSemiFinal(gameId)
-	if err != nil {
-		c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
-		return
-	}
 	c.JSON(http.StatusOK, nil)
 }
 
@@ -298,34 +278,12 @@ func (h *beerpongTournamentHandler) UpdateTournamentFinal(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "missing game id"})
 		return
 	}
-	idValue := strings.Split(id, "=")
-	gameId, err := strconv.Atoi(idValue[1])
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	mode := c.Query("mode")
-	gameMode, err := strconv.Atoi(mode)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	switch gameMode {
-	case 0:
-		err = h.SixGFiveT_Mode.UpdateMatchesFinal(gameId)
-		if err != nil {
-			c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
-			return
-		}
-	case 1:
-		err = h.OneGFiveT_Mode.UpdateMatchesFinal(gameId)
-		if err != nil {
-			c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
-			return
-		}
-	}
+	// idValue := strings.Split(id, "=")
+	// gameId, err := strconv.Atoi(idValue[1])
+	// if err != nil {
+	// 	c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	// 	return
+	// }
 
 	c.JSON(http.StatusOK, nil)
 }

@@ -153,6 +153,30 @@ func (gr *Gamerepo) GetTeamByTournamentID(tournamentId int, teamName string, gro
 	return retval, nil
 }
 
+func (gr *Gamerepo) GetRoundOfSixteenMatches(tournamentId int, matchType string) ([]*models.Match, error) {
+	var retval []*models.Match
+	if tx := gr.db.Where("tournament_id=? and type=?", tournamentId, matchType).Find(&retval); tx.Error != nil {
+		return retval, tx.Error
+	}
+	return retval, nil
+}
+
+func (gr *Gamerepo) GetQuaterFinalMatches(tournamentId int, matchType string) ([]*models.Match, error) {
+	var retval []*models.Match
+	if tx := gr.db.Where("tournament_id=? and type=?", tournamentId, matchType).Find(&retval); tx.Error != nil {
+		return retval, tx.Error
+	}
+	return retval, nil
+}
+
+func (gr *Gamerepo) GetSemiFinalMatches(tournamentId int, matchType string) ([]*models.Match, error) {
+	var retval []*models.Match
+	if tx := gr.db.Where("tournament_id=? and type=?", tournamentId, matchType).Find(&retval); tx.Error != nil {
+		return retval, tx.Error
+	}
+	return retval, nil
+}
+
 func (gr *Gamerepo) UpdateTeam(t *models.Team) error {
 	tx := gr.db.Where("tournament_id=? and team_name=?", t.TournamentID, t.TeamName).Save(&t)
 	return tx.Error

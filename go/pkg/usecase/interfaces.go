@@ -9,8 +9,10 @@ type ITournamentrepo interface {
 	CreateTournament(*models.NewTournament) error
 	GetTeamsByTournamentID(int) ([]models.Team, error)
 	GetTeamByTournamentID(int, string, string) (models.Team, error)
-	GetMatchesByTournamentType(int, string) ([]models.Match, error)
 	GetMatchesByTournamentID(int) ([]models.Match, error)
+	GetRoundOfSixteenMatches(int, string) ([]*models.Match, error)
+	GetQuaterFinalMatches(int, string) ([]*models.Match, error)
+	GetSemiFinalMatches(int, string) ([]*models.Match, error)
 	CreateMatches([]*models.Match) error
 	UpdateMatches(*models.Match) error
 	UpdateTeam(*models.Team) error

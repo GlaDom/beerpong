@@ -58,7 +58,7 @@ export class AdminSpaceComponent implements OnInit {
     finalMatch: Match[] = [];
 
     //booleans
-    isLoading: boolean = true;
+    isLoading: boolean = false;
     showRanking: boolean | undefined;
 
     constructor(
@@ -73,6 +73,7 @@ export class AdminSpaceComponent implements OnInit {
 
     ngOnInit(): void {
       this.game$.subscribe((game) => {
+        this.isLoading = game.isLoading
         if(game.currentGame.tournament.matches!.length>0) {
           this.gameId = game.currentGame.tournament.groups[0].tournament_id
           this.matches = game.currentGame.tournament.matches!
@@ -85,7 +86,6 @@ export class AdminSpaceComponent implements OnInit {
           this.semiFinalMatches = this.configService.filterMatches('semiFinal', this.matches)
           this.thirdPlaceMatch = this.configService.filterMatches('Spiel um Platz 3', this.matches)
           this.finalMatch = this.configService.filterMatches('final', this.matches)
-          this.isLoading = game.isLoading
           this.checkForToastMessage(game.toastStatus)
         } else {
           this.matches = game.currentGame.tournament.matches!
