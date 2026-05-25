@@ -1,5 +1,509 @@
-:host {
-    ::ng-deep .p-stepper .p-stepper-header .p-stepper-action {
-        background: rgb(240, 237, 233);
-    }
+/* ============================================================
+   Tournament Setup
+   ============================================================ */
+
+.setup-root {
+  background: var(--bg);
+  min-height: calc(100vh - 65px);
+}
+
+.setup-inner {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 40px 28px 96px;
+}
+
+/* --- Header --- */
+.setup-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 32px;
+}
+
+.setup-title {
+  font-family: var(--font-display);
+  font-size: 34px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--fg-1);
+}
+
+.btn-quiet {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: transparent;
+  border: none;
+  color: var(--fg-2);
+  font-size: 14px;
+  font-weight: 600;
+  font-family: var(--font-body);
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  transition: color 150ms, background 150ms;
+}
+.btn-quiet:hover {
+  color: var(--fg-1);
+  background: var(--surface-2);
+}
+
+/* --- Step pills --- */
+.step-pills {
+  display: flex;
+  align-items: center;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  padding: 6px;
+  margin-bottom: 36px;
+  gap: 0;
+}
+
+.step-pill {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px 18px;
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: var(--fg-2);
+  border: none;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 200ms;
+  cursor: default;
+  white-space: nowrap;
+}
+
+.step-pill-active {
+  background: var(--surface-3);
+  color: var(--fg-1);
+  cursor: pointer;
+}
+
+.step-pill-done {
+  color: var(--accent);
+  cursor: pointer;
+}
+
+.step-num {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--surface-3);
+  color: var(--fg-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 700;
+  flex-shrink: 0;
+  transition: all 200ms;
+}
+
+.step-num-accent {
+  background: var(--accent);
+  color: var(--fg-inv);
+}
+
+/* --- Cards --- */
+.setup-card {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.card-section-header {
+  padding: 18px 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+.card-section-title {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--fg-1);
+}
+
+.card-section-sub {
+  font-size: 13px;
+  color: var(--fg-2);
+  margin-top: 4px;
+}
+
+.card-body {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+/* --- Field rows --- */
+.field-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.field-label { flex: 1; min-width: 0; }
+
+.field-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--fg-1);
+}
+
+.field-hint {
+  font-size: 12px;
+  color: var(--fg-3);
+  margin-top: 2px;
+}
+
+.field-divider {
+  height: 1px;
+  background: var(--border);
+}
+
+/* --- Number stepper --- */
+.num-stepper {
+  display: inline-flex;
+  align-items: center;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.stepper-btn {
+  width: 36px;
+  height: 36px;
+  background: transparent;
+  border: none;
+  color: var(--fg-1);
+  font-size: 18px;
+  font-weight: 400;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 150ms;
+  flex-shrink: 0;
+}
+.stepper-btn:hover:not(:disabled) { background: var(--surface-3); }
+.stepper-btn:disabled { color: var(--fg-3); cursor: not-allowed; }
+
+.stepper-val {
+  min-width: 48px;
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--fg-1);
+  border-left: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+  padding: 0 8px;
+  line-height: 36px;
+}
+
+.stepper-suffix {
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--fg-3);
+  margin-left: 3px;
+}
+
+/* --- Styled select --- */
+.styled-select {
+  padding: 10px 14px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--fg-1);
+  font-size: 14px;
+  font-family: var(--font-body);
+  cursor: pointer;
+  outline: none;
+  transition: border-color 150ms;
+  flex-shrink: 0;
+}
+.styled-select:focus { border-color: var(--accent); }
+
+/* --- Styled input --- */
+.styled-input {
+  flex: 1;
+  padding: 10px 12px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--fg-1);
+  font-size: 14px;
+  font-family: var(--font-body);
+  outline: none;
+  transition: border-color 150ms;
+  width: 100%;
+}
+.styled-input:focus { border-color: var(--accent); }
+.styled-input.input-valid { border-color: rgba(158, 245, 60, 0.4); }
+.styled-input.input-error { border-color: var(--cup); }
+
+/* --- Referee input --- */
+.referee-input-row {
+  margin-top: -8px;
+}
+
+/* --- Teams grid (step 2) --- */
+.teams-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+
+.group-card {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 18px;
+}
+
+.group-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.group-badge {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-sm);
+  background: var(--accent-muted);
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.group-badge-sm {
+  width: 22px;
+  height: 22px;
+  font-size: 11px;
+}
+
+.group-title {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--fg-1);
+}
+
+.team-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.team-input-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.team-index {
+  width: 18px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--fg-3);
+  flex-shrink: 0;
+  text-align: right;
+}
+
+.dup-tag {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--cup);
+  background: var(--red-muted);
+  border: 1px solid rgba(245, 80, 60, 0.3);
+  padding: 2px 7px;
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* --- Review (step 3) --- */
+.review-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.review-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  padding: 20px 24px;
+  gap: 24px;
+}
+
+.review-stat-val {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--fg-1);
+}
+
+.review-lineup {
+  display: grid;
+  gap: 16px;
+  padding: 20px 24px;
+}
+
+.review-group-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.review-group-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--fg-2);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.review-team-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.review-team-row {
+  display: flex;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--fg-1);
+}
+
+.review-team-num {
+  font-family: var(--font-mono);
+  color: var(--fg-3);
+  min-width: 16px;
+}
+
+.review-details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  padding: 20px 24px;
+}
+
+.review-detail-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--fg-3);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.review-detail-val {
+  font-size: 14px;
+  color: var(--fg-1);
+}
+
+/* --- Nav buttons --- */
+.setup-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 32px;
+  gap: 12px;
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--accent);
+  color: var(--fg-inv);
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 12px 22px;
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: var(--accent-glow);
+  transition: filter 150ms, transform 80ms;
+}
+.btn-primary:hover:not(:disabled) { filter: brightness(1.08); }
+.btn-primary:active:not(:disabled) { transform: scale(0.97); }
+.btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--surface-2);
+  color: var(--fg-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 12px 22px;
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: filter 150ms;
+}
+.btn-secondary:hover { filter: brightness(1.05); }
+
+.btn-secondary-sm {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--surface-2);
+  color: var(--fg-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 8px 14px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: filter 150ms;
+}
+.btn-secondary-sm:hover { filter: brightness(1.05); }
+
+/* --- PrimeNG overrides (datepicker, toggleswitch) --- */
+.step-content ::ng-deep .p-datepicker-input {
+  padding: 10px 14px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--fg-1);
+  font-family: var(--font-mono);
+  font-size: 13px;
+}
+
+.step-content ::ng-deep .p-datepicker-input:focus {
+  border-color: var(--accent);
+  outline: none;
 }

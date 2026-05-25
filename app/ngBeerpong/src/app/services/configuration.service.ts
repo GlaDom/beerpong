@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from "@angular/common/http";
-import { BeerpongState } from '../store/beerpong/game.state';
 import {Match} from '../api/match.interface';
 import {TeamUpdate} from '../api/team-update.interface';
 import { NewTournament } from '../api/game-request';
@@ -22,7 +21,7 @@ export class ConfigurationService {
   }
 
   GetGame(url: string) {
-    return this.httpClient.get<BeerpongState>(this.url+"/tournament").pipe()
+    return this.httpClient.get<GameState>(this.url+"/tournament").pipe()
   }
 
   GetLastGame(url: string) {

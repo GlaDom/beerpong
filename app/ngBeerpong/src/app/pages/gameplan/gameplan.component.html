@@ -1,43 +1,539 @@
-<div class="h-full">
-    <div class="m-4">
-        <p-card>
-            <ng-template #title>
-                <div class="flex flex-row justify-between items-center">
-                    <p>Spielplan</p>
-                    <div class="flex flex-row gap-2 items-center">
-                        <p-button [pTooltip]="tooltipContent" tooltipPosition="left" icon="pi pi-table" (onClick)="toggleShowTableView()"/>
-                        <ng-template #tooltipContent>
-                            <div class="flex items-center">
-                                <span> Tabellenansicht </span>
-                            </div>
-                        </ng-template>
-                    </div>
-                </div>
-            </ng-template>
-        </p-card>
+<div class="gp-root">
+
+  <!-- ===== LOADING ===== -->
+  @if (isLoading()) {
+    <div class="gp-loading">
+      <div class="gp-loading-dots">
+        <span></span><span></span><span></span>
+      </div>
     </div>
-    @if (!showTableView) {
-        <div class="m-4 grid grid-cols-12"> 
-            <div class="col-span-12">
-                @if (!showRanking && !isLoading) {
-                    @if (groups.length>1) {
-                        <app-gameplan-s-gf-t [regularMatches]="regularMatches" [roundOfSixteenMatches]="roundOfsixteen" [quarterFinalMatches]="quaterFinals" [semiFinalMatches]="semiFinals" [semiFinalMatches]="semiFinals" [finalMatches]="final" [groups]="groups"></app-gameplan-s-gf-t>
-                    } @else {
-                        <div class="flex flex-col items-center justify-center h-full">
-                            <p>Es ist derzeit kein Spiel aktiv</p>
-                        </div>
-                    }
-                }
+  }
+
+  <!-- ===== EMPTY STATE ===== -->
+  @if (!hasActiveGame() && !isLoading()) {
+    <div class="gp-empty-wrap">
+      <div class="empty-card">
+        <div class="empty-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--fg-3)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/>
+          </svg>
+        </div>
+        <h2 class="empty-title">Kein aktives Turnier</h2>
+        <p class="empty-body">
+          Sobald ein Organisator ein Turnier startet, kannst du den Spielplan hier in Echtzeit verfolgen.
+        </p>
+        <button type="button" class="btn-ghost" (click)="refreshNow()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/>
+          </svg>
+          Aktualisieren
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- ===== FINISHED SCREEN ===== -->
+  @if (hasActiveGame() && isFinished()) {
+    <div class="gp-finished">
+      <!-- Gradient bg decoration -->
+      <div aria-hidden class="finished-bg-green"></div>
+      <div aria-hidden class="finished-bg-red"></div>
+
+      <div class="finished-inner">
+        <!-- Header -->
+        <div class="finished-header">
+          <div class="finished-badge">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M6 9H4.5a2.5 2.5 0 010-5H6"/><path d="M18 9h1.5a2.5 2.5 0 000-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0012 0V2z"/>
+            </svg>
+            <span>Turnier beendet</span>
+          </div>
+          <h1 class="finished-title">Endplatzierung</h1>
+          <p class="finished-sub">{{ allMatchesFlat().length }} Spiele · {{ groups().length * (groups()[0]?.teams?.length ?? 0) }} Teams · 1 Sieger</p>
+        </div>
+
+        <!-- Podium -->
+        @if (podium().length >= 3) {
+          <div class="podium">
+            <!-- 2nd place (left) -->
+            <div class="podium-step">
+              <div class="podium-card">
+                <div class="podium-medal" style="color:#B0BEC5">🥈</div>
+                <div class="podium-team-name">{{ podium()[1].team_name }}</div>
+                <div class="podium-team-stats">
+                  <span>{{ podium()[1].points }} Pkt</span>
+                  <span>{{ podium()[1].cups_hit }} B</span>
+                </div>
+              </div>
+              <div class="podium-block podium-block-2">2</div>
             </div>
+            <!-- 1st place (center) -->
+            <div class="podium-step">
+              <div class="podium-card podium-card-winner">
+                <div class="podium-crown">👑</div>
+                <div class="podium-medal" style="color:#FFD54F">🏆</div>
+                <div class="podium-team-name podium-team-winner">{{ podium()[0].team_name }}</div>
+                <div class="podium-team-stats">
+                  <span>{{ podium()[0].points }} Pkt</span>
+                  <span>{{ podium()[0].cups_hit }} B</span>
+                </div>
+              </div>
+              <div class="podium-block podium-block-1">1</div>
+            </div>
+            <!-- 3rd place (right) -->
+            <div class="podium-step">
+              <div class="podium-card">
+                <div class="podium-medal" style="color:#CD7F32">🥉</div>
+                <div class="podium-team-name">{{ podium()[2].team_name }}</div>
+                <div class="podium-team-stats">
+                  <span>{{ podium()[2].points }} Pkt</span>
+                  <span>{{ podium()[2].cups_hit }} B</span>
+                </div>
+              </div>
+              <div class="podium-block podium-block-3">3</div>
+            </div>
+          </div>
+        }
+
+        <!-- Full ranking -->
+        <div class="ranking-card">
+          <div class="ranking-card-header">
+            <h3 class="ranking-card-title">Gesamtwertung</h3>
+          </div>
+          <!-- Table header -->
+          <div class="ranking-head">
+            <span class="label" style="font-size:10px">#</span>
+            <span class="label" style="font-size:10px">Team</span>
+            <span class="label" style="font-size:10px;text-align:right">+/-</span>
+            <span class="label" style="font-size:10px;text-align:right">B</span>
+            <span class="label" style="font-size:10px;text-align:right">Punkte</span>
+          </div>
+          @for (row of finalRanking(); track $index; let last = $last) {
+            <div class="ranking-row" [class.ranking-row-podium]="row.place <= 3" [class.ranking-row-last]="last">
+              <span class="ranking-place"
+                    [style.color]="row.place===1?'#FFD54F':row.place===2?'#B0BEC5':row.place===3?'#CD7F32':'var(--fg-3)'">
+                {{ row.place }}
+              </span>
+              <span class="ranking-team" [class.ranking-team-bold]="row.place <= 3">{{ row.team_name }}</span>
+              <span class="ranking-mono" [style.color]="row.cup_difference>0?'var(--accent)':row.cup_difference<0?'var(--cup)':'var(--fg-2)'">
+                {{ row.cup_difference > 0 ? '+' : '' }}{{ row.cup_difference }}
+              </span>
+              <span class="ranking-mono">{{ row.cups_hit }}</span>
+              <span class="ranking-pts" [class.ranking-pts-podium]="row.place <= 3">{{ row.points }}</span>
+            </div>
+          }
         </div>
-    } @else if (showTableView) {
-        <div class="m-4">
-            <app-table-view [regularMatches]="regularMatches" [roundOfSixteenMatches]="roundOfsixteen" [quarterFinalMatches]="quaterFinals" [semiFinalMatches]="semiFinals" [finalMatches]="final"></app-table-view>
+
+        <div class="finished-actions">
+          <button type="button" class="btn-ghost" (click)="goHome()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+            </svg>
+            Zum Home
+          </button>
         </div>
-    } 
-    <!-- @if (showRanking && !isLoading) {
-        <div class="m-4">
-            <app-ranking [teams]="getBestEightTeams()" [rankinkSize]="8"></app-ranking>
+      </div>
+    </div>
+  }
+
+  <!-- ===== ACTIVE GAME ===== -->
+  @if (hasActiveGame() && !isFinished()) {
+    <div class="gp-inner">
+
+      <!-- Header -->
+      <div class="gp-header">
+        <div>
+          <div class="gp-header-meta">
+            <div class="status-live">
+              <span class="status-dot"></span>
+              <span>Live</span>
+            </div>
+            <span class="last-update">aktualisiert {{ lastUpdateTime() | date:'HH:mm' }}</span>
+          </div>
+          <h1 class="gp-title">Spielplan</h1>
+          <div class="gp-phase-row">
+            <span style="font-size:13px;color:var(--fg-2)">Aktuelle Phase</span>
+            <span class="phase-tag">{{ currentPhase() }}</span>
+          </div>
         </div>
-    } -->
+
+        <div class="gp-header-actions">
+          <!-- View switcher -->
+          <div class="view-switcher">
+            <button class="view-btn" [class.view-btn-active]="view() === 'grid'" (click)="setView('grid')">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
+                   [attr.stroke]="view()==='grid'?'var(--accent)':'currentColor'"
+                   [attr.stroke-width]="view()==='grid'?2:1.6"
+                   stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+                <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+              </svg>
+              Match-Grid
+            </button>
+            <button class="view-btn" [class.view-btn-active]="view() === 'table'" (click)="setView('table')">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
+                   [attr.stroke]="view()==='table'?'var(--accent)':'currentColor'"
+                   [attr.stroke-width]="view()==='table'?2:1.6"
+                   stroke-linecap="round" stroke-linejoin="round">
+                <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/>
+                <line x1="8" y1="18" x2="21" y2="18"/>
+                <line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/>
+                <line x1="3" y1="18" x2="3.01" y2="18"/>
+              </svg>
+              Tabelle
+            </button>
+          </div>
+          <button type="button" class="btn-ghost" (click)="refreshNow()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/>
+            </svg>
+            Refresh
+          </button>
+        </div>
+      </div>
+
+      <!-- Stats strip -->
+      <div class="stats-strip">
+        <div class="stat-card">
+          <div class="stat-label">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--fg-3)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/>
+              <path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/>
+            </svg>
+            <span class="label">Teams</span>
+          </div>
+          <div class="stat-val">{{ groups().length * (groups()[0]?.teams?.length ?? 0) }}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--fg-3)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M6 9H4.5a2.5 2.5 0 010-5H6"/><path d="M18 9h1.5a2.5 2.5 0 000-5H18"/>
+              <path d="M4 22h16"/><path d="M18 2H6v7a6 6 0 0012 0V2z"/>
+            </svg>
+            <span class="label">Gespielt</span>
+          </div>
+          <div class="stat-val">{{ lockedMatchCount() }}</div>
+          <div class="stat-sub">von {{ groupMatchCount() }} Gruppenspielen</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--fg-3)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+            <span class="label">Becher versenkt</span>
+          </div>
+          <div class="stat-val">{{ totalCups() }}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--fg-3)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+            </svg>
+            <span class="label">Phase</span>
+          </div>
+          <div class="stat-val stat-val-sm">{{ currentPhase() }}</div>
+        </div>
+      </div>
+
+      <!-- ===== GRID VIEW ===== -->
+      @if (view() === 'grid') {
+
+        <!-- Group columns -->
+        <div class="gp-grid"
+             [style.grid-template-columns]="'repeat(' + groups().length + ', minmax(240px, 1fr))'">
+          @for (g of groups(); track $index; let gi = $index) {
+            <div class="gp-group-col">
+              <!-- Group header -->
+              <div class="gp-group-header">
+                <div style="display:flex;align-items:center;gap:8px">
+                  <span class="group-badge">{{ g.group_name }}</span>
+                  <span class="group-col-title">Gruppe {{ g.group_name }}</span>
+                </div>
+                <span class="group-lock-count"
+                      [class.group-lock-done]="lockedInGroup(gi) === (regularMatches()[gi]?.length ?? 0) && (regularMatches()[gi]?.length ?? 0) > 0">
+                  {{ lockedInGroup(gi) }}/{{ regularMatches()[gi]?.length ?? 0 }}
+                </span>
+              </div>
+
+              <!-- Mini standings -->
+              <div class="gp-standings">
+                @for (t of g.teams; track $index; let ti = $index) {
+                  <div class="standing-row" [class.standing-row-sep]="ti > 0">
+                    <span class="standing-pos" [class.standing-pos-top]="ti < 2">{{ ti + 1 }}</span>
+                    <span class="standing-name" [class.standing-name-top]="ti < 2">{{ t.team_name }}</span>
+                    <span class="standing-pts" [class.standing-pts-top]="ti < 2">{{ t.points }}</span>
+                  </div>
+                }
+              </div>
+
+              <!-- Match cards -->
+              <div class="group-matches">
+                @for (m of regularMatches()[gi]; track $index) {
+                  <div class="match-card"
+                       [class.match-card-locked]="isLocked(m)"
+                       [class.match-card-pending]="!isLocked(m)">
+                    <div class="match-teams">
+                      <div class="match-team-row">
+                        <span class="match-team-name"
+                              [class.match-winner]="isLocked(m) && m.points_home > m.points_away">
+                          {{ m.home_team }}
+                        </span>
+                        <span class="match-score"
+                              [class.match-score-win]="isLocked(m) && m.points_home > m.points_away">
+                          {{ isLocked(m) ? m.points_home : '–' }}
+                        </span>
+                      </div>
+                      <div class="match-team-row">
+                        <span class="match-team-name"
+                              [class.match-winner]="isLocked(m) && m.points_away > m.points_home">
+                          {{ m.away_team }}
+                        </span>
+                        <span class="match-score"
+                              [class.match-score-win]="isLocked(m) && m.points_away > m.points_home">
+                          {{ isLocked(m) ? m.points_away : '–' }}
+                        </span>
+                      </div>
+                    </div>
+                    <div class="match-meta">
+                      <span class="match-time">{{ m.start_time | date:'HH:mm' }}</span>
+                      @if (isLocked(m)) {
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                          <polyline points="20 6 9 17 4 12"/>
+                        </svg>
+                      } @else {
+                        <span class="match-table-num">T{{ m.group_number }}</span>
+                      }
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+        </div>
+
+        <!-- KO phases below grid -->
+        @if (roundOfsixteen().length > 0) {
+          <div class="ko-section">
+            <div class="ko-section-header">
+              <div class="ko-phase-badge">AF</div>
+              <span class="ko-phase-label">Achtelfinale</span>
+              <span class="ko-match-count">{{ roundOfsixteen().length }} Spiele</span>
+            </div>
+            <div class="ko-matches-grid">
+              @for (m of roundOfsixteen(); track $index) {
+                <div class="match-card" [class.match-card-locked]="isLocked(m)">
+                  <div class="match-teams">
+                    <div class="match-team-row">
+                      <span class="match-team-name" [class.match-winner]="isLocked(m) && m.points_home > m.points_away">{{ m.home_team }}</span>
+                      <span class="match-score" [class.match-score-win]="isLocked(m) && m.points_home > m.points_away">{{ isLocked(m) ? m.points_home : '–' }}</span>
+                    </div>
+                    <div class="match-team-row">
+                      <span class="match-team-name" [class.match-winner]="isLocked(m) && m.points_away > m.points_home">{{ m.away_team }}</span>
+                      <span class="match-score" [class.match-score-win]="isLocked(m) && m.points_away > m.points_home">{{ isLocked(m) ? m.points_away : '–' }}</span>
+                    </div>
+                  </div>
+                  <div class="match-meta">
+                    <span class="match-time">{{ m.start_time | date:'HH:mm' }}</span>
+                    @if (isLocked(m)) {
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"/>
+                      </svg>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+        @if (quaterFinals().length > 0) {
+          <div class="ko-section">
+            <div class="ko-section-header">
+              <div class="ko-phase-badge">VF</div>
+              <span class="ko-phase-label">Viertelfinale</span>
+              <span class="ko-match-count">{{ quaterFinals().length }} Spiele</span>
+            </div>
+            <div class="ko-matches-grid">
+              @for (m of quaterFinals(); track $index) {
+                <div class="match-card" [class.match-card-locked]="isLocked(m)">
+                  <div class="match-teams">
+                    <div class="match-team-row">
+                      <span class="match-team-name" [class.match-winner]="isLocked(m) && m.points_home > m.points_away">{{ m.home_team }}</span>
+                      <span class="match-score" [class.match-score-win]="isLocked(m) && m.points_home > m.points_away">{{ isLocked(m) ? m.points_home : '–' }}</span>
+                    </div>
+                    <div class="match-team-row">
+                      <span class="match-team-name" [class.match-winner]="isLocked(m) && m.points_away > m.points_home">{{ m.away_team }}</span>
+                      <span class="match-score" [class.match-score-win]="isLocked(m) && m.points_away > m.points_home">{{ isLocked(m) ? m.points_away : '–' }}</span>
+                    </div>
+                  </div>
+                  <div class="match-meta">
+                    <span class="match-time">{{ m.start_time | date:'HH:mm' }}</span>
+                    @if (isLocked(m)) {
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"/>
+                      </svg>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+        @if (semiFinals().length > 0) {
+          <div class="ko-section">
+            <div class="ko-section-header">
+              <div class="ko-phase-badge">HF</div>
+              <span class="ko-phase-label">Halbfinale</span>
+              <span class="ko-match-count">{{ semiFinals().length }} Spiele</span>
+            </div>
+            <div class="ko-matches-grid">
+              @for (m of semiFinals(); track $index) {
+                <div class="match-card" [class.match-card-locked]="isLocked(m)">
+                  <div class="match-teams">
+                    <div class="match-team-row">
+                      <span class="match-team-name" [class.match-winner]="isLocked(m) && m.points_home > m.points_away">{{ m.home_team }}</span>
+                      <span class="match-score" [class.match-score-win]="isLocked(m) && m.points_home > m.points_away">{{ isLocked(m) ? m.points_home : '–' }}</span>
+                    </div>
+                    <div class="match-team-row">
+                      <span class="match-team-name" [class.match-winner]="isLocked(m) && m.points_away > m.points_home">{{ m.away_team }}</span>
+                      <span class="match-score" [class.match-score-win]="isLocked(m) && m.points_away > m.points_home">{{ isLocked(m) ? m.points_away : '–' }}</span>
+                    </div>
+                  </div>
+                  <div class="match-meta">
+                    <span class="match-time">{{ m.start_time | date:'HH:mm' }}</span>
+                    @if (isLocked(m)) {
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"/>
+                      </svg>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+        @if (thirdPlace().length > 0) {
+          <div class="ko-section">
+            <div class="ko-section-header">
+              <div class="ko-phase-badge" style="background:var(--yellow-muted);color:var(--yellow)">P3</div>
+              <span class="ko-phase-label">Spiel um Platz 3</span>
+            </div>
+            <div class="ko-matches-grid">
+              @for (m of thirdPlace(); track $index) {
+                <div class="match-card" [class.match-card-locked]="isLocked(m)">
+                  <div class="match-teams">
+                    <div class="match-team-row">
+                      <span class="match-team-name" [class.match-winner]="isLocked(m) && m.points_home > m.points_away">{{ m.home_team }}</span>
+                      <span class="match-score" [class.match-score-win]="isLocked(m) && m.points_home > m.points_away">{{ isLocked(m) ? m.points_home : '–' }}</span>
+                    </div>
+                    <div class="match-team-row">
+                      <span class="match-team-name" [class.match-winner]="isLocked(m) && m.points_away > m.points_home">{{ m.away_team }}</span>
+                      <span class="match-score" [class.match-score-win]="isLocked(m) && m.points_away > m.points_home">{{ isLocked(m) ? m.points_away : '–' }}</span>
+                    </div>
+                  </div>
+                  <div class="match-meta">
+                    <span class="match-time">{{ m.start_time | date:'HH:mm' }}</span>
+                    @if (isLocked(m)) {
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"/>
+                      </svg>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+        @if (final().length > 0) {
+          <div class="ko-section">
+            <div class="ko-section-header">
+              <div class="ko-phase-badge" style="background:var(--accent-muted);color:var(--accent)">F</div>
+              <span class="ko-phase-label">Finale</span>
+            </div>
+            <div class="ko-matches-grid">
+              @for (m of final(); track $index) {
+                <div class="match-card match-card-final" [class.match-card-locked]="isLocked(m)">
+                  <div class="match-teams">
+                    <div class="match-team-row">
+                      <span class="match-team-name" [class.match-winner]="isLocked(m) && m.points_home > m.points_away">{{ m.home_team }}</span>
+                      <span class="match-score" [class.match-score-win]="isLocked(m) && m.points_home > m.points_away">{{ isLocked(m) ? m.points_home : '–' }}</span>
+                    </div>
+                    <div class="match-team-row">
+                      <span class="match-team-name" [class.match-winner]="isLocked(m) && m.points_away > m.points_home">{{ m.away_team }}</span>
+                      <span class="match-score" [class.match-score-win]="isLocked(m) && m.points_away > m.points_home">{{ isLocked(m) ? m.points_away : '–' }}</span>
+                    </div>
+                  </div>
+                  <div class="match-meta">
+                    <span class="match-time">{{ m.start_time | date:'HH:mm' }}</span>
+                    @if (isLocked(m)) {
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"/>
+                      </svg>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        }
+      }
+
+      <!-- ===== TABLE VIEW ===== -->
+      @if (view() === 'table') {
+        <div class="tv-wrap">
+          <div class="tv-head">
+            <span class="label" style="font-size:10px">Zeit</span>
+            <span class="label" style="font-size:10px">Phase</span>
+            <span class="label" style="font-size:10px">Heim</span>
+            <span class="label" style="font-size:10px;text-align:center">Score</span>
+            <span class="label" style="font-size:10px">Auswärts</span>
+            <span class="label" style="font-size:10px">Tisch</span>
+            <span class="label" style="font-size:10px"></span>
+          </div>
+          @for (row of allMatchesFlat(); track $index; let last = $last) {
+            <div class="tv-row"
+                 [class.tv-row-last]="last"
+                 [class.tv-row-live]="!isLocked(row.match)">
+              <span class="tv-time">{{ row.match.start_time | date:'HH:mm' }}</span>
+              <span class="tv-phase-tag" [class.tv-phase-ko]="row.isKO">{{ row.phaseLabel }}</span>
+              <span class="tv-team"
+                    [class.tv-team-winner]="isLocked(row.match) && row.match.points_home > row.match.points_away">
+                {{ row.match.home_team }}
+              </span>
+              <div class="tv-score">
+                <span [class.tv-score-win]="isLocked(row.match) && row.match.points_home > row.match.points_away">
+                  {{ isLocked(row.match) ? row.match.points_home : '–' }}
+                </span>
+                <span class="tv-colon">:</span>
+                <span [class.tv-score-win]="isLocked(row.match) && row.match.points_away > row.match.points_home">
+                  {{ isLocked(row.match) ? row.match.points_away : '–' }}
+                </span>
+              </div>
+              <span class="tv-team"
+                    [class.tv-team-winner]="isLocked(row.match) && row.match.points_away > row.match.points_home">
+                {{ row.match.away_team }}
+              </span>
+              <span class="tv-table-num">T{{ row.match.group_number || '–' }}</span>
+              <span class="tv-status-icon">
+                @if (isLocked(row.match)) {
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"/>
+                  </svg>
+                } @else {
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--fg-3)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                  </svg>
+                }
+              </span>
+            </div>
+          }
+        </div>
+      }
+
+    </div>
+  }
+
 </div>

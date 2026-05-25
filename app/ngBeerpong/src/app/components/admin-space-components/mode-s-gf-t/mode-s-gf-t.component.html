@@ -1,109 +1,117 @@
 <p-confirmdialog/>
-<ng-container *ngIf="!showRanking">
-    <p-tabView>
-        <p-tabPanel header="Gruppen A-C">
-            <div class="flex">
-                @if(groups.length <= 3) {
-                    @for(g of groups; track $index; let i = $index) {
+@if (!showRanking) {
+    <p-tabs value="0">
+        <p-tablist>
+            <p-tab value="0">Gruppen A-C</p-tab>
+            @if (groups.length > 3) {
+                <p-tab value="1">Gruppen D-F</p-tab>
+            }
+        </p-tablist>
+        <p-tabpanels>
+            <p-tabpanel value="0">
+                <div class="flex">
+                    @if (groups.length <= 3) {
+                        @for (g of groups; track $index; let i = $index) {
+                            <div class="flex flex-col flex-1 w-full">
+                                @for (m of sortedMatches[i]; track $index) {
+                                    <app-game-card [match]="m" class="w-full"></app-game-card>
+                                }
+                            </div>
+                        }
+                    } @else {
+                        @for (g of groups.slice(0, 3); track $index; let i = $index) {
+                            <div class="flex flex-col flex-1 w-full">
+                                @for (m of sortedMatches[i]; track $index) {
+                                    <app-game-card [match]="m" class="w-full"></app-game-card>
+                                }
+                            </div>
+                        }
+                    }
+                </div>
+            </p-tabpanel>
+            @if (groups.length > 3) {
+                <p-tabpanel value="1">
+                    @for (g of groups.slice(3, groups.length); track $index; let i = $index) {
                         <div class="flex flex-col flex-1 w-full">
-                            <ng-container *ngFor="let m of sortedMatches[i]">
+                            @for (m of sortedMatches[i+3]; track $index) {
                                 <app-game-card [match]="m" class="w-full"></app-game-card>
-                            </ng-container>
+                            }
                         </div>
                     }
-                } @else {
-                    @for(g of groups.slice(0, 3); track $index; let i = $index) {
-                        <div class="flex flex-col flex-1 w-full">
-                            <ng-container *ngFor="let m of sortedMatches[i]">
-                                <app-game-card [match]="m" class="w-full"></app-game-card>
-                            </ng-container>
-                        </div>
-                    }
-                }
-            </div>
-        </p-tabPanel>
-        <ng-container *ngIf="groups.length > 3">
-            <p-tabPanel header="Gruppen D-F">
-               @for(g of groups.slice(3, groups.length); track $index; let i = $index) {
-                    <div class="flex flex-col flex-1 w-full">
-                        <ng-container *ngFor="let m of sortedMatches[i+3]">
-                            <app-game-card [match]="m" class="w-full"></app-game-card>
-                        </ng-container>
-                    </div>
-                }
-            </p-tabPanel>
-        </ng-container>
-    </p-tabView>
+                </p-tabpanel>
+            }
+        </p-tabpanels>
+    </p-tabs>
     <div class="flex flex-row-reverse mt-5">
         <p-button (onClick)="updateRoundOfSixteen()" label="Gruppenphase abschliessen"></p-button>
     </div>
-    <ng-container *ngIf="roundOfsixteen.length > 0">
+    @if (roundOfsixteen.length > 0) {
         <div>
             <p-fieldset legend="Achtelfinals">
                 <div class="flex flex-wrap">
-                    <ng-container *ngFor="let m of roundOfsixteen">
+                    @for (m of roundOfsixteen; track $index) {
                         <div class="">
                             <app-game-card [match]="m" [showGroupName]="false"></app-game-card>
                         </div>
-                    </ng-container>
+                    }
                 </div>
             </p-fieldset>
         </div>
         <div class="flex flex-row-reverse mt-5">
             <p-button (onClick)="updateQuaterFinals()" label="Achtelfinals abschliessen"></p-button>
         </div>
-    </ng-container>
-    <ng-container *ngIf="quaterFinalMatches.length > 0">
+    }
+    @if (quaterFinalMatches.length > 0) {
         <div>
             <p-fieldset legend="Viertelfinals">
                 <div class="flex flex-row">
-                    <ng-container *ngFor="let m of quaterFinalMatches">
+                    @for (m of quaterFinalMatches; track $index) {
                         <div class="flex-1">
                             <app-game-card [match]="m" [showGroupName]="false"></app-game-card>
                         </div>
-                    </ng-container>
+                    }
                 </div>
             </p-fieldset>
         </div>
         <div class="flex flex-row-reverse mt-5">
             <p-button (onClick)="updateSemiFinals()" label="Viertelfinal abschliessen"></p-button>
         </div>
-    </ng-container>
+    }
     <div class="mt-5">
         <p-fieldset legend="Halbfinals">
             <div class="flex flex-row">
-                <ng-container *ngFor="let m of semiFinalMatches">
+                @for (m of semiFinalMatches; track $index) {
                     <div class="flex-1">
                         <app-game-card [match]="m" [showGroupName]="false"></app-game-card>
                     </div>
-                </ng-container>
+                }
             </div>
         </p-fieldset>
     </div>
     <div class="flex flex-row-reverse mt-5">
         <p-button (onClick)="updateFinal()" label="Halbfinals abschliessen"></p-button>
     </div>
-    <ng-container *ngIf="thirdPlaceMatch.length > 0">
+    @if (thirdPlaceMatch.length > 0) {
         <div class="mt-5">
             <p-fieldset legend="Spiel um Platz 3">
                 <div class="flex flex-row justify-around">
-                    <ng-container *ngFor="let m of thirdPlaceMatch">
+                    @for (m of thirdPlaceMatch; track $index) {
                         <div class="w-1/2">
                             <app-game-card [match]="m" [showGroupName]="false"></app-game-card>
                         </div>
-                    </ng-container>
+                    }
                 </div>
             </p-fieldset>
         </div>
-    </ng-container>
+    }
     <div class="mt-5">
         <p-fieldset legend="Finale">
             <div class="flex flex-row justify-around">
-                <ng-container *ngFor="let m of finalMatches">
+                @for (m of finalMatches; track $index) {
                     <div class="w-1/2">
                         <app-game-card [match]="m" [showGroupName]="false"></app-game-card>
                     </div>
-                </ng-container>
+                }
             </div>
         </p-fieldset>
     </div>
@@ -111,8 +119,8 @@
         <p-button severity="danger" (onClick)="confirmGameFinish($event)" label="Spiel sofort beenden"></p-button>
         <p-button (onClick)="setTournamentFinished()" label="Zur Tabelle"></p-button>
     </div>
-</ng-container>
-<ng-container *ngIf="showRanking">
+}
+@if (showRanking) {
     <div class="">
         <app-ranking [teams]="getRanking()" [rankinkSize]="getRanking().length">
             <div class="flex gap-3 mt-1">
@@ -121,4 +129,4 @@
             </div>
         </app-ranking>
     </div>
-</ng-container>
+}

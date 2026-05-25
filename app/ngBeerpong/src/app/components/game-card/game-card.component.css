@@ -1,3 +1,219 @@
-.p-card-content {
-    padding: 0px;
+/* ============================================================
+   Game Card (Match Card — Classic variant)
+   ============================================================ */
+
+.mc-root {
+  position: relative;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: border-color 200ms ease-out;
 }
+
+.mc-locked {
+  border-color: rgba(158, 245, 60, 0.25);
+}
+
+.mc-locked-bg {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, var(--accent-muted) 0%, transparent 35%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* --- Header --- */
+.mc-header {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-0);
+}
+
+.mc-tags {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.mc-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--fg-2);
+  white-space: nowrap;
+}
+
+.mc-tag-accent {
+  background: var(--accent-muted);
+  border-color: rgba(158, 245, 60, 0.25);
+  color: var(--accent);
+}
+
+.mc-time {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--fg-2);
+}
+
+/* --- Body --- */
+.mc-body {
+  position: relative;
+  z-index: 1;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.mc-team-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.mc-name-wrap {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+  flex: 1;
+}
+
+.mc-team-name {
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--fg-1);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color 200ms, font-weight 200ms;
+}
+
+.mc-winner {
+  font-weight: 700;
+  color: var(--fg-1);
+}
+
+.mc-loser {
+  color: var(--fg-3);
+  font-weight: 400;
+}
+
+/* Score input */
+.mc-score-input {
+  width: 70px;
+  height: 48px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--fg-1);
+  outline: none;
+  letter-spacing: -0.02em;
+  transition: border-color 150ms;
+  flex-shrink: 0;
+}
+
+.mc-score-input:focus {
+  border-color: var(--accent);
+}
+
+.mc-score-input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Hide browser spinners */
+.mc-score-input::-webkit-outer-spin-button,
+.mc-score-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+
+.mc-score-input[type=number] {
+  -moz-appearance: textfield;
+}
+
+/* --- Footer --- */
+.mc-footer {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  border-top: 1px solid var(--border);
+}
+
+.mc-referee {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--fg-2);
+  min-width: 0;
+  overflow: hidden;
+}
+
+.mc-referee span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mc-match-id {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--fg-3);
+}
+
+/* Lock button */
+.mc-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: var(--radius-md);
+  border: none;
+  background: var(--accent);
+  color: var(--fg-inv);
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  box-shadow: var(--accent-glow);
+  transition: filter 150ms, transform 80ms;
+}
+
+.mc-btn:hover { filter: brightness(1.08); }
+.mc-btn:active { transform: scale(0.97); }
+
+.mc-btn-locked {
+  background: var(--surface-3);
+  color: var(--accent);
+  border: 1px solid rgba(158, 245, 60, 0.35);
+  box-shadow: none;
+}
+
+.mc-btn-locked:hover { filter: none; background: var(--surface-2); }

@@ -1,86 +1,65 @@
-import { CommonModule, DatePipe, NgFor, NgIf } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
-import { ButtonModule } from 'primeng/button';
-import { CardModule } from 'primeng/card';
-import { StepsModule } from 'primeng/steps';
-import { ToggleButtonModule } from 'primeng/togglebutton';
-import { InputTextModule } from 'primeng/inputtext';
-import { DividerModule } from 'primeng/divider';
-import { FormArray, FormBuilder, FormControl, FormGroup, FormsModule, RequiredValidator, Validators } from '@angular/forms';
+import { Component, computed, inject, signal } from '@angular/core';
+import { FormArray, FormBuilder, FormControl, FormGroup, FormsModule, Validators } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
-import { StepperModule } from 'primeng/stepper';
-import { InputNumberModule } from 'primeng/inputnumber';
-import { CalendarModule } from 'primeng/calendar';
+import { Router, RouterModule } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { DatePicker } from 'primeng/datepicker';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
+import { InputTextModule } from 'primeng/inputtext';
 import { Team } from '../../api/team.interface';
 import { DemoTeams } from './demo-teams';
-import { BeerpongState } from '../../store/beerpong/game.state';
-import { Store } from '@ngrx/store';
-import { createGame } from '../../store/beerpong/beerpong.actions';
+import { BeerpongStore } from '../../store/beerpong/beerpong.store';
+import { UserStore } from '../../store/user/user.store';
 import { Referee } from '../../api/referee';
-import { PanelModule } from 'primeng/panel';
-import { ToggleSwitchModule } from 'primeng/toggleswitch';
-import { TooltipModule } from 'primeng/tooltip';
-import { Observable } from 'rxjs';
-import { UserState } from '../../store/user/user.state';
-import { selectUserState } from '../../store/user/user.selectors';
 import { uniqueTeamNamesValidator } from '../../shared/validators/duplicate-team-names-validator';
-import { SelectChangeEvent, SelectModule } from 'primeng/select';
 import { NewTournament } from '../../api/game-request';
-import GroupModel from '../../form-models/group.model';
 import Group from '../../api/group.interface';
-import { MessageModule } from 'primeng/message';
 
 @Component({
   selector: 'app-beerpong-setup',
   templateUrl: './beerpong-setup.component.html',
   styleUrl: './beerpong-setup.component.css',
   imports: [
-    ButtonModule,
-    CardModule,
-    StepsModule,
-    ToggleButtonModule,
-    NgFor,
-    InputTextModule,
-    DividerModule,
-    ReactiveFormsModule,
-    StepperModule,
-    InputNumberModule,
-    CalendarModule,
-    FormsModule,
-    PanelModule,
-    ToggleSwitchModule,
-    DatePipe,
-    TooltipModule,
     CommonModule,
-    SelectModule,
-    MessageModule
+    ReactiveFormsModule,
+    FormsModule,
+    RouterModule,
+    DatePicker,
+    ToggleSwitchModule,
+    InputTextModule,
   ]
 })
-export class BeerpongSetupComponent implements OnInit {
-  // user
-  private userDetails$: Observable<UserState>;
-  private userSub: string;
-  private userObserver = {
-    next: (u: UserState) => this.userSub = u.userDetails.sub!,
-    error: (err: Error) => console.log(err),
-    complete: () => console.log('user observable completed on beerpong setup component')
-  }
+export class BeerpongSetupComponent {
+  private userStore = inject(UserStore);
+  private beerpongStore = inject(BeerpongStore);
+  private router = inject(Router);
 
-  // game
+  public currentStep = signal(0);
+
+  public readonly steps = [
+    { label: 'Spieleinstellungen' },
+    { label: 'Mannschaften' },
+    { label: 'Übersicht' },
+  ];
+
+  public readonly groupNames = ['A','B','C','D','E','F','G','H','I','J'];
+
   public gameForm: FormGroup;
+  private groupsStatus = signal<string>('INVALID');
 
-  groupNames: string[] = ["A", "B", "C", "D", "E", "F"]
-  teamsSet: boolean = false;
+  public canAdvance = computed(() => {
+    if (this.currentStep() === 0) {
+      const g = this.amountOfGroups.value ?? 0;
+      const t = this.amountOfTeams.value ?? 0;
+      return g >= 1 && t >= 3;
+    }
+    if (this.currentStep() === 1) {
+      return this.groupsStatus() === 'VALID';
+    }
+    return true;
+  });
 
-  public groupOptions: Number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-  public teamOptions: Number[] = [3, 4, 5];
-  public qualifiedTeamsOptions: Number[] = [1, 2];
-
-  constructor(
-    private fb: FormBuilder,
-    private beerpongstore: Store<BeerpongState>,
-    private userstore: Store<UserState>,
-  ) {
+  constructor(private fb: FormBuilder) {
     this.gameForm = this.fb.group({
       amountOfGroups: this.fb.control<number | null>(1, [Validators.required]),
       amountOfTeams: this.fb.control<number | null>(3, [Validators.required]),
@@ -94,24 +73,22 @@ export class BeerpongSetupComponent implements OnInit {
           ])
         })
       ], uniqueTeamNamesValidator()),
-      gameTime: this.fb.control<number | null>(null, [Validators.required]),
-      gameStart: this.fb.control<Date | null>(null, [Validators.required]),
+      gameTime: this.fb.control<number | null>(12, [Validators.required]),
+      gameStart: this.fb.control<Date | null>(null),
       koStage: this.fb.control<boolean>(false),
       includeThirdPlaceMatch: this.fb.control<boolean>(false),
-      numberOfQualifiedTeams: this.fb.control<number | null>(1, [Validators.required]),
+      numberOfQualifiedTeams: this.fb.control<number | null>(8, [Validators.required]),
       withReferees: this.fb.control<boolean>(false),
       referees: this.fb.control<string | null>(null),
-    })
+    });
 
-    this.userDetails$ = this.userstore.select(selectUserState)
-  }
-
-  ngOnInit(): void {
-    this.userDetails$.subscribe(this.userObserver)
+    this.gameForm.controls['groups'].statusChanges.subscribe(status => {
+      this.groupsStatus.set(status);
+    });
   }
 
   get groupsFormArray(): FormArray {
-    return this.gameForm.controls["groups"] as FormArray;
+    return this.gameForm.controls['groups'] as FormArray;
   }
 
   public getTeamsFromArray(groupIndex: number): FormArray {
@@ -119,144 +96,123 @@ export class BeerpongSetupComponent implements OnInit {
   }
 
   get amountOfGroups(): FormControl {
-    return this.gameForm.controls["amountOfGroups"] as FormControl;
+    return this.gameForm.controls['amountOfGroups'] as FormControl;
   }
 
   get amountOfTeams(): FormControl {
-    return this.gameForm.controls["amountOfTeams"] as FormControl;
+    return this.gameForm.controls['amountOfTeams'] as FormControl;
   }
 
   get gameTime(): FormControl {
-    return this.gameForm.controls["gameTime"] as FormControl;
+    return this.gameForm.controls['gameTime'] as FormControl;
   }
 
-  public updateGroupNumber(event: SelectChangeEvent): void {
-    console.log(event.value);
+  public setGroups(n: number): void {
+    const count = Math.max(1, Math.min(10, n));
+    this.amountOfGroups.setValue(count);
     this.groupsFormArray.clear();
-    for (let i = 0; i < event.value; i++) {
+    for (let i = 0; i < count; i++) {
+      const teamsArray = this.fb.array(
+        Array.from({ length: this.amountOfTeams.value ?? 3 }, () =>
+          new FormControl<string | null>(null, [Validators.required])
+        )
+      );
       this.groupsFormArray.push(
         this.fb.group({
           groupName: this.fb.control<string | null>(this.groupNames[i], [Validators.required]),
-          teams: this.fb.array([])
+          teams: teamsArray,
         })
-      )
+      );
     }
-    this.groupsFormArray.controls.forEach(group => {
-      // Add number of teams to each group
-      for (let j = 0; j < this.amountOfTeams.value!; j++) {
-        (group.get('teams') as FormArray).push(new FormControl<string | null>(null, [Validators.required]));
-      }
-    })
   }
 
-  public updateTeamNumber(event: SelectChangeEvent): void {
-    const teamCount = event.value;
+  public setTeamsPerGroup(n: number): void {
+    const count = Math.max(3, Math.min(5, n));
+    this.amountOfTeams.setValue(count);
     this.groupsFormArray.controls.forEach(group => {
       const teamsArray = group.get('teams') as FormArray;
-      // Clear existing teams
       teamsArray.clear();
-      // Add new number of teams
-      for (let j = 0; j < teamCount; j++) {
+      for (let j = 0; j < count; j++) {
         teamsArray.push(new FormControl<string | null>(null, [Validators.required]));
       }
-    })
+    });
   }
 
-  startGame(): void {
-    console.log(this.gameForm)
-    let referees: Referee[] | null = null;
-    console.log(this.gameForm.get('referees')?.value)
-    if (this.gameForm.get('referees')?.value) {
-      let refs: string = this.gameForm.get('referees')?.value
-      let refsArray = refs.trim().split(',')
-      refsArray.map(r => referees!.push({
-        name: r,
-      }))
+  public setGameTime(n: number): void {
+    this.gameTime.setValue(Math.max(5, Math.min(30, n)));
+  }
+
+  public nextStep(): void {
+    if (this.currentStep() < 2) this.currentStep.update(v => v + 1);
+  }
+
+  public prevStep(): void {
+    if (this.currentStep() > 0) this.currentStep.update(v => v - 1);
+  }
+
+  public goToStep(i: number): void {
+    if (i <= this.currentStep()) this.currentStep.set(i);
+  }
+
+  public fillGroupsWithTeamNames(): void {
+    const pool = [...DemoTeams].sort(() => Math.random() - 0.5);
+    let idx = 0;
+    this.groupsFormArray.controls.forEach(groupControl => {
+      const teamsArray = groupControl.get('teams') as FormArray;
+      teamsArray.controls.forEach(teamControl => {
+        teamControl.setValue(pool[idx++ % pool.length]);
+      });
+    });
+  }
+
+  public startGame(): void {
+    const referees: Referee[] = [];
+    const refValue: string | null = this.gameForm.get('referees')?.value;
+    if (this.gameForm.get('withReferees')?.value && refValue) {
+      refValue.trim().split(',').forEach(r => {
+        const name = r.trim();
+        if (name) referees.push({ name });
+      });
     }
-    let newGame: NewTournament = {
+
+    const newGame: NewTournament = {
       tournament: {
-        user_sub: this.userSub,
-        amount_of_teams: this.gameForm.get('amountOfTeams')?.value,
+        user_sub: this.userStore.userDetails().sub ?? '',
+        amount_of_teams: this.amountOfTeams.value,
         is_finished: false,
-        game_time: this.gameForm.get('gameTime')?.value,
+        game_time: this.gameTime.value,
         start_time: this.gameForm.get('gameStart')?.value,
-        referee: referees!,
+        referee: referees,
         groups: this.getGroupsForNewGame(),
         got_ko_stage: this.gameForm.get('koStage')?.value,
         got_stage_in_between: this.gameForm.get('includeThirdPlaceMatch')?.value,
         number_of_qualified_teams: this.gameForm.get('numberOfQualifiedTeams')?.value,
         include_third_place_match: this.gameForm.get('includeThirdPlaceMatch')?.value,
       },
-    }
+    };
 
-    this.beerpongstore.dispatch(createGame({ game: newGame }))
-
-    console.log(newGame)
-  }
-
-  // getTeamsForGame(): Team[] {
-  //   let retval: Team[] = []
-  //   console.log(this.groupsFormArray.value)
-  //   let groups: any = this.groupsFormArray.value
-  //   for (let i = 0; i < groups.length; i++) {
-  //     let newTeams: Team[] = []
-  //     newTeams.push(this.getNewTeam(groups[i].name, groups[i].team1))
-  //     newTeams.push(this.getNewTeam(groups[i].name, groups[i].team2))
-  //     newTeams.push(this.getNewTeam(groups[i].name, groups[i].team3))
-  //     newTeams.push(this.getNewTeam(groups[i].name, groups[i].team4))
-  //     newTeams.push(this.getNewTeam(groups[i].name, groups[i].team5))
-  //     retval.push(...newTeams)
-  //   }
-  //   return retval
-  // }
-
-  getNewTeam(grouName: string, teamName: string): Team {
-    let retval: Team = {
-      team_name: teamName,
-      group_name: grouName,
-      points: 0,
-      cups_hit: 0,
-      cups_get: 0,
-      cup_difference: 0,
-      rank: 0
-    }
-    if (retval.team_name == '') {
-      retval.team_name = this.getRandomTeamName()
-    }
-    return retval
-  }
-
-  getRandomTeamName(): string {
-    let index = Math.floor(Math.random() * (29 - 0 + 1) + 0);
-    return DemoTeams[index]
-  }
-
-  fillGroupsWithTeamNames(): void {
-    this.groupsFormArray.controls.forEach(groupControl => {
-      const teamsArray = groupControl.get('teams') as FormArray;
-      teamsArray.controls.forEach(teamControl => {
-        teamControl.setValue(this.getRandomTeamName());
-      });
-    });
-    console.log(this.groupsFormArray)
+    this.beerpongStore.createGame(newGame);
+    this.router.navigate(['/adminspace']);
   }
 
   private getGroupsForNewGame(): Group[] {
-    let groups: Group[] = [];
-    this.groupsFormArray.controls.forEach((groupControl, index) => {
+    return this.groupsFormArray.controls.map(groupControl => {
       const groupName = groupControl.get('groupName')?.value;
       const teamsArray = groupControl.get('teams') as FormArray;
-      const teams: Team[] = teamsArray.controls.map(teamControl => ({
-        team_name: teamControl.value || this.getRandomTeamName(),
+      const teams: Team[] = teamsArray.controls.map(t => ({
+        team_name: t.value || this.getRandomTeamName(),
         group_name: groupName,
         points: 0,
         cups_hit: 0,
         cups_get: 0,
         cup_difference: 0,
-        rank: 0
+        rank: 0,
       }));
-      groups.push({ group_name: groupName, teams: teams});
+      return { group_name: groupName, teams };
     });
-    return groups;
+  }
+
+  private getRandomTeamName(): string {
+    return DemoTeams[Math.floor(Math.random() * DemoTeams.length)];
   }
 }

@@ -1,40 +1,91 @@
-<div class="m-1">
-    <p-card>
-        <ng-template pTemplate="header">
-            <div class="flex flex-row justify-between">
-                <div class="flex flex-row gap-2 m-2">
-                    <ng-container *ngIf="showGroupName">
-                        <p-tag value="Gruppe {{match.group_number}}"></p-tag>
-                    </ng-container>
-                    <p-tag value="Tisch {{match.group_number}}" severity="secondary"></p-tag>
-                </div>
-                <div class="mt-2 mr-4">
-                    <p-tag value="{{match.start_time | date: 'hh:mm'}}-{{match.end_time | date: 'hh:mm'}}" severity="secondary"></p-tag>
-                </div>
-            </div>
-        </ng-template>
-        <ng-template pTemplate="content">
-            <div [formGroup]="points">
-                <div class="flex justify-between mb-1 max-h-7">
-                    <p>{{match.home_team}}</p>
-                    <div class="flex flex-row-reverse">
-                        <p-inputNumber [inputStyle]="{'width': '50px'}" formControlName="points_home" />
-                    </div>
-                </div>
-                <div class="flex justify-between max-h-7">
-                    <p>{{match.away_team}}</p>
-                    <p-inputNumber [inputStyle]="{'width': '50px'}" formControlName="points_away" />
-                </div>
-            </div>
-        </ng-template>
+<div class="mc-root" [class.mc-locked]="isLockedState">
 
-        <ng-template pTemplate="footer">
-            <div class="flex justify-between">
-                <div class="content-center">
-                    <p-tag value="{{match.referee}}" icon="pi pi-user"></p-tag>
-                </div>
-                <p-button [severity]="label" icon="pi pi-lock" (onClick)="setLocked()"/>
-            </div>
-        </ng-template>
-    </p-card>
+  @if (isLockedState) {
+    <div class="mc-locked-bg"></div>
+  }
+
+  <!-- Header -->
+  <div class="mc-header">
+    <div class="mc-tags">
+      @if (showGroupName) {
+        <span class="mc-tag mc-tag-accent">Gruppe {{ match.group_number }}</span>
+      }
+      <span class="mc-tag">Tisch {{ match.group_number }}</span>
+    </div>
+    <div class="mc-time">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--fg-3)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+      </svg>
+      {{ match.start_time | date:'HH:mm' }}
+    </div>
+  </div>
+
+  <!-- Teams -->
+  <div class="mc-body" [formGroup]="points">
+
+    <!-- Home -->
+    <div class="mc-team-row">
+      <div class="mc-name-wrap">
+        @if (homeWins) {
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 9H4.5a2.5 2.5 0 010-5H6"/><path d="M18 9h1.5a2.5 2.5 0 000-5H18"/>
+            <path d="M4 22h16"/><path d="M18 2H6v7a6 6 0 0012 0V2z"/>
+          </svg>
+        }
+        <span class="mc-team-name"
+              [class.mc-winner]="homeWins"
+              [class.mc-loser]="isLockedState && !homeWins">
+          {{ match.home_team }}
+        </span>
+      </div>
+      <input type="number" class="mc-score-input" formControlName="points_home" min="0" max="10">
+    </div>
+
+    <!-- Away -->
+    <div class="mc-team-row">
+      <div class="mc-name-wrap">
+        @if (awayWins) {
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 9H4.5a2.5 2.5 0 010-5H6"/><path d="M18 9h1.5a2.5 2.5 0 000-5H18"/>
+            <path d="M4 22h16"/><path d="M18 2H6v7a6 6 0 0012 0V2z"/>
+          </svg>
+        }
+        <span class="mc-team-name"
+              [class.mc-winner]="awayWins"
+              [class.mc-loser]="isLockedState && !awayWins">
+          {{ match.away_team }}
+        </span>
+      </div>
+      <input type="number" class="mc-score-input" formControlName="points_away" min="0" max="10">
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <div class="mc-footer">
+    <div class="mc-referee">
+      @if (match.referee) {
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--fg-3)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>
+        </svg>
+        <span>{{ match.referee }}</span>
+      } @else if (match.id) {
+        <span class="mc-match-id">#{{ match.id }}</span>
+      }
+    </div>
+    <button type="button" class="mc-btn" [class.mc-btn-locked]="isLockedState" (click)="setLocked()">
+      @if (isLockedState) {
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+        Gewertet
+      } @else {
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>
+        </svg>
+        Eintragen
+      }
+    </button>
+  </div>
+
 </div>

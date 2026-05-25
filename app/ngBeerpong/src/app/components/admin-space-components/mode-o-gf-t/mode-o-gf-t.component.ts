@@ -1,30 +1,25 @@
-import { Component, Input, OnInit } from '@angular/core';
-import {Match} from '../../../api/match.interface';
+import { Component, inject, Input, OnInit } from '@angular/core';
+import { Match } from '../../../api/match.interface';
 import { GameCardComponent } from '../../game-card/game-card.component';
-import { TabViewModule } from 'primeng/tabview';
-import { NgFor, NgIf } from '@angular/common';
+import { Tab, TabList, TabPanel, TabPanels, Tabs } from 'primeng/tabs';
 import { ButtonModule } from 'primeng/button';
 import { FieldsetModule } from 'primeng/fieldset';
-import { BeerpongState } from '../../../store/beerpong/game.state';
-import { Store } from '@ngrx/store';
-import { finishGame, setShowRanking, updateMatchesFinal } from '../../../store/beerpong/beerpong.actions';
-import {Team} from '../../../api/team.interface';
+import { Team } from '../../../api/team.interface';
 import { RankingComponent } from '../../ranking/ranking.component';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ConfigurationService } from '../../../services/configuration.service';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import Group from '../../../api/group.interface';
+import { BeerpongStore } from '../../../store/beerpong/beerpong.store';
 
 @Component({
     selector: 'app-mode-o-gf-t',
     imports: [
         GameCardComponent,
-        TabViewModule,
-        NgFor,
+        Tabs, TabList, Tab, TabPanels, TabPanel,
         ButtonModule,
         FieldsetModule,
-        NgIf,
         RankingComponent,
         ToastModule,
         ConfirmDialogModule
@@ -38,6 +33,11 @@ import Group from '../../../api/group.interface';
     styleUrl: './mode-o-gf-t.component.css'
 })
 export class ModeOGfTComponent implements OnInit {
+  private beerpongStore = inject(BeerpongStore);
+  private messageService = inject(MessageService);
+  private confirmationService = inject(ConfirmationService);
+  private configService = inject(ConfigurationService);
+
   @Input()
   gameMode: number = 2;
 
@@ -55,21 +55,12 @@ export class ModeOGfTComponent implements OnInit {
 
   gameId: number | undefined;
 
-  constructor(
-    private beerpongStore: Store<BeerpongState>,
-    private messageService: MessageService,
-    private confirmationService: ConfirmationService,
-    private configService: ConfigurationService
-  ) {}
-
   ngOnInit(): void {
-    this.gameId = this.regularMatches[0].tournament_id
+    this.gameId = this.regularMatches[0]?.tournament_id;
   }
 
   updateFinal(): void {
-    if(this.gameId) {
-      this.beerpongStore.dispatch(updateMatchesFinal({gameId: this.gameId, gameMode: this.gameMode}))
-    }
+    if (this.gameId) this.beerpongStore.updateFinal(this.gameId, this.gameMode);
   }
 
   getRanking(): Team[] {
@@ -112,7 +103,7 @@ export class ModeOGfTComponent implements OnInit {
   }
 
   backToAdminSpace(): void {
-    this.beerpongStore.dispatch(setShowRanking({showRanking: false}))
+    this.beerpongStore.setShowRanking(false);
   }
 
   confirmGameFinish(event: Event): void {
@@ -121,23 +112,21 @@ export class ModeOGfTComponent implements OnInit {
       message: 'Bist du sicher dass du das Spiel beenden willst?',
       header: 'Confirmation',
       icon: 'pi pi-exclamation-triangle',
-      acceptIcon:"none",
-      rejectIcon:"none",
-      rejectButtonStyleClass:"p-button-text",
+      acceptIcon: 'none',
+      rejectIcon: 'none',
+      rejectButtonStyleClass: 'p-button-text',
       accept: () => {
-          this.messageService.add({ severity: 'info', summary: 'Bestaetigt', detail: 'Spiel wird beendet' });
-          if(this.gameId) {
-            this.beerpongStore.dispatch(finishGame({gameId: this.gameId}))
-          }
+        this.messageService.add({ severity: 'info', summary: 'Bestaetigt', detail: 'Spiel wird beendet' });
+        if (this.gameId) this.beerpongStore.finishGame(this.gameId);
       },
       reject: () => {
-          this.messageService.add({ severity: 'error', summary: 'Rejected', detail: 'Spiel nicht beendet', life: 3000 });
+        this.messageService.add({ severity: 'error', summary: 'Rejected', detail: 'Spiel nicht beendet', life: 3000 });
       }
     });
   }
 
   setTournamentFinished(): void {
-    this.beerpongStore.dispatch(setShowRanking({showRanking: true}))
+    this.beerpongStore.setShowRanking(true);
   }
 
   getTeamsByName(teamNames: string[]): Team[] {
