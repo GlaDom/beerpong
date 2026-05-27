@@ -259,9 +259,9 @@
               <div class="gp-standings">
                 @for (t of g.teams; track $index; let ti = $index) {
                   <div class="standing-row" [class.standing-row-sep]="ti > 0">
-                    <span class="standing-pos" [class.standing-pos-top]="ti < 2">{{ ti + 1 }}</span>
-                    <span class="standing-name" [class.standing-name-top]="ti < 2">{{ t.team_name }}</span>
-                    <span class="standing-pts" [class.standing-pts-top]="ti < 2">{{ t.points }}</span>
+                    <span class="standing-pos" [class.standing-pos-top]="ti < numberOfQualifiedTeams()">{{ ti + 1 }}</span>
+                    <span class="standing-name" [class.standing-name-top]="ti < numberOfQualifiedTeams()">{{ t.team_name }}</span>
+                    <span class="standing-pts" [class.standing-pts-top]="ti < numberOfQualifiedTeams()">{{ t.points }}</span>
                   </div>
                 }
               </div>

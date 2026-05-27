@@ -31,6 +31,7 @@ export class GameplanComponent {
   public quaterFinals = computed(() => this.configService.filterMatches('quaterFinal', this.beerpongStore.matches()));
   public semiFinals = computed(() => this.configService.filterMatches('semiFinal', this.beerpongStore.matches()));
   public final = computed(() => this.configService.filterMatches('final', this.beerpongStore.matches()));
+  public numberOfQualifiedTeams = computed(() => this.beerpongStore.currentGame().tournament.number_of_qualified_teams);
   public thirdPlace = computed(() => this.configService.filterMatches('thirdPlace', this.beerpongStore.matches()));
 
   public hasActiveGame = computed(() => this.groups().length > 0);
@@ -50,11 +51,18 @@ export class GameplanComponent {
   );
 
   public currentPhase = computed(() => {
-    if (this.final().length > 0) return 'Finale';
-    if (this.semiFinals().length > 0) return 'Halbfinale';
-    if (this.quaterFinals().length > 0) return 'Viertelfinale';
-    if (this.roundOfsixteen().length > 0) return 'Achtelfinale';
-    return 'Gruppenphase';
+    const phases = [
+      { matches: this.beerpongStore.matches().filter(m => m.type === 'regular'), label: 'Gruppenphase' },
+      { matches: this.roundOfsixteen(), label: 'Achtelfinale' },
+      { matches: this.quaterFinals(), label: 'Viertelfinale' },
+      { matches: this.semiFinals(), label: 'Halbfinale' },
+      { matches: this.thirdPlace(), label: 'Platz 3' },
+      { matches: this.final(), label: 'Finale' },
+    ];
+    const active = phases.find(p => p.matches.length > 0 && p.matches.some(m => !this.isLocked(m)));
+    if (active) return active.label;
+    const last = [...phases].reverse().find(p => p.matches.length > 0);
+    return last?.label ?? 'Gruppenphase';
   });
 
   public allMatchesFlat = computed(() => {

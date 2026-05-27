@@ -140,17 +140,17 @@
               </div>
               @for (t of g.teams; track $index; let ti = $index) {
                 <div class="standings-row" [class.standings-row-sep]="ti > 0">
-                  <span class="standings-pos" [class.standings-pos-qual]="ti < 2">
-                    @if (ti < 2) {
+                  <span class="standings-pos" [class.standings-pos-qual]="ti < numberOfQualifiedTeams()">
+                    @if (ti < numberOfQualifiedTeams()) {
                       <span class="qual-bar"></span>
                     }
                     {{ ti + 1 }}
                   </span>
-                  <span class="standings-name" [class.standings-name-qual]="ti < 2">{{ t.team_name }}</span>
+                  <span class="standings-name" [class.standings-name-qual]="ti < numberOfQualifiedTeams()">{{ t.team_name }}</span>
                   <span class="standings-diff" [class.standings-diff-pos]="t.cup_difference > 0">
                     {{ t.cup_difference > 0 ? '+' : '' }}{{ t.cup_difference }}
                   </span>
-                  <span class="standings-pts" [class.standings-pts-qual]="ti < 2">{{ t.points }}</span>
+                  <span class="standings-pts" [class.standings-pts-qual]="ti < numberOfQualifiedTeams()">{{ t.points }}</span>
                 </div>
               }
             </div>

@@ -8,8 +8,10 @@
         <h1 class="setup-title">Neues Turnier</h1>
       </div>
       <a routerLink="/home" class="btn-quiet">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+          stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
         </svg>
         Abbrechen
       </a>
@@ -18,23 +20,20 @@
     <!-- Step indicator pill -->
     <div class="step-pills">
       @for (s of steps; track $index; let i = $index) {
-        <button class="step-pill"
-                [class.step-pill-active]="currentStep() === i"
-                [class.step-pill-done]="currentStep() > i"
-                [disabled]="i > currentStep()"
-                (click)="goToStep(i)">
-          <span class="step-num"
-                [class.step-num-accent]="currentStep() >= i">
-            @if (currentStep() > i) {
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--fg-inv)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="20 6 9 17 4 12"/>
-              </svg>
-            } @else {
-              {{ i + 1 }}
-            }
-          </span>
-          {{ s.label }}
-        </button>
+      <button class="step-pill" [class.step-pill-active]="currentStep() === i"
+        [class.step-pill-done]="currentStep() > i" [disabled]="i > currentStep()" (click)="goToStep(i)">
+        <span class="step-num" [class.step-num-accent]="currentStep() >= i">
+          @if (currentStep() > i) {
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--fg-inv)" stroke-width="2.5"
+            stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12" />
+          </svg>
+          } @else {
+          {{ i + 1 }}
+          }
+        </span>
+        {{ s.label }}
+      </button>
       }
     </div>
 
@@ -43,257 +42,260 @@
 
       <!-- Step 0: Settings -->
       @if (currentStep() === 0) {
-        <div class="setup-card">
-          <div class="card-section-header">
-            <div class="card-section-title">Spieleinstellungen</div>
-            <p class="card-section-sub">Grundgerüst deines Turniers.</p>
-          </div>
-          <div class="card-body">
-
-            <div class="field-row">
-              <div class="field-label">
-                <div class="field-name">Anzahl Gruppen</div>
-                <div class="field-hint">1 bis 10</div>
-              </div>
-              <div class="num-stepper">
-                <button type="button" class="stepper-btn" (click)="setGroups(amountOfGroups.value - 1)"
-                        [disabled]="amountOfGroups.value <= 1">−</button>
-                <span class="stepper-val">{{ amountOfGroups.value }}</span>
-                <button type="button" class="stepper-btn" (click)="setGroups(amountOfGroups.value + 1)"
-                        [disabled]="amountOfGroups.value >= 10">+</button>
-              </div>
-            </div>
-
-            <div class="field-row">
-              <div class="field-label">
-                <div class="field-name">Teams pro Gruppe</div>
-                <div class="field-hint">3 bis 5</div>
-              </div>
-              <div class="num-stepper">
-                <button type="button" class="stepper-btn" (click)="setTeamsPerGroup(amountOfTeams.value - 1)"
-                        [disabled]="amountOfTeams.value <= 3">−</button>
-                <span class="stepper-val">{{ amountOfTeams.value }}</span>
-                <button type="button" class="stepper-btn" (click)="setTeamsPerGroup(amountOfTeams.value + 1)"
-                        [disabled]="amountOfTeams.value >= 5">+</button>
-              </div>
-            </div>
-
-            <div class="field-divider"></div>
-
-            <div class="field-row">
-              <div class="field-label">
-                <div class="field-name">K.O.‑Runde</div>
-                <div class="field-hint">Achtel‑/Viertel‑/Halbfinale & Finale</div>
-              </div>
-              <p-toggleswitch formControlName="koStage"/>
-            </div>
-
-            <div class="field-row">
-              <div class="field-label">
-                <div class="field-name">Spiel um Platz 3</div>
-                <div class="field-hint">Wer von den Halbfinalverlierern wird Dritter?</div>
-              </div>
-              <p-toggleswitch formControlName="includeThirdPlaceMatch"/>
-            </div>
-
-            @if (gameForm.get('koStage')?.value) {
-              <div class="field-row">
-                <div class="field-label">
-                  <div class="field-name">Qualifizierte Teams</div>
-                  <div class="field-hint">Wer kommt in die K.O.‑Phase</div>
-                </div>
-                <select class="styled-select" formControlName="numberOfQualifiedTeams">
-                  <option [value]="4">Top 4</option>
-                  <option [value]="8">Top 8</option>
-                  <option [value]="16">Top 16</option>
-                </select>
-              </div>
-            }
-
-            <div class="field-divider"></div>
-
-            <div class="field-row">
-              <div class="field-label">
-                <div class="field-name">Zeit pro Spiel</div>
-                <div class="field-hint">Minuten</div>
-              </div>
-              <div class="num-stepper">
-                <button type="button" class="stepper-btn" (click)="setGameTime(gameTime.value - 1)"
-                        [disabled]="gameTime.value <= 5">−</button>
-                <span class="stepper-val">{{ gameTime.value }}<span class="stepper-suffix">min</span></span>
-                <button type="button" class="stepper-btn" (click)="setGameTime(gameTime.value + 1)"
-                        [disabled]="gameTime.value >= 30">+</button>
-              </div>
-            </div>
-
-            <div class="field-row">
-              <div class="field-label">
-                <div class="field-name">Beginn des Turniers</div>
-                <div class="field-hint">Datum & Uhrzeit</div>
-              </div>
-              <p-datepicker formControlName="gameStart" [showTime]="true" hourFormat="24"
-                            dateFormat="dd.mm.yy" placeholder="TT.MM.JJJJ hh:mm"
-                            styleClass="setup-datepicker"/>
-            </div>
-
-            <div class="field-divider"></div>
-
-            <div class="field-row">
-              <div class="field-label">
-                <div class="field-name">Schiedsrichter</div>
-                <div class="field-hint">Spiele werden automatisch verteilt</div>
-              </div>
-              <p-toggleswitch formControlName="withReferees"/>
-            </div>
-
-            @if (gameForm.get('withReferees')?.value) {
-              <div class="referee-input-row">
-                <input pInputText type="text" formControlName="referees"
-                       class="styled-input" placeholder="z.B. Franz, Kevin, Stefan"/>
-                <div class="field-hint" style="margin-top:6px">Namen kommagetrennt.</div>
-              </div>
-            }
-
-          </div>
+      <div class="setup-card">
+        <div class="card-section-header">
+          <div class="card-section-title">Spieleinstellungen</div>
+          <p class="card-section-sub">Grundgerüst deines Turniers.</p>
         </div>
+        <div class="card-body">
+
+          <div class="field-row">
+            <div class="field-label">
+              <div class="field-name">Anzahl Gruppen</div>
+              <div class="field-hint">1 bis 10</div>
+            </div>
+            <div class="num-stepper">
+              <button type="button" class="stepper-btn" (click)="setGroups(amountOfGroups.value - 1)"
+                [disabled]="amountOfGroups.value <= 1">−</button>
+              <span class="stepper-val">{{ amountOfGroups.value }}</span>
+              <button type="button" class="stepper-btn" (click)="setGroups(amountOfGroups.value + 1)"
+                [disabled]="amountOfGroups.value >= 10">+</button>
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field-label">
+              <div class="field-name">Teams pro Gruppe</div>
+              <div class="field-hint">3 bis 5</div>
+            </div>
+            <div class="num-stepper">
+              <button type="button" class="stepper-btn" (click)="setTeamsPerGroup(amountOfTeams.value - 1)"
+                [disabled]="amountOfTeams.value <= 3">−</button>
+              <span class="stepper-val">{{ amountOfTeams.value }}</span>
+              <button type="button" class="stepper-btn" (click)="setTeamsPerGroup(amountOfTeams.value + 1)"
+                [disabled]="amountOfTeams.value >= 5">+</button>
+            </div>
+          </div>
+
+          <div class="field-divider"></div>
+
+          <div class="field-row">
+            <div class="field-label">
+              <div class="field-name">K.O.‑Runde</div>
+              <div class="field-hint">Achtel‑/Viertel‑/Halbfinale & Finale</div>
+            </div>
+            <p-toggleswitch formControlName="koStage" />
+          </div>
+
+          <div class="field-row">
+            <div class="field-label">
+              <div class="field-name">Spiel um Platz 3</div>
+              <div class="field-hint">Wer von den Halbfinalverlierern wird Dritter?</div>
+            </div>
+            <p-toggleswitch formControlName="includeThirdPlaceMatch" />
+          </div>
+
+          @if (gameForm.get('koStage')?.value) {
+          <div class="field-row">
+            <div class="field-label">
+              <div class="field-name">Qualifizierte Teams pro Gruppe</div>
+              <div class="field-hint">Wer kommt in die K.O.‑Phase</div>
+            </div>
+            <select class="styled-select" formControlName="numberOfQualifiedTeams">
+              <option [ngValue]="1">Top 1</option>
+              <option [ngValue]="2">Top 2</option>
+              <option [ngValue]="3">Top 3</option>
+            </select>
+          </div>
+          }
+
+          <div class="field-divider"></div>
+
+          <div class="field-row">
+            <div class="field-label">
+              <div class="field-name">Zeit pro Spiel</div>
+              <div class="field-hint">Minuten</div>
+            </div>
+            <div class="num-stepper">
+              <button type="button" class="stepper-btn" (click)="setGameTime(gameTime.value - 1)"
+                [disabled]="gameTime.value <= 5">−</button>
+              <span class="stepper-val">{{ gameTime.value }}<span class="stepper-suffix">min</span></span>
+              <button type="button" class="stepper-btn" (click)="setGameTime(gameTime.value + 1)"
+                [disabled]="gameTime.value >= 30">+</button>
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field-label">
+              <div class="field-name">Beginn des Turniers</div>
+              <div class="field-hint">Datum & Uhrzeit</div>
+            </div>
+            <p-datepicker formControlName="gameStart" [showTime]="true" hourFormat="24" dateFormat="dd.mm.yy"
+              placeholder="TT.MM.JJJJ hh:mm" styleClass="setup-datepicker" />
+          </div>
+
+          <div class="field-divider"></div>
+
+          <div class="field-row">
+            <div class="field-label">
+              <div class="field-name">Schiedsrichter</div>
+              <div class="field-hint">Spiele werden automatisch verteilt</div>
+            </div>
+            <p-toggleswitch formControlName="withReferees" />
+          </div>
+
+          @if (gameForm.get('withReferees')?.value) {
+          <div class="referee-input-row">
+            <input pInputText type="text" formControlName="referees" class="styled-input"
+              placeholder="z.B. Franz, Kevin, Stefan" />
+            <div class="field-hint" style="margin-top:6px">Namen kommagetrennt.</div>
+          </div>
+          }
+
+        </div>
+      </div>
       }
 
       <!-- Step 1: Teams -->
       @if (currentStep() === 1) {
-        <div>
-          <div class="setup-card" style="margin-bottom:18px">
-            <div class="card-section-header" style="display:flex;justify-content:space-between;align-items:center">
-              <div>
-                <div class="card-section-title">Mannschaften eintragen</div>
-                <p class="card-section-sub">
-                  {{ amountOfGroups.value * amountOfTeams.value }} Teams in {{ amountOfGroups.value }} Gruppen
-                </p>
-              </div>
-              <button type="button" class="btn-secondary-sm" (click)="fillGroupsWithTeamNames()">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M12 3v18"/><path d="M5 8l7-5 7 5"/><path d="M5 16l7 5 7-5"/>
-                </svg>
-                Zufällige Namen
-              </button>
+      <div>
+        <div class="setup-card" style="margin-bottom:18px">
+          <div class="card-section-header" style="display:flex;justify-content:space-between;align-items:center">
+            <div>
+              <div class="card-section-title">Mannschaften eintragen</div>
+              <p class="card-section-sub">
+                {{ amountOfGroups.value * amountOfTeams.value }} Teams in {{ amountOfGroups.value }} Gruppen
+              </p>
             </div>
-          </div>
-
-          <div class="teams-grid" formArrayName="groups">
-            @for (group of groupsFormArray.controls; track $index; let groupIndex = $index) {
-              <div class="group-card" [formGroupName]="groupIndex">
-                <div class="group-card-header">
-                  <div style="display:flex;align-items:center;gap:8px">
-                    <span class="group-badge">{{ group.get('groupName')?.value }}</span>
-                    <span class="group-title">Gruppe {{ group.get('groupName')?.value }}</span>
-                  </div>
-                  <span class="label" style="color:var(--fg-3)">{{ amountOfTeams.value }} Teams</span>
-                </div>
-                <div class="team-inputs" formArrayName="teams">
-                  @for (team of getTeamsFromArray(groupIndex).controls; track $index; let teamIndex = $index) {
-                    <div class="team-input-row">
-                      <span class="team-index">{{ teamIndex + 1 }}</span>
-                      <input type="text" [formControlName]="teamIndex"
-                             class="styled-input"
-                             [class.input-error]="team.errors?.['notUnique'] || (team.invalid && team.errors?.['required'] && (team.dirty || team.touched))"
-                             [class.input-valid]="team.valid && team.value"
-                             placeholder="Mannschaft {{ teamIndex + 1 }}"/>
-                      @if (team.errors?.['notUnique']) {
-                        <span class="dup-tag">Duplikat</span>
-                      }
-                    </div>
-                  }
-                </div>
-              </div>
-            }
+            <button type="button" class="btn-secondary-sm" (click)="fillGroupsWithTeamNames()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 3v18" />
+                <path d="M5 8l7-5 7 5" />
+                <path d="M5 16l7 5 7-5" />
+              </svg>
+              Zufällige Namen
+            </button>
           </div>
         </div>
+
+        <div class="teams-grid" formArrayName="groups">
+          @for (group of groupsFormArray.controls; track $index; let groupIndex = $index) {
+          <div class="group-card" [formGroupName]="groupIndex">
+            <div class="group-card-header">
+              <div style="display:flex;align-items:center;gap:8px">
+                <span class="group-badge">{{ group.get('groupName')?.value }}</span>
+                <span class="group-title">Gruppe {{ group.get('groupName')?.value }}</span>
+              </div>
+              <span class="label" style="color:var(--fg-3)">{{ amountOfTeams.value }} Teams</span>
+            </div>
+            <div class="team-inputs" formArrayName="teams">
+              @for (team of getTeamsFromArray(groupIndex).controls; track $index; let teamIndex = $index) {
+              <div class="team-input-row">
+                <span class="team-index">{{ teamIndex + 1 }}</span>
+                <input type="text" [formControlName]="teamIndex" class="styled-input"
+                  [class.input-error]="team.errors?.['notUnique'] || (team.invalid && team.errors?.['required'] && (team.dirty || team.touched))"
+                  [class.input-valid]="team.valid && team.value" placeholder="Mannschaft {{ teamIndex + 1 }}" />
+                @if (team.errors?.['notUnique']) {
+                <span class="dup-tag">Duplikat</span>
+                }
+              </div>
+              }
+            </div>
+          </div>
+          }
+        </div>
+      </div>
       }
 
       <!-- Step 2: Review -->
       @if (currentStep() === 2) {
-        <div class="review-stack">
+      <div class="review-stack">
 
-          <!-- Summary stats -->
-          <div class="setup-card">
-            <div class="card-section-header">
-              <div class="card-section-title">Letzte Kontrolle</div>
-              <p class="card-section-sub">Alles korrekt? Dann auf "Turnier starten".</p>
+        <!-- Summary stats -->
+        <div class="setup-card">
+          <div class="card-section-header">
+            <div class="card-section-title">Letzte Kontrolle</div>
+            <p class="card-section-sub">Alles korrekt? Dann auf "Turnier starten".</p>
+          </div>
+          <div class="review-stats">
+            <div class="review-stat">
+              <div class="label" style="margin-bottom:4px">Gruppen</div>
+              <div class="review-stat-val">{{ amountOfGroups.value }}</div>
             </div>
-            <div class="review-stats">
-              <div class="review-stat">
-                <div class="label" style="margin-bottom:4px">Gruppen</div>
-                <div class="review-stat-val">{{ amountOfGroups.value }}</div>
-              </div>
-              <div class="review-stat">
-                <div class="label" style="margin-bottom:4px">Teams</div>
-                <div class="review-stat-val">{{ amountOfGroups.value * amountOfTeams.value }}</div>
-              </div>
-              <div class="review-stat">
-                <div class="label" style="margin-bottom:4px">K.O.‑Phase</div>
-                <div class="review-stat-val">{{ gameForm.get('koStage')?.value ? 'Ja' : 'Nein' }}</div>
-              </div>
-              <div class="review-stat">
-                <div class="label" style="margin-bottom:4px">Spielzeit</div>
-                <div class="review-stat-val">{{ gameTime.value }} min</div>
-              </div>
+            <div class="review-stat">
+              <div class="label" style="margin-bottom:4px">Teams</div>
+              <div class="review-stat-val">{{ amountOfGroups.value * amountOfTeams.value }}</div>
+            </div>
+            <div class="review-stat">
+              <div class="label" style="margin-bottom:4px">K.O.‑Phase</div>
+              <div class="review-stat-val">{{ gameForm.get('koStage')?.value ? 'Ja' : 'Nein' }}</div>
+            </div>
+            <div class="review-stat">
+              <div class="label" style="margin-bottom:4px">Spielzeit</div>
+              <div class="review-stat-val">{{ gameTime.value }} min</div>
             </div>
           </div>
-
-          <!-- Lineup -->
-          <div class="setup-card">
-            <div class="card-section-header" style="border-bottom:1px solid var(--border);padding-bottom:14px;margin-bottom:0">
-              <div style="font-family:var(--font-display);font-size:15px;font-weight:600;letter-spacing:-0.01em">Aufstellung</div>
-            </div>
-            <div class="review-lineup" formArrayName="groups"
-                 [style.grid-template-columns]="'repeat(' + (amountOfGroups.value > 4 ? 4 : amountOfGroups.value) + ', 1fr)'">
-              @for (group of groupsFormArray.controls; track $index; let groupIndex = $index) {
-                <div [formGroupName]="groupIndex">
-                  <div class="review-group-header">
-                    <span class="group-badge group-badge-sm">{{ group.get('groupName')?.value }}</span>
-                    <span class="review-group-label">Gruppe {{ group.get('groupName')?.value }}</span>
-                  </div>
-                  <div class="review-team-list" formArrayName="teams">
-                    @for (team of getTeamsFromArray(groupIndex).controls; track $index; let teamIndex = $index) {
-                      <div class="review-team-row" [formControlName]="teamIndex">
-                        <span class="review-team-num">{{ teamIndex + 1 }}.</span>
-                        <span>{{ team.value || '–' }}</span>
-                      </div>
-                    }
-                  </div>
-                </div>
-              }
-            </div>
-          </div>
-
-          <!-- Details -->
-          <div class="setup-card">
-            <div class="review-details">
-              <div class="review-detail">
-                <div class="review-detail-label">Startzeit</div>
-                <div class="review-detail-val">
-                  {{ gameForm.get('gameStart')?.value ? (gameForm.get('gameStart')?.value | date:'dd. MMMM yyyy, HH:mm') : '–' }}
-                </div>
-              </div>
-              <div class="review-detail">
-                <div class="review-detail-label">Schiedsrichter</div>
-                <div class="review-detail-val">
-                  {{ gameForm.get('withReferees')?.value ? (gameForm.get('referees')?.value || '–') : 'Keine' }}
-                </div>
-              </div>
-              <div class="review-detail">
-                <div class="review-detail-label">Spiel um Platz 3</div>
-                <div class="review-detail-val">{{ gameForm.get('includeThirdPlaceMatch')?.value ? 'Ja' : 'Nein' }}</div>
-              </div>
-              <div class="review-detail">
-                <div class="review-detail-label">Qualifizierte</div>
-                <div class="review-detail-val">
-                  {{ gameForm.get('koStage')?.value ? 'Top ' + gameForm.get('numberOfQualifiedTeams')?.value : '–' }}
-                </div>
-              </div>
-            </div>
-          </div>
-
         </div>
+
+        <!-- Lineup -->
+        <div class="setup-card">
+          <div class="card-section-header"
+            style="border-bottom:1px solid var(--border);padding-bottom:14px;margin-bottom:0">
+            <div style="font-family:var(--font-display);font-size:15px;font-weight:600;letter-spacing:-0.01em">
+              Aufstellung</div>
+          </div>
+          <div class="review-lineup" formArrayName="groups"
+            [style.grid-template-columns]="'repeat(' + (amountOfGroups.value > 4 ? 4 : amountOfGroups.value) + ', 1fr)'">
+            @for (group of groupsFormArray.controls; track $index; let groupIndex = $index) {
+            <div [formGroupName]="groupIndex">
+              <div class="review-group-header">
+                <span class="group-badge group-badge-sm">{{ group.get('groupName')?.value }}</span>
+                <span class="review-group-label">Gruppe {{ group.get('groupName')?.value }}</span>
+              </div>
+              <div class="review-team-list" formArrayName="teams">
+                @for (team of getTeamsFromArray(groupIndex).controls; track $index; let teamIndex = $index) {
+                <div class="review-team-row">
+                  <span class="review-team-num">{{ teamIndex + 1 }}.</span>
+                  <span>{{ team.value || '–' }}</span>
+                </div>
+                }
+              </div>
+            </div>
+            }
+          </div>
+        </div>
+
+        <!-- Details -->
+        <div class="setup-card">
+          <div class="review-details">
+            <div class="review-detail">
+              <div class="review-detail-label">Startzeit</div>
+              <div class="review-detail-val">
+                {{ gameForm.get('gameStart')?.value ? (gameForm.get('gameStart')?.value | date:'dd. MMMM yyyy, HH:mm') :
+                '–' }}
+              </div>
+            </div>
+            <div class="review-detail">
+              <div class="review-detail-label">Schiedsrichter</div>
+              <div class="review-detail-val">
+                {{ gameForm.get('withReferees')?.value ? (gameForm.get('referees')?.value || '–') : 'Keine' }}
+              </div>
+            </div>
+            <div class="review-detail">
+              <div class="review-detail-label">Spiel um Platz 3</div>
+              <div class="review-detail-val">{{ gameForm.get('includeThirdPlaceMatch')?.value ? 'Ja' : 'Nein' }}</div>
+            </div>
+            <div class="review-detail">
+              <div class="review-detail-label">Qualifizierte</div>
+              <div class="review-detail-val">
+                {{ gameForm.get('koStage')?.value ? 'Top ' + gameForm.get('numberOfQualifiedTeams')?.value : '–' }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
       }
 
     </div>
@@ -302,31 +304,36 @@
     <!-- Nav buttons -->
     <div class="setup-nav">
       @if (currentStep() > 0) {
-        <button type="button" class="btn-secondary" (click)="prevStep()">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
-          </svg>
-          Zurück
-        </button>
+      <button type="button" class="btn-secondary" (click)="prevStep()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+          stroke-linecap="round" stroke-linejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12" />
+          <polyline points="12 19 5 12 12 5" />
+        </svg>
+        Zurück
+      </button>
       } @else {
-        <span></span>
+      <span></span>
       }
 
-      @if (currentStep() < 2) {
-        <button type="button" class="btn-primary" (click)="nextStep()" [disabled]="!canAdvance()">
-          Weiter
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
-          </svg>
+      @if (currentStep() < 2) { <button type="button" class="btn-primary" (click)="nextStep()"
+        [disabled]="!canAdvance()">
+        Weiter
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+          stroke-linecap="round" stroke-linejoin="round">
+          <line x1="5" y1="12" x2="19" y2="12" />
+          <polyline points="12 5 19 12 12 19" />
+        </svg>
         </button>
-      } @else {
+        } @else {
         <button type="button" class="btn-primary" (click)="startGame()">
           Turnier starten
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <polygon points="6 4 20 12 6 20 6 4"/>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+            stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="6 4 20 12 6 20 6 4" />
           </svg>
         </button>
-      }
+        }
     </div>
 
   </div>

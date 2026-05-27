@@ -42,7 +42,7 @@ export class BeerpongSetupComponent {
     { label: 'Übersicht' },
   ];
 
-  public readonly groupNames = ['A','B','C','D','E','F','G','H','I','J'];
+  public readonly groupNames = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
 
   public gameForm: FormGroup;
   private groupsStatus = signal<string>('INVALID');
@@ -77,7 +77,7 @@ export class BeerpongSetupComponent {
       gameStart: this.fb.control<Date | null>(null),
       koStage: this.fb.control<boolean>(false),
       includeThirdPlaceMatch: this.fb.control<boolean>(false),
-      numberOfQualifiedTeams: this.fb.control<number | null>(8, [Validators.required]),
+      numberOfQualifiedTeams: this.fb.control<number | null>(1, [Validators.required]),
       withReferees: this.fb.control<boolean>(false),
       referees: this.fb.control<string | null>(null),
     });
@@ -186,7 +186,7 @@ export class BeerpongSetupComponent {
         groups: this.getGroupsForNewGame(),
         got_ko_stage: this.gameForm.get('koStage')?.value,
         got_stage_in_between: this.gameForm.get('includeThirdPlaceMatch')?.value,
-        number_of_qualified_teams: this.gameForm.get('numberOfQualifiedTeams')?.value,
+        number_of_qualified_teams: this.gameForm.get('numberOfQualifiedTeams')?.value as number,
         include_third_place_match: this.gameForm.get('includeThirdPlaceMatch')?.value,
       },
     };

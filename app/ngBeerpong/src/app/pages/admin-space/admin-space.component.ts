@@ -39,6 +39,7 @@ export class AdminSpaceComponent {
   public semiFinals = computed(() => this.configService.filterMatches('semiFinal', this.beerpongStore.matches()));
   public thirdPlace = computed(() => this.configService.filterMatches('Spiel um Platz 3', this.beerpongStore.matches()));
   public final = computed(() => this.configService.filterMatches('final', this.beerpongStore.matches()));
+  public numberOfQualifiedTeams = computed(() => this.beerpongStore.currentGame().tournament.number_of_qualified_teams);
 
   private phaseOverride = signal<PhaseId | null>(null);
 
@@ -58,7 +59,8 @@ export class AdminSpaceComponent {
     const override = this.phaseOverride();
     if (override !== null) return override;
     const p = this.phases();
-    return p.length > 0 ? p[p.length - 1].id : 'group';
+    const current = p.find(phase => phase.matches.some(m => !this.isLocked(m)));
+    return current?.id ?? (p.length > 0 ? p[p.length - 1].id : 'group');
   });
 
   public phaseProgress = computed(() => {
