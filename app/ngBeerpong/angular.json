@@ -58,16 +58,16 @@
               "outputHashing": "all",
               "fileReplacements": [
                 {
-                  "replace": "ngBeerpong/src/environments/environment.ts",
-                  "with": "ngBeerpong/src/environments/environment.production.ts"
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.production.ts"
                 }
               ]
             },
             "staging": {
               "fileReplacements": [
                 {
-                  "replace": "ngBeerpong/src/environments/environment.ts",
-                  "with": "ngBeerpong/src/environments/environment.staging.ts"
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.staging.ts"
                 }
               ]
             },
