@@ -1,32 +1,110 @@
-version: '3.7'
+# Production stack — skbeerpong.com
+#
+# First-time VPS setup:
+#   1. mkdir letsencrypt && touch letsencrypt/acme.json && chmod 600 letsencrypt/acme.json
+#   2. cp .env.example .env  and fill in all values
+#   3. Create config.json next to this file (DB host must be "db", not localhost)
+#   4. docker compose pull && docker compose up -d
+#
+# Update to a new image:
+#   FRONTEND_TAG=frontend/v0.2.0 BACKEND_TAG=backend/v0.3.0 docker compose up -d --no-deps frontend backend
 
 services:
+
+  traefik:
+    image: traefik:v3.3
+    container_name: traefik
+    restart: unless-stopped
+    command:
+      - --api.dashboard=true
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --providers.docker.network=web
+      # HTTP entrypoint — redirects everything to HTTPS
+      - --entrypoints.web.address=:80
+      - --entrypoints.web.http.redirections.entrypoint.to=websecure
+      - --entrypoints.web.http.redirections.entrypoint.scheme=https
+      # HTTPS entrypoint
+      - --entrypoints.websecure.address=:443
+      # Let's Encrypt via TLS challenge
+      - --certificatesresolvers.le.acme.tlschallenge=true
+      - --certificatesresolvers.le.acme.email=${ACME_EMAIL}
+      - --certificatesresolvers.le.acme.storage=/letsencrypt/acme.json
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./letsencrypt:/letsencrypt
+    networks:
+      - web
+    labels:
+      - traefik.enable=true
+      # Dashboard — only reachable on traefik.skbeerpong.com, protected by basic auth
+      # Generate the hash:  echo $(htpasswd -nB admin) | sed 's/\$/\$\$/g'
+      - traefik.http.routers.dashboard.rule=Host(`traefik.skbeerpong.com`)
+      - traefik.http.routers.dashboard.entrypoints=websecure
+      - traefik.http.routers.dashboard.tls.certresolver=le
+      - traefik.http.routers.dashboard.service=api@internal
+      - traefik.http.routers.dashboard.middlewares=dashboard-auth
+      - traefik.http.middlewares.dashboard-auth.basicauth.users=${TRAEFIK_DASHBOARD_AUTH}
+
+  frontend:
+    image: ${DOCKERHUB_USERNAME}/beerpong-frontend:${FRONTEND_TAG:-latest}
+    container_name: frontend
+    restart: unless-stopped
+    networks:
+      - web
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.frontend.rule=Host(`skbeerpong.com`) || Host(`www.skbeerpong.com`)
+      - traefik.http.routers.frontend.entrypoints=websecure
+      - traefik.http.routers.frontend.tls.certresolver=le
+      # Lower priority so /api/v1 requests go to the backend first
+      - traefik.http.routers.frontend.priority=1
+      - traefik.http.services.frontend.loadbalancer.server.port=80
+
+  backend:
+    image: ${DOCKERHUB_USERNAME}/beerpong-backend:${BACKEND_TAG:-latest}
+    container_name: backend
+    restart: unless-stopped
+    volumes:
+      # Auth0 + DB credentials — DB host must be "db"
+      - ./config.json:/app/config.json:ro
+    networks:
+      - web
+      - internal
+    depends_on:
+      - db
+    labels:
+      - traefik.enable=true
+      # Higher priority than frontend — catches /api/v1/... before the catch-all frontend router
+      # No strip-prefix needed: Go routes are already registered under /api/v1
+      - traefik.http.routers.backend.rule=Host(`skbeerpong.com`) && PathPrefix(`/api/v1`)
+      - traefik.http.routers.backend.entrypoints=websecure
+      - traefik.http.routers.backend.tls.certresolver=le
+      - traefik.http.routers.backend.priority=10
+      - traefik.http.services.backend.loadbalancer.server.port=8082
+
   db:
-    image: postgres:latest
-    container_name: postgres-db
-    restart: always
+    image: postgres:16-alpine
+    container_name: postgres
+    restart: unless-stopped
     environment:
       POSTGRES_DB: beerpong
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: beerpong
-    ports:
-      - "5433:5432"
-
-  pgadmin:
-    image: dpage/pgadmin4
-    container_name: pgadmin
-    restart: always
-    ports:
-      - "5051:80"
-    environment:
-      PGADMIN_DEFAULT_EMAIL: beerpong@web.de
-      PGADMIN_DEFAULT_PASSWORD: beerpong
-
-  bpbackend:
-    image: gladom95/beeerpong-backend
-    container_name: bpbackend
-    ports:
-      - "8082:8082"
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     volumes:
-      - ./go/cmd/config.json:/app/beerpong-server/
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - internal
 
+networks:
+  web:
+    driver: bridge
+  internal:
+    driver: bridge
+    internal: true
+
+volumes:
+  postgres_data:
