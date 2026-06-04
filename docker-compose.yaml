@@ -25,27 +25,12 @@ services:
       - ./traefik/dynamic.yml:/dynamic.yml:ro
       - ./traefik/letsencrypt:/letsencrypt
       - ./traefik/resolv.conf:/etc/resolv.conf
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.dashboard.rule=Host(`traefik.skbeerpong.com`)
-      - traefik.http.routers.dashboard.entrypoints=websecure
-      - traefik.http.routers.dashboard.tls.certresolver=letsencrypt
-      - traefik.http.routers.dashboard.service=api@internal
-      # Middleware is defined in traefik/dynamic.yml — @file suffix required
-      - traefik.http.routers.dashboard.middlewares=dashboard-auth@file
 
   frontend:
     image: ${DOCKERHUB_USERNAME}/beerpong-frontend:${FRONTEND_TAG:-latest}
     container_name: frontend
     restart: unless-stopped
     network_mode: host
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.frontend.rule=Host(`skbeerpong.com`) || Host(`www.skbeerpong.com`)
-      - traefik.http.routers.frontend.entrypoints=websecure
-      - traefik.http.routers.frontend.tls.certresolver=letsencrypt
-      - traefik.http.routers.frontend.priority=1
-      - traefik.http.services.frontend.loadbalancer.server.port=8081
 
   backend:
     image: ${DOCKERHUB_USERNAME}/beerpong-backend:${BACKEND_TAG:-latest}
@@ -55,10 +40,3 @@ services:
     volumes:
       # Auth0 + DB credentials — DB host must be "localhost"
       - ./config.json:/app/config.json:ro
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.backend.rule=Host(`skbeerpong.com`) && PathPrefix(`/api/v1`)
-      - traefik.http.routers.backend.entrypoints=websecure
-      - traefik.http.routers.backend.tls.certresolver=letsencrypt
-      - traefik.http.routers.backend.priority=10
-      - traefik.http.services.backend.loadbalancer.server.port=8082
