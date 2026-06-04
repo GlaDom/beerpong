@@ -74,8 +74,6 @@ services:
     networks:
       - web
       - internal
-    depends_on:
-      - db
     labels:
       - traefik.enable=true
       # Higher priority than frontend — catches /api/v1/... before the catch-all frontend router
