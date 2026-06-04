@@ -3,6 +3,7 @@ import { AuthService as OAuthService } from '@auth0/auth0-angular';
 import { Observable, of } from 'rxjs';
 import { UserState, UserStore } from '../../store/user/user.store';
 import { Router } from '@angular/router';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -30,8 +31,8 @@ export class AuthService {
         console.log('User state cached successfully');
         this.oauthService.getAccessTokenSilently({
           authorizationParams: {
-            audience: 'https://skbeerpongtst.com/api',
-            redirect_uri: 'https://skbeerpong.com:4200/callback',
+            audience: environment.auth.audience,
+            redirect_uri: environment.auth.redirectUri + '/callback',
           }
         }).subscribe(token => {
           if (!token) return;
@@ -55,15 +56,15 @@ export class AuthService {
   login(): void {
     this.oauthService.loginWithRedirect({
       authorizationParams: {
-        audience: 'https://dev-nduro5lf8x5ddjgj.eu.auth0.com/api/v2/',
-        redirect_uri: 'https://skbeerpong.com:4200/callback'
+        audience: environment.auth.audience,
+        redirect_uri: environment.auth.redirectUri + '/callback'
       }
     });
   }
 
   logout(): void {
     this.userStore.resetUser();
-    this.oauthService.logout({ logoutParams: { returnTo: 'https://skbeerpong.com:4200/logout' } });
+    this.oauthService.logout({ logoutParams: { returnTo: environment.auth.redirectUri + '/logout' } });
   }
 
   public restoreUserState(): Observable<boolean> {

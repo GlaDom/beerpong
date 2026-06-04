@@ -9,6 +9,6 @@ export const environment: IEnvironment = {
         redirectUri: 'https://skbeerpong.com'
     },
     api: {
-        url: 'https://localhost:8082/api'
+        url: 'https://skbeerpong.com/api'
     }
 };

@@ -108,11 +108,11 @@ bootstrapApplication(AppComponent, {
       }
     }),
     provideAuth0({
-      domain: 'dev-nduro5lf8x5ddjgj.eu.auth0.com',
-      clientId: 'f5We2HLhj4JInznJZHZYY6eXDz6I3AEz',
+      domain: environment.auth.domain,
+      clientId: environment.auth.clientId,
       authorizationParams: {
-        redirect_uri: 'https://skbeerpong.com:4200/callback',
-        audience: 'https://skbeerpongtst.com/api',
+        redirect_uri: environment.auth.redirectUri + '/callback',
+        audience: environment.auth.audience,
       }
     }),
     {
