@@ -22,7 +22,7 @@ certificatesResolvers:
     acme:
       email: "dominik8.glaser@web.de"   # replace with your email before deploying
       storage: /letsencrypt/acme.json
-      caServer: https://acme-v02.api.letsencrypt.org/directory
+      caServer: https://acme-staging-v02.api.letsencrypt.org/directory
       tlsChallenge: {}
 
 providers:
@@ -35,4 +35,4 @@ providers:
     watch: true
 
 log:
-  level: INFO
+  level: DEBUG
