@@ -9,6 +9,6 @@ export const environment: IEnvironment = {
         redirectUri: 'https://skbeerpong.com:4200/home,https://skbeerpong.com:4200/callback'
     },
     api: {
-        url: 'https://localhost:8082/api'
+        url: 'https://localhost:8082/api/v1'
     }
 };
