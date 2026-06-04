@@ -1,0 +1,105 @@
+http:
+  routers:
+    # Frontend Router (HTTPS) - niedrige Priorität, catch-all
+    frontend:
+      rule: "Host(`skbeerpong.com`)"
+      entryPoints:
+        - websecure
+      service: frontend
+      priority: 1
+      tls:
+        certResolver: letsencrypt
+    
+    # Backend API Router (HTTPS) - höhere Priorität
+    backend:
+      rule: "Host(`skbeerpong.com`) && PathPrefix(`/api/`)"
+      entryPoints:
+        - websecure
+      service: backend
+      priority: 10
+      tls:
+        certResolver: letsencrypt
+      middlewares:
+        - backend-cors
+    
+    # Backend API Router (HTTP) - für Tests
+    backend-http:
+      rule: "Host(`skbeerpong.com`) && PathPrefix(`/api/`)"
+      entryPoints:
+        - web
+      service: backend
+      priority: 10
+      middlewares:
+        - backend-cors
+    
+    # Backend Root Routes (ping, health, swagger) - HTTPS
+    backend-root:
+      rule: "Host(`skbeerpong.com`) && (Path(`/ping`) || Path(`/health`) || PathPrefix(`/swagger/`))"
+      entryPoints:
+        - websecure
+      service: backend
+      priority: 10
+      tls:
+        certResolver: letsencrypt
+      middlewares:
+        - backend-cors
+    
+    # Backend Root Routes (ping, health, swagger) - HTTP
+    backend-root-http:
+      rule: "Host(`skbeerpong.com`) && (Path(`/ping`) || Path(`/health`) || PathPrefix(`/swagger/`))"
+      entryPoints:
+        - web
+      service: backend
+      priority: 10
+      middlewares:
+        - backend-cors
+    
+    # Traefik Dashboard
+    traefik-dashboard:
+      rule: "Host(`traefik.skbeerpong.com`)"
+      entryPoints:
+        - websecure
+      service: api@internal
+      tls:
+        certResolver: letsencrypt
+
+  services:
+    # Frontend Service (läuft auf Host-Port 8081 im Container)
+    frontend:
+      loadBalancer:
+        servers:
+          - url: "http://localhost:8081"
+    
+    # Backend Service (läuft auf Host-Port 8080)
+    backend:
+      loadBalancer:
+        servers:
+          - url: "http://localhost:8080"
+
+  middlewares:
+    dashboard-auth:
+        basicAuth:
+          users:
+            - "admin:$$2y$$..."   # replace: echo $(htpasswd -nB admin) | sed 's/\$/\$\$/g'
+
+    # Strip /api prefix before forwarding to backend
+    # backend-strip:
+    #   stripPrefix:
+    #     prefixes:
+    #       - "/api"
+    
+    # CORS Middleware für Backend
+    backend-cors:
+      headers:
+        accessControlAllowMethods:
+          - GET
+          - OPTIONS
+          - PUT
+          - POST
+          - DELETE
+        accessControlAllowOriginList:
+          - "*"
+        accessControlAllowHeaders:
+          - "*"
+        accessControlMaxAge: 100
+        addVaryHeader: true
