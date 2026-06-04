@@ -29,7 +29,7 @@ services:
       - traefik.enable=true
       - traefik.http.routers.dashboard.rule=Host(`traefik.skbeerpong.com`)
       - traefik.http.routers.dashboard.entrypoints=websecure
-      - traefik.http.routers.dashboard.tls.certresolver=le
+      - traefik.http.routers.dashboard.tls.certresolver=letsencrypt
       - traefik.http.routers.dashboard.service=api@internal
       # Middleware is defined in traefik/dynamic.yml — @file suffix required
       - traefik.http.routers.dashboard.middlewares=dashboard-auth@file
@@ -43,7 +43,7 @@ services:
       - traefik.enable=true
       - traefik.http.routers.frontend.rule=Host(`skbeerpong.com`) || Host(`www.skbeerpong.com`)
       - traefik.http.routers.frontend.entrypoints=websecure
-      - traefik.http.routers.frontend.tls.certresolver=le
+      - traefik.http.routers.frontend.tls.certresolver=letsencrypt
       - traefik.http.routers.frontend.priority=1
       - traefik.http.services.frontend.loadbalancer.server.port=8081
 
@@ -59,6 +59,6 @@ services:
       - traefik.enable=true
       - traefik.http.routers.backend.rule=Host(`skbeerpong.com`) && PathPrefix(`/api/v1`)
       - traefik.http.routers.backend.entrypoints=websecure
-      - traefik.http.routers.backend.tls.certresolver=le
+      - traefik.http.routers.backend.tls.certresolver=letsencrypt
       - traefik.http.routers.backend.priority=10
       - traefik.http.services.backend.loadbalancer.server.port=8082
