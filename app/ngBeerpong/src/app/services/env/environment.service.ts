@@ -9,9 +9,13 @@ export const ENVIRONMENT = new InjectionToken<IEnvironment>('environment');
 })
 export class EnvironmentService {
 
-  constructor() {}
+  constructor() { }
 
   public getAuth(): Auth {
     return environment.auth;
+  }
+
+  public getApiUrl(): string {
+    return environment.api.url;
   }
 }
