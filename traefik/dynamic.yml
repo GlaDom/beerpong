@@ -2,7 +2,7 @@ http:
   routers:
     # Frontend Router (HTTPS) - niedrige Priorität, catch-all
     frontend:
-      rule: "Host(`skbeerpong.com`)"
+      rule: "Host(`skbeerpong.com`) || Host(`www.skbeerpong.com`)"
       entryPoints:
         - websecure
       service: frontend
