@@ -440,198 +440,198 @@
 
     <!-- KO phases below grid / league table -->
     <div class="ko-sections" [class.ko-sections-league]="isLeagueMode()">
-    @if (roundOfsixteen().length > 0) {
-    <div class="ko-section">
-      <div class="ko-section-header">
-        <div class="ko-phase-badge">AF</div>
-        <span class="ko-phase-label">Achtelfinale</span>
-        <span class="ko-match-count">{{ roundOfsixteen().length }} Spiele</span>
-      </div>
-      <div class="ko-matches-grid">
-        @for (m of roundOfsixteen(); track $index) {
-        <div class="match-card" [class.match-card-locked]="isLocked(m)">
-          <div class="match-teams">
-            <div class="match-team-row">
-              <span class="match-team-name" [class.match-winner]="isLocked(m) && m.points_home > m.points_away">{{
-                m.home_team }}</span>
-              <span class="match-score" [class.match-score-win]="isLocked(m) && m.points_home > m.points_away">{{
-                isLocked(m) ? m.points_home : '–' }}</span>
-            </div>
-            <div class="match-team-row">
-              <span class="match-team-name" [class.match-winner]="isLocked(m) && m.points_away > m.points_home">{{
-                m.away_team }}</span>
-              <span class="match-score" [class.match-score-win]="isLocked(m) && m.points_away > m.points_home">{{
-                isLocked(m) ? m.points_away : '–' }}</span>
-            </div>
-          </div>
-          <div class="match-meta">
-            <span class="match-time">{{ m.start_time | date:'HH:mm' }}</span>
-            @if (isLocked(m)) {
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5"
-              stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="20 6 9 17 4 12" />
-            </svg>
-            }
-          </div>
+      @if (roundOfsixteen().length > 0) {
+      <div class="ko-section">
+        <div class="ko-section-header">
+          <div class="ko-phase-badge">AF</div>
+          <span class="ko-phase-label">Achtelfinale</span>
+          <span class="ko-match-count">{{ roundOfsixteen().length }} Spiele</span>
         </div>
-        }
+        <div class="ko-matches-grid">
+          @for (m of roundOfsixteen(); track $index) {
+          <div class="match-card" [class.match-card-locked]="isLocked(m)">
+            <div class="match-teams">
+              <div class="match-team-row">
+                <span class="match-team-name" [class.match-winner]="isLocked(m) && m.points_home > m.points_away">{{
+                  m.home_team }}</span>
+                <span class="match-score" [class.match-score-win]="isLocked(m) && m.points_home > m.points_away">{{
+                  isLocked(m) ? m.points_home : '–' }}</span>
+              </div>
+              <div class="match-team-row">
+                <span class="match-team-name" [class.match-winner]="isLocked(m) && m.points_away > m.points_home">{{
+                  m.away_team }}</span>
+                <span class="match-score" [class.match-score-win]="isLocked(m) && m.points_away > m.points_home">{{
+                  isLocked(m) ? m.points_away : '–' }}</span>
+              </div>
+            </div>
+            <div class="match-meta">
+              <span class="match-time">{{ m.start_time | date:'HH:mm' }}</span>
+              @if (isLocked(m)) {
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5"
+                stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+              }
+            </div>
+          </div>
+          }
+        </div>
       </div>
-    </div>
-    }
+      }
 
-    @if (quaterFinals().length > 0) {
-    <div class="ko-section">
-      <div class="ko-section-header">
-        <div class="ko-phase-badge">VF</div>
-        <span class="ko-phase-label">Viertelfinale</span>
-        <span class="ko-match-count">{{ quaterFinals().length }} Spiele</span>
-      </div>
-      <div class="ko-matches-grid">
-        @for (m of quaterFinals(); track $index) {
-        <div class="match-card" [class.match-card-locked]="isLocked(m)">
-          <div class="match-teams">
-            <div class="match-team-row">
-              <span class="match-team-name" [class.match-winner]="isLocked(m) && m.points_home > m.points_away">{{
-                m.home_team }}</span>
-              <span class="match-score" [class.match-score-win]="isLocked(m) && m.points_home > m.points_away">{{
-                isLocked(m) ? m.points_home : '–' }}</span>
-            </div>
-            <div class="match-team-row">
-              <span class="match-team-name" [class.match-winner]="isLocked(m) && m.points_away > m.points_home">{{
-                m.away_team }}</span>
-              <span class="match-score" [class.match-score-win]="isLocked(m) && m.points_away > m.points_home">{{
-                isLocked(m) ? m.points_away : '–' }}</span>
-            </div>
-          </div>
-          <div class="match-meta">
-            <span class="match-time">{{ m.start_time | date:'HH:mm' }}</span>
-            @if (isLocked(m)) {
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5"
-              stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="20 6 9 17 4 12" />
-            </svg>
-            }
-          </div>
+      @if (quaterFinals().length > 0) {
+      <div class="ko-section">
+        <div class="ko-section-header">
+          <div class="ko-phase-badge">VF</div>
+          <span class="ko-phase-label">Viertelfinale</span>
+          <span class="ko-match-count">{{ quaterFinals().length }} Spiele</span>
         </div>
-        }
+        <div class="ko-matches-grid">
+          @for (m of quaterFinals(); track $index) {
+          <div class="match-card" [class.match-card-locked]="isLocked(m)">
+            <div class="match-teams">
+              <div class="match-team-row">
+                <span class="match-team-name" [class.match-winner]="isLocked(m) && m.points_home > m.points_away">{{
+                  m.home_team }}</span>
+                <span class="match-score" [class.match-score-win]="isLocked(m) && m.points_home > m.points_away">{{
+                  isLocked(m) ? m.points_home : '–' }}</span>
+              </div>
+              <div class="match-team-row">
+                <span class="match-team-name" [class.match-winner]="isLocked(m) && m.points_away > m.points_home">{{
+                  m.away_team }}</span>
+                <span class="match-score" [class.match-score-win]="isLocked(m) && m.points_away > m.points_home">{{
+                  isLocked(m) ? m.points_away : '–' }}</span>
+              </div>
+            </div>
+            <div class="match-meta">
+              <span class="match-time">{{ m.start_time | date:'HH:mm' }}</span>
+              @if (isLocked(m)) {
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5"
+                stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+              }
+            </div>
+          </div>
+          }
+        </div>
       </div>
-    </div>
-    }
+      }
 
-    @if (semiFinals().length > 0) {
-    <div class="ko-section">
-      <div class="ko-section-header">
-        <div class="ko-phase-badge">HF</div>
-        <span class="ko-phase-label">Halbfinale</span>
-        <span class="ko-match-count">{{ semiFinals().length }} Spiele</span>
-      </div>
-      <div class="ko-matches-grid">
-        @for (m of semiFinals(); track $index) {
-        <div class="match-card" [class.match-card-locked]="isLocked(m)">
-          <div class="match-teams">
-            <div class="match-team-row">
-              <span class="match-team-name" [class.match-winner]="isLocked(m) && m.points_home > m.points_away">{{
-                m.home_team }}</span>
-              <span class="match-score" [class.match-score-win]="isLocked(m) && m.points_home > m.points_away">{{
-                isLocked(m) ? m.points_home : '–' }}</span>
-            </div>
-            <div class="match-team-row">
-              <span class="match-team-name" [class.match-winner]="isLocked(m) && m.points_away > m.points_home">{{
-                m.away_team }}</span>
-              <span class="match-score" [class.match-score-win]="isLocked(m) && m.points_away > m.points_home">{{
-                isLocked(m) ? m.points_away : '–' }}</span>
-            </div>
-          </div>
-          <div class="match-meta">
-            <span class="match-time">{{ m.start_time | date:'HH:mm' }}</span>
-            @if (isLocked(m)) {
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5"
-              stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="20 6 9 17 4 12" />
-            </svg>
-            }
-          </div>
+      @if (semiFinals().length > 0) {
+      <div class="ko-section">
+        <div class="ko-section-header">
+          <div class="ko-phase-badge">HF</div>
+          <span class="ko-phase-label">Halbfinale</span>
+          <span class="ko-match-count">{{ semiFinals().length }} Spiele</span>
         </div>
-        }
+        <div class="ko-matches-grid">
+          @for (m of semiFinals(); track $index) {
+          <div class="match-card" [class.match-card-locked]="isLocked(m)">
+            <div class="match-teams">
+              <div class="match-team-row">
+                <span class="match-team-name" [class.match-winner]="isLocked(m) && m.points_home > m.points_away">{{
+                  m.home_team }}</span>
+                <span class="match-score" [class.match-score-win]="isLocked(m) && m.points_home > m.points_away">{{
+                  isLocked(m) ? m.points_home : '–' }}</span>
+              </div>
+              <div class="match-team-row">
+                <span class="match-team-name" [class.match-winner]="isLocked(m) && m.points_away > m.points_home">{{
+                  m.away_team }}</span>
+                <span class="match-score" [class.match-score-win]="isLocked(m) && m.points_away > m.points_home">{{
+                  isLocked(m) ? m.points_away : '–' }}</span>
+              </div>
+            </div>
+            <div class="match-meta">
+              <span class="match-time">{{ m.start_time | date:'HH:mm' }}</span>
+              @if (isLocked(m)) {
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5"
+                stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+              }
+            </div>
+          </div>
+          }
+        </div>
       </div>
-    </div>
-    }
+      }
 
-    @if (thirdPlace().length > 0) {
-    <div class="ko-section">
-      <div class="ko-section-header">
-        <div class="ko-phase-badge" style="background:var(--yellow-muted);color:var(--yellow)">P3</div>
-        <span class="ko-phase-label">Spiel um Platz 3</span>
-      </div>
-      <div class="ko-matches-grid">
-        @for (m of thirdPlace(); track $index) {
-        <div class="match-card" [class.match-card-locked]="isLocked(m)">
-          <div class="match-teams">
-            <div class="match-team-row">
-              <span class="match-team-name" [class.match-winner]="isLocked(m) && m.points_home > m.points_away">{{
-                m.home_team }}</span>
-              <span class="match-score" [class.match-score-win]="isLocked(m) && m.points_home > m.points_away">{{
-                isLocked(m) ? m.points_home : '–' }}</span>
-            </div>
-            <div class="match-team-row">
-              <span class="match-team-name" [class.match-winner]="isLocked(m) && m.points_away > m.points_home">{{
-                m.away_team }}</span>
-              <span class="match-score" [class.match-score-win]="isLocked(m) && m.points_away > m.points_home">{{
-                isLocked(m) ? m.points_away : '–' }}</span>
-            </div>
-          </div>
-          <div class="match-meta">
-            <span class="match-time">{{ m.start_time | date:'HH:mm' }}</span>
-            @if (isLocked(m)) {
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5"
-              stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="20 6 9 17 4 12" />
-            </svg>
-            }
-          </div>
+      @if (thirdPlace().length > 0) {
+      <div class="ko-section">
+        <div class="ko-section-header">
+          <div class="ko-phase-badge" style="background:var(--yellow-muted);color:var(--yellow)">P3</div>
+          <span class="ko-phase-label">Spiel um Platz 3</span>
         </div>
-        }
+        <div class="ko-matches-grid">
+          @for (m of thirdPlace(); track $index) {
+          <div class="match-card" [class.match-card-locked]="isLocked(m)">
+            <div class="match-teams">
+              <div class="match-team-row">
+                <span class="match-team-name" [class.match-winner]="isLocked(m) && m.points_home > m.points_away">{{
+                  m.home_team }}</span>
+                <span class="match-score" [class.match-score-win]="isLocked(m) && m.points_home > m.points_away">{{
+                  isLocked(m) ? m.points_home : '–' }}</span>
+              </div>
+              <div class="match-team-row">
+                <span class="match-team-name" [class.match-winner]="isLocked(m) && m.points_away > m.points_home">{{
+                  m.away_team }}</span>
+                <span class="match-score" [class.match-score-win]="isLocked(m) && m.points_away > m.points_home">{{
+                  isLocked(m) ? m.points_away : '–' }}</span>
+              </div>
+            </div>
+            <div class="match-meta">
+              <span class="match-time">{{ m.start_time | date:'HH:mm' }}</span>
+              @if (isLocked(m)) {
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5"
+                stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+              }
+            </div>
+          </div>
+          }
+        </div>
       </div>
-    </div>
-    }
+      }
 
-    @if (final().length > 0) {
-    <div class="ko-section">
-      <div class="ko-section-header">
-        <div class="ko-phase-badge" style="background:var(--accent-muted);color:var(--accent)">F</div>
-        <span class="ko-phase-label">Finale</span>
-      </div>
-      <div class="ko-matches-grid">
-        @for (m of final(); track $index) {
-        <div class="match-card match-card-final" [class.match-card-locked]="isLocked(m)">
-          <div class="match-teams">
-            <div class="match-team-row">
-              <span class="match-team-name" [class.match-winner]="isLocked(m) && m.points_home > m.points_away">{{
-                m.home_team }}</span>
-              <span class="match-score" [class.match-score-win]="isLocked(m) && m.points_home > m.points_away">{{
-                isLocked(m) ? m.points_home : '–' }}</span>
-            </div>
-            <div class="match-team-row">
-              <span class="match-team-name" [class.match-winner]="isLocked(m) && m.points_away > m.points_home">{{
-                m.away_team }}</span>
-              <span class="match-score" [class.match-score-win]="isLocked(m) && m.points_away > m.points_home">{{
-                isLocked(m) ? m.points_away : '–' }}</span>
-            </div>
-          </div>
-          <div class="match-meta">
-            <span class="match-time">{{ m.start_time | date:'HH:mm' }}</span>
-            @if (isLocked(m)) {
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5"
-              stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="20 6 9 17 4 12" />
-            </svg>
-            }
-          </div>
+      @if (final().length > 0) {
+      <div class="ko-section">
+        <div class="ko-section-header">
+          <div class="ko-phase-badge" style="background:var(--accent-muted);color:var(--accent)">F</div>
+          <span class="ko-phase-label">Finale</span>
         </div>
-        }
+        <div class="ko-matches-grid">
+          @for (m of final(); track $index) {
+          <div class="match-card match-card-final" [class.match-card-locked]="isLocked(m)">
+            <div class="match-teams">
+              <div class="match-team-row">
+                <span class="match-team-name" [class.match-winner]="isLocked(m) && m.points_home > m.points_away">{{
+                  m.home_team }}</span>
+                <span class="match-score" [class.match-score-win]="isLocked(m) && m.points_home > m.points_away">{{
+                  isLocked(m) ? m.points_home : '–' }}</span>
+              </div>
+              <div class="match-team-row">
+                <span class="match-team-name" [class.match-winner]="isLocked(m) && m.points_away > m.points_home">{{
+                  m.away_team }}</span>
+                <span class="match-score" [class.match-score-win]="isLocked(m) && m.points_away > m.points_home">{{
+                  isLocked(m) ? m.points_away : '–' }}</span>
+              </div>
+            </div>
+            <div class="match-meta">
+              <span class="match-time">{{ m.start_time | date:'HH:mm' }}</span>
+              @if (isLocked(m)) {
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5"
+                stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+              }
+            </div>
+          </div>
+          }
+        </div>
       </div>
-    </div>
-    }
+      }
     </div>
     }
 
