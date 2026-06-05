@@ -66,14 +66,14 @@
           <div class="field-row">
             <div class="field-label">
               <div class="field-name">Teams pro Gruppe</div>
-              <div class="field-hint">3 bis 5</div>
+              <div class="field-hint">3 bis 6</div>
             </div>
             <div class="num-stepper">
               <button type="button" class="stepper-btn" (click)="setTeamsPerGroup(amountOfTeams.value - 1)"
                 [disabled]="amountOfTeams.value <= 3">−</button>
               <span class="stepper-val">{{ amountOfTeams.value }}</span>
               <button type="button" class="stepper-btn" (click)="setTeamsPerGroup(amountOfTeams.value + 1)"
-                [disabled]="amountOfTeams.value >= 5">+</button>
+                [disabled]="amountOfTeams.value >= 6">+</button>
             </div>
           </div>
 

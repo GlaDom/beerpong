@@ -127,7 +127,7 @@ export class BeerpongSetupComponent {
   }
 
   public setTeamsPerGroup(n: number): void {
-    const count = Math.max(3, Math.min(5, n));
+    const count = Math.max(3, Math.min(6, n));
     this.amountOfTeams.setValue(count);
     this.groupsFormArray.controls.forEach(group => {
       const teamsArray = group.get('teams') as FormArray;
