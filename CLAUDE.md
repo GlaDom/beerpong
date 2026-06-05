@@ -109,6 +109,85 @@ go/
 
 **Database**: PostgreSQL via GORM. Production uses Supabase; local dev uses Docker Compose (`db` service on port 5433).
 
+### Domain Models (`pkg/models/models.go`)
+
+Entity hierarchy:
+
+```
+Tournament (root)
+├── Groups[]   (FK: TournamentID)
+│   └── Teams[]  (FK: GroupID, TournamentID)
+├── Matches[]  (FK: TournamentID)
+└── Referee[]  (FK: TournamentID)
+```
+
+Key Tournament flags:
+- `GotKoStage bool` — whether a KO phase is generated
+- `NumberOfQualifiedTeams int` — teams advancing per group
+- `IncludeThirdPlaceMatch bool`
+- `GameTime time.Duration` — match duration in minutes
+- `UserSub string` — Auth0 subject (owner)
+
+Team ranking fields: `Points`, `CupsHit`, `CupsGet`, `CupDifference` (Hit−Get).  
+Sorting: primary by `Points` descending, tiebreaker by `CupDifference` descending (`models.Teams.Less()`).
+
+Match `Type` values: `"regular"` (group stage), `"roundOfSixteen"`, `"quaterFinal"`, `"semiFinal"`, `"final"`.  
+KO matches use placeholder names (`"1ter Gruppe A"`, `"Gewinner Match X"`) until real results are entered.
+
+### Round-Robin Algorithm (`pkg/usecase/round-robin.go`)
+
+**Input**: group's `[]Team`, `matchDuration`, `groupNumber`, `startTime`  
+**Output**: `[]Match` with sequential IDs and consecutive scheduled times (no gaps)
+
+Two-phase approach:
+1. **`generateAllMatches()`** — O(n²) nested loop produces all n·(n−1)/2 pairings.
+2. **`optimizeMatchOrder()`** — greedy pass that picks the next match maximising rest:
+   - Score = `(minPause × 10) + balanceBonus`
+   - `minPause` = smallest pause of the two teams since their last appearance
+   - `balanceBonus` = +1 when both teams' pauses differ by ≤ 1 (rewards equal rest)
+   - Selected match is removed from the remaining pool; repeat until empty.
+
+Times are sequential: `EndTime[i]` becomes `StartTime[i+1]`.
+
+### KO Bracket Algorithm (`pkg/usecase/ko-round-generator.go`)
+
+**Input**: `tournamentId`, `[]Group`, `teamsPerGroup`, `includeThirdPlace`, `gameDuration`, `startTime`  
+**Output**: `[]Match` for all KO rounds
+
+Steps:
+1. **`determineQualificationSlots()`** — fills slots position-first across alphabetically sorted groups (all winners first, then all runners-up, etc.).
+2. **`adjustToNextPowerOfTwo()`** — rounds participant count *down* to nearest power of 2 (e.g. 6→4, 5→4). Teams beyond that count do not advance.
+3. **`createSeeding()`** — standard 1-vs-last bracket: seed 1 plays seed N, seed 2 plays seed N−1, etc. Produces placeholder names like `"1ter Gruppe A"`.
+4. **`generateAllKOMatches()`** — recursive: each round pairs adjacent slots; next round uses `"Gewinner Match X"` placeholders; recurses until 2 teams remain (final).
+5. **Third-place match** (optional): losers of both semis, named `"Verlierer Halbfinale 1"` vs `"Verlierer Halbfinale 2"`.
+
+Round names by bracket size: 2→`final`, 4→`semiFinal`, 8→`quaterFinal`, 16→`roundOfSixteen`, 32→`roundOfThirtyTwo`.
+
+All matches within the same KO round share the same `StartTime` (parallel play assumed).  
+Placeholder replacement happens later via `UpdateKOMatchWithResult()` as prior rounds complete.
+
+### Tournament Creation Data Flow
+
+```
+POST /api/v1/tournament
+  └─ CreateGame handler
+       ├─ For each group → RoundRobin.GenerateOptimalRoundRobinTournament()
+       ├─ If GotKoStage → KoRoundGenerator.GenerateKOMatches()
+       │    └─ KO startTime = last group match's EndTime
+       └─ repo.CreateTournament() — single DB transaction
+            ├─ INSERT tournament
+            ├─ INSERT groups (without Teams to avoid FK constraint)
+            ├─ INSERT teams per group
+            └─ INSERT all matches (group + KO)
+```
+
+Team stats are **incremental**: `PUT /tournament/teams` adds `PointsToAdd`/`CupsHitted`/`CupsGot` to current DB values via `general.GetUpdatedTeam()`. Never replace; always accumulate.
+
+### Known Incomplete Areas
+
+- KO round update endpoints (`round-of-sixteen`, `quaterfinals`, `semifinals`, `final`) currently return 200 with nil — handlers are not yet implemented.
+- `general.CalculateMatchesForKORound()` exists but only partially fills `HomeTeam`; `AwayTeam` is left unchanged.
+
 ### Authentication Flow
 
 1. Public landing page → user clicks login → Auth0 redirect

@@ -126,13 +126,22 @@ export class GameCardComponent implements OnInit {
     return newMatch
   }
 
+  private getTeamGroupName(teamName: string, fallback: string): string {
+    for (const group of this.beerpongStore.groups()) {
+      if (group.teams.some(t => t.team_name === teamName)) {
+        return group.group_name;
+      }
+    }
+    return fallback;
+  }
+
   getTeamsToUpdate(match: Match, updatePoints: boolean): TeamUpdate[] {
     let retval: TeamUpdate[] = []
     // Auswaertsteam
     let teamOne: TeamUpdate = {
       tournament_id: match.tournament_id,
       team_name: match.away_team,
-      group_name: match.group_number,
+      group_name: this.getTeamGroupName(match.away_team, match.group_number),
       points_to_add: 0,
       cups_hitted: match.points_away,
       cups_got: match.points_home
@@ -141,7 +150,7 @@ export class GameCardComponent implements OnInit {
     let teamTwo: TeamUpdate = {
       tournament_id: match.tournament_id,
       team_name: match.home_team,
-      group_name: match.group_number,
+      group_name: this.getTeamGroupName(match.home_team, match.group_number),
       points_to_add: 0,
       cups_hitted: match.points_home,
       cups_got: match.points_away

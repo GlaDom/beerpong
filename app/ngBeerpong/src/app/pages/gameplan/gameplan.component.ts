@@ -32,7 +32,7 @@ export class GameplanComponent {
   public semiFinals = computed(() => this.configService.filterMatches('semiFinal', this.beerpongStore.matches()));
   public final = computed(() => this.configService.filterMatches('final', this.beerpongStore.matches()));
   public numberOfQualifiedTeams = computed(() => this.beerpongStore.currentGame().tournament.number_of_qualified_teams);
-  public thirdPlace = computed(() => this.configService.filterMatches('thirdPlace', this.beerpongStore.matches()));
+  public thirdPlace = computed(() => this.configService.filterMatches('Spiel um Platz 3', this.beerpongStore.matches()));
 
   public hasActiveGame = computed(() => this.groups().length > 0);
 
@@ -75,7 +75,7 @@ export class GameplanComponent {
       ['round_of_16', 'Achtelfinale'],
       ['quaterFinal', 'Viertelfinale'],
       ['semiFinal', 'Halbfinale'],
-      ['thirdPlace', 'Platz 3'],
+      ['Spiel um Platz 3', 'Platz 3'],
       ['final', 'Finale'],
     ];
     ko.forEach(([type, label]) =>

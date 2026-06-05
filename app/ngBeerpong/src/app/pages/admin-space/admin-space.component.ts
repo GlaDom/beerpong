@@ -59,8 +59,19 @@ export class AdminSpaceComponent {
     const override = this.phaseOverride();
     if (override !== null) return override;
     const p = this.phases();
-    const current = p.find(phase => phase.matches.some(m => !this.isLocked(m)));
-    return current?.id ?? (p.length > 0 ? p[p.length - 1].id : 'group');
+    const current = p.find(
+      phase => this.isPhaseDrawn(phase) && phase.matches.some(m => !this.isLocked(m))
+    );
+    if (current) return current.id;
+    const drawn = p.filter(phase => this.isPhaseDrawn(phase));
+    return drawn.length > 0 ? drawn[drawn.length - 1].id : 'group';
+  });
+
+  private nextPhase = computed((): PhaseInfo | null => {
+    const phases = this.phases().filter(p => p.id !== 'Spiel um Platz 3');
+    const currentIndex = phases.findIndex(p => p.id === this.activePhase());
+    if (currentIndex === -1 || currentIndex === phases.length - 1) return null;
+    return phases[currentIndex + 1];
   });
 
   public phaseProgress = computed(() => {
@@ -73,14 +84,12 @@ export class AdminSpaceComponent {
   });
 
   public phaseCta = computed(() => {
-    switch (this.activePhase()) {
-      case 'group':            return 'K.O.-Phase auslosen';
-      case 'round_of_16':     return 'Viertelfinale auslosen';
-      case 'quaterFinal':     return 'Halbfinale auslosen';
-      case 'semiFinal':       return 'Finale auslosen';
-      case 'Spiel um Platz 3': return null;
-      case 'final':           return 'Turnier beenden';
-    }
+    const current = this.activePhase();
+    if (current === 'final')             return 'Turnier beenden';
+    if (current === 'Spiel um Platz 3')  return null;
+    const next = this.nextPhase();
+    if (!next) return null;
+    return `${next.label} auslosen`;
   });
 
   public activeKoMatches = computed((): Match[] => {
@@ -111,6 +120,18 @@ export class AdminSpaceComponent {
     return m.points_home > 0 || m.points_away > 0;
   }
 
+  private isPlaceholderName(name: string): boolean {
+    return /^(\d+ter|Gewinner|Verlierer)\s/.test(name);
+  }
+
+  private isPhaseDrawn(phase: PhaseInfo): boolean {
+    if (phase.id === 'group') return true;
+    if (phase.matches.length === 0) return false;
+    return phase.matches.some(
+      m => !this.isPlaceholderName(m.home_team) || !this.isPlaceholderName(m.away_team)
+    );
+  }
+
   public isPhaseComplete(phase: PhaseInfo): boolean {
     return phase.matches.length > 0 && phase.matches.filter(m => this.isLocked(m)).length === phase.matches.length;
   }
@@ -124,15 +145,24 @@ export class AdminSpaceComponent {
   }
 
   public advancePhase(): void {
+    this.phaseOverride.set(null);
     const id = this.gameId();
     const mode = this.gameMode();
     if (!id) return;
-    switch (this.activePhase()) {
-      case 'group':           this.beerpongStore.updateRoundOfSixteen(id); break;
-      case 'round_of_16':    this.beerpongStore.updateQuaterFinals(id); break;
-      case 'quaterFinal':    this.beerpongStore.updateSemiFinals(id); break;
-      case 'semiFinal':      if (mode) this.beerpongStore.updateFinal(id, mode); break;
-      case 'final':          this.beerpongStore.finishGame(id); break;
+
+    if (this.activePhase() === 'final') {
+      this.beerpongStore.finishGame(id);
+      return;
+    }
+
+    const next = this.nextPhase();
+    if (!next) return;
+
+    switch (next.id) {
+      case 'round_of_16':  this.beerpongStore.updateRoundOfSixteen(id); break;
+      case 'quaterFinal':  this.beerpongStore.updateQuaterFinals(id); break;
+      case 'semiFinal':    this.beerpongStore.updateSemiFinals(id); break;
+      case 'final':        this.beerpongStore.updateFinal(id, mode); break;
     }
   }
 

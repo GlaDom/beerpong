@@ -3,6 +3,7 @@ package handler
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 
@@ -206,14 +207,21 @@ func (h *beerpongTournamentHandler) UpdateTournamentRoundOf16(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "missing game id"})
 		return
 	}
-	// idValue := strings.Split(id, "=")
-	// gameId, err := strconv.Atoi(idValue[1])
-	// if err != nil {
-	// 	c.JSON(http.StatusBadRequest, gin.H{"error": err})
-	// 	return
-	// }
-
-	c.JSON(http.StatusOK, nil)
+	idValue := strings.Split(id, "=")
+	if len(idValue) != 2 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid id format"})
+		return
+	}
+	gameID, err := strconv.Atoi(idValue[1])
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	if err := h.General.SeedKORoundFromGroupStage(gameID, "roundOfSixteen"); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "round updated"})
 }
 
 // Update Quaterfinals godoc
@@ -230,14 +238,25 @@ func (h *beerpongTournamentHandler) UpdateTournamentQuaterFinals(c *gin.Context)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "missing game id"})
 		return
 	}
-	// idValue := strings.Split(id, "=")
-	// gameId, err := strconv.Atoi(idValue[1])
-	// if err != nil {
-	// 	c.JSON(http.StatusBadRequest, gin.H{"error": err})
-	// 	return
-	// }
-
-	c.JSON(http.StatusOK, nil)
+	idValue := strings.Split(id, "=")
+	if len(idValue) != 2 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid id format"})
+		return
+	}
+	gameID, err := strconv.Atoi(idValue[1])
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	if err := h.General.SeedKORoundFromGroupStage(gameID, "quaterFinal"); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	if err := h.General.PropagateKORoundResults(gameID, "roundOfSixteen"); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "round updated"})
 }
 
 // Update SemiFinal godoc
@@ -254,14 +273,29 @@ func (h *beerpongTournamentHandler) UpdateTournamentSemiFinals(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "missing game id"})
 		return
 	}
-	// idValue := strings.Split(id, "=")
-	// gameId, err := strconv.Atoi(idValue[1])
-	// if err != nil {
-	// 	c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-	// 	return
-	// }
-
-	c.JSON(http.StatusOK, nil)
+	idValue := strings.Split(id, "=")
+	if len(idValue) != 2 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid id format"})
+		return
+	}
+	gameID, err := strconv.Atoi(idValue[1])
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	if err := h.General.SeedKORoundFromGroupStage(gameID, "semiFinal"); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	if err := h.General.PropagateKORoundResults(gameID, "quaterFinal"); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	if err := h.General.PropagateKORoundResults(gameID, "semiFinal"); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "round updated"})
 }
 
 // Update SemiFinal godoc
@@ -278,14 +312,25 @@ func (h *beerpongTournamentHandler) UpdateTournamentFinal(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "missing game id"})
 		return
 	}
-	// idValue := strings.Split(id, "=")
-	// gameId, err := strconv.Atoi(idValue[1])
-	// if err != nil {
-	// 	c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-	// 	return
-	// }
-
-	c.JSON(http.StatusOK, nil)
+	idValue := strings.Split(id, "=")
+	if len(idValue) != 2 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid id format"})
+		return
+	}
+	gameID, err := strconv.Atoi(idValue[1])
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	if err := h.General.SeedKORoundFromGroupStage(gameID, "final"); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	if err := h.General.PropagateKORoundResults(gameID, "semiFinal"); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "round updated"})
 }
 
 // Finish Game

@@ -1,13 +1,17 @@
 package usecase
 
 import (
+	"fmt"
 	"sort"
 
 	"github.com/gladom/beerpong/pkg/models"
 )
 
 const (
-	quaterFinal = "quaterFinal"
+	quaterFinal    = "quaterFinal"
+	roundOfSixteen = "roundOfSixteen"
+	semiFinal      = "semiFinal"
+	finalRound     = "final"
 )
 
 type General struct {
@@ -115,6 +119,108 @@ func (g *General) GetGameByID(tournamentID string) (*models.Tournament, error) {
 
 func (ge *General) UpdateGame(g *models.Tournament) error {
 	return ge.GameRepo.UpdateTournament(g)
+}
+
+func buildPlaceholderName(position int, groupName string) string {
+	positionText := map[int]string{1: "1ter", 2: "2ter", 3: "3ter", 4: "4ter"}
+	if text, ok := positionText[position]; ok {
+		return fmt.Sprintf("%s Gruppe %s", text, groupName)
+	}
+	return fmt.Sprintf("%d. Gruppe %s", position, groupName)
+}
+
+func (g *General) SeedKORoundFromGroupStage(tournamentID int, roundType string) error {
+	teams, err := g.GameRepo.GetTeamsByTournamentID(tournamentID)
+	if err != nil {
+		return err
+	}
+
+	grouped := make(map[string]models.Teams)
+	for _, t := range teams {
+		grouped[t.GroupName] = append(grouped[t.GroupName], t)
+	}
+	for name := range grouped {
+		sort.Sort(grouped[name])
+	}
+
+	placeholderMap := make(map[string]string)
+	for groupName, sortedTeams := range grouped {
+		for i, team := range sortedTeams {
+			placeholderMap[buildPlaceholderName(i+1, groupName)] = team.TeamName
+		}
+	}
+
+	allMatches, err := g.GameRepo.GetMatchesByTournamentID(tournamentID)
+	if err != nil {
+		return err
+	}
+
+	for i := range allMatches {
+		if allMatches[i].Type != roundType {
+			continue
+		}
+		changed := false
+		if name, ok := placeholderMap[allMatches[i].HomeTeam]; ok {
+			allMatches[i].HomeTeam = name
+			changed = true
+		}
+		if name, ok := placeholderMap[allMatches[i].AwayTeam]; ok {
+			allMatches[i].AwayTeam = name
+			changed = true
+		}
+		if changed {
+			if err := g.GameRepo.UpdateMatches(&allMatches[i]); err != nil {
+				return err
+			}
+		}
+	}
+	return nil
+}
+
+func (g *General) PropagateKORoundResults(tournamentID int, roundType string) error {
+	allMatches, err := g.GameRepo.GetMatchesByTournamentID(tournamentID)
+	if err != nil {
+		return err
+	}
+
+	type snap struct{ home, away string }
+	original := make(map[int]snap, len(allMatches))
+	for _, m := range allMatches {
+		original[m.ID] = snap{m.HomeTeam, m.AwayTeam}
+	}
+
+	for _, m := range allMatches {
+		if m.Type != roundType {
+			continue
+		}
+		if m.PointsHome == 0 && m.PointsAway == 0 {
+			continue
+		}
+		allMatches = UpdateKOMatchWithResult(allMatches, m)
+	}
+
+	if roundType == semiFinal {
+		var sfDone []models.Match
+		for _, m := range allMatches {
+			if m.Type == semiFinal && (m.PointsHome != 0 || m.PointsAway != 0) {
+				sfDone = append(sfDone, m)
+			}
+		}
+		sort.Slice(sfDone, func(i, j int) bool { return sfDone[i].MatchID < sfDone[j].MatchID })
+		for i, sf := range sfDone {
+			allMatches = UpdateKOMatchWithLoser(allMatches, sf, i+1)
+		}
+	}
+
+	for i := range allMatches {
+		s := original[allMatches[i].ID]
+		if allMatches[i].HomeTeam != s.home || allMatches[i].AwayTeam != s.away {
+			if err := g.GameRepo.UpdateMatches(&allMatches[i]); err != nil {
+				return err
+			}
+		}
+	}
+	return nil
 }
 
 func (g *General) CalculateMatchesForKORound(tournamentId int, groups []models.Group) ([]*models.Match, error) {

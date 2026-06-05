@@ -168,7 +168,7 @@
               </span>
             </div>
             <div class="matches-grid">
-              @for (m of sortedMatches()[gi]; track $index) {
+              @for (m of sortedMatches()[gi]; track m.id) {
                 <app-game-card [match]="m"/>
               }
             </div>
@@ -188,7 +188,7 @@
             </div>
           } @else {
             <div class="matches-grid matches-grid-ko">
-              @for (m of activeKoMatches(); track $index) {
+              @for (m of activeKoMatches(); track m.id) {
                 <app-game-card [match]="m" [showGroupName]="false"/>
               }
             </div>
