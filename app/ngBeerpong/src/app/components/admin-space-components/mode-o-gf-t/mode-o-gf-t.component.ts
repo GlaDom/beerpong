@@ -14,23 +14,23 @@ import Group from '../../../api/group.interface';
 import { BeerpongStore } from '../../../store/beerpong/beerpong.store';
 
 @Component({
-    selector: 'app-mode-o-gf-t',
-    imports: [
-        GameCardComponent,
-        Tabs, TabList, Tab, TabPanels, TabPanel,
-        ButtonModule,
-        FieldsetModule,
-        RankingComponent,
-        ToastModule,
-        ConfirmDialogModule
-    ],
-    providers: [
-        MessageService,
-        ConfigurationService,
-        ConfirmationService
-    ],
-    templateUrl: './mode-o-gf-t.component.html',
-    styleUrl: './mode-o-gf-t.component.css'
+  selector: 'app-mode-o-gf-t',
+  imports: [
+    GameCardComponent,
+    Tabs, TabList, Tab, TabPanels, TabPanel,
+    ButtonModule,
+    FieldsetModule,
+    RankingComponent,
+    ToastModule,
+    ConfirmDialogModule
+  ],
+  providers: [
+    MessageService,
+    ConfigurationService,
+    ConfirmationService
+  ],
+  templateUrl: './mode-o-gf-t.component.html',
+  styleUrl: './mode-o-gf-t.component.css'
 })
 export class ModeOGfTComponent implements OnInit {
   private beerpongStore = inject(BeerpongStore);
@@ -60,7 +60,7 @@ export class ModeOGfTComponent implements OnInit {
   }
 
   updateFinal(): void {
-    if (this.gameId) this.beerpongStore.updateFinal(this.gameId, this.gameMode);
+    if (this.gameId) this.beerpongStore.updateFinal(this.gameId);
   }
 
   getRanking(): Team[] {
@@ -69,15 +69,15 @@ export class ModeOGfTComponent implements OnInit {
 
     // Alle Teams aus den Gruppen sammeln
     this.groups.forEach(group => {
-        allTeams.push(...group.teams);
+      allTeams.push(...group.teams);
     });
 
     // Prüfen, ob Spiele in den verschiedenen Turnierphasen gespielt wurden
     const finalsPlayed = this.finalMatches.some(match => match.points_home > 0 || match.points_away > 0);
 
     // Wenn Spiele gespielt wurden, sortiere die Teams entsprechend der Turnierphase
-    const eliminatedTeams = allTeams.filter(team => 
-        !this.finalMatches.some(match => match.home_team === team.team_name || match.away_team === team.team_name)
+    const eliminatedTeams = allTeams.filter(team =>
+      !this.finalMatches.some(match => match.home_team === team.team_name || match.away_team === team.team_name)
     );
 
     // Sortiere ausgeschiedene Teams
@@ -85,19 +85,19 @@ export class ModeOGfTComponent implements OnInit {
 
     // Gewinner und Verlierer der Finalspiele bestimmen (falls gespielt)
     const finalWinners = finalsPlayed
-        ? this.getTeamsByName(this.finalMatches.map(match => match.points_home > match.points_away ? match.home_team : match.away_team))
-        : [];
+      ? this.getTeamsByName(this.finalMatches.map(match => match.points_home > match.points_away ? match.home_team : match.away_team))
+      : [];
     const finalLosers = finalsPlayed
-        ? this.getTeamsByName(this.finalMatches.map(match => match.points_home > match.points_away ? match.away_team : match.home_team))
-        : [];
+      ? this.getTeamsByName(this.finalMatches.map(match => match.points_home > match.points_away ? match.away_team : match.home_team))
+      : [];
 
     // Rangliste zusammenstellen
     rankedTeams = [
-        ...finalWinners, // Platz 1
-        ...finalLosers,  // Platz 2
-        ...sortedEliminatedTeams // Platz 3-5
+      ...finalWinners, // Platz 1
+      ...finalLosers,  // Platz 2
+      ...sortedEliminatedTeams // Platz 3-5
     ];
-    
+
 
     return rankedTeams;
   }
@@ -134,7 +134,7 @@ export class ModeOGfTComponent implements OnInit {
     teamNames.map(name => {
       this.groups.map(g => {
         g.teams.map(t => {
-          if(t.team_name == name){
+          if (t.team_name == name) {
             retval.push(t);
           }
         })

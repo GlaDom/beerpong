@@ -29,7 +29,6 @@ export class AdminSpaceComponent {
 
   public isLoading = this.beerpongStore.isLoading;
   public gameId = this.beerpongStore.gameId;
-  public gameMode = this.beerpongStore.gameMode;
   public groups = computed(() => this.configService.sortTeamsInGroups(this.beerpongStore.groups()));
   public hasMatches = computed(() => this.beerpongStore.matches().length > 0);
 
@@ -45,12 +44,12 @@ export class AdminSpaceComponent {
 
   public phases = computed((): PhaseInfo[] => {
     const all: PhaseInfo[] = [
-      { id: 'group',            label: 'Gruppenphase',      short: 'GR', matches: this.beerpongStore.matches().filter(m => m.type === 'regular') },
-      { id: 'round_of_16',      label: 'Achtelfinale',      short: 'AF', matches: this.roundOfsixteen() },
-      { id: 'quaterFinal',      label: 'Viertelfinale',     short: 'VF', matches: this.quaterFinals() },
-      { id: 'semiFinal',        label: 'Halbfinale',        short: 'HF', matches: this.semiFinals() },
+      { id: 'group', label: 'Gruppenphase', short: 'GR', matches: this.beerpongStore.matches().filter(m => m.type === 'regular') },
+      { id: 'round_of_16', label: 'Achtelfinale', short: 'AF', matches: this.roundOfsixteen() },
+      { id: 'quaterFinal', label: 'Viertelfinale', short: 'VF', matches: this.quaterFinals() },
+      { id: 'semiFinal', label: 'Halbfinale', short: 'HF', matches: this.semiFinals() },
       { id: 'Spiel um Platz 3', label: 'Spiel um Platz 3', short: 'P3', matches: this.thirdPlace() },
-      { id: 'final',            label: 'Finale',            short: 'F',  matches: this.final() },
+      { id: 'final', label: 'Finale', short: 'F', matches: this.final() },
     ];
     return all.filter(p => p.id === 'group' || p.matches.length > 0);
   });
@@ -85,8 +84,8 @@ export class AdminSpaceComponent {
 
   public phaseCta = computed(() => {
     const current = this.activePhase();
-    if (current === 'final')             return 'Turnier beenden';
-    if (current === 'Spiel um Platz 3')  return null;
+    if (current === 'final') return 'Turnier beenden';
+    if (current === 'Spiel um Platz 3') return null;
     const next = this.nextPhase();
     if (!next) return null;
     return `${next.label} auslosen`;
@@ -147,7 +146,6 @@ export class AdminSpaceComponent {
   public advancePhase(): void {
     this.phaseOverride.set(null);
     const id = this.gameId();
-    const mode = this.gameMode();
     if (!id) return;
 
     if (this.activePhase() === 'final') {
@@ -159,24 +157,24 @@ export class AdminSpaceComponent {
     if (!next) return;
 
     switch (next.id) {
-      case 'round_of_16':  this.beerpongStore.updateRoundOfSixteen(id); break;
-      case 'quaterFinal':  this.beerpongStore.updateQuaterFinals(id); break;
-      case 'semiFinal':    this.beerpongStore.updateSemiFinals(id); break;
-      case 'final':        this.beerpongStore.updateFinal(id, mode); break;
+      case 'round_of_16': this.beerpongStore.updateRoundOfSixteen(id); break;
+      case 'quaterFinal': this.beerpongStore.updateQuaterFinals(id); break;
+      case 'semiFinal': this.beerpongStore.updateSemiFinals(id); break;
+      case 'final': this.beerpongStore.updateFinal(id); break;
     }
   }
 
   private showToast(status: Status): void {
     const map: Partial<Record<NonNullable<Status>, [string, string]>> = {
-      'success match updated':       ['success', 'Ergebnis gespeichert!'],
-      'failed match updated':        ['error',   'Fehler beim Speichern!'],
-      'failed update round of 16':   ['error',   'Achtelfinale konnte nicht ausgelost werden. Alle Spiele eingetragen?'],
-      'failed update quater finals': ['error',   'Viertelfinale konnte nicht ausgelost werden. Alle Spiele eingetragen?'],
-      'failed update semi finals':   ['error',   'Halbfinale konnte nicht ausgelost werden. Alle Spiele eingetragen?'],
-      'failed update final':         ['error',   'Finale konnte nicht ausgelost werden. Alle Spiele eingetragen?'],
-      'success game finished':       ['success', 'Turnier erfolgreich beendet!'],
-      'failed game finished':        ['error',   'Fehler beim Beenden des Turniers!'],
-      'invalid match result':        ['error',   'Ungültiges Ergebnis eingegeben!'],
+      'success match updated': ['success', 'Ergebnis gespeichert!'],
+      'failed match updated': ['error', 'Fehler beim Speichern!'],
+      'failed update round of 16': ['error', 'Achtelfinale konnte nicht ausgelost werden. Alle Spiele eingetragen?'],
+      'failed update quater finals': ['error', 'Viertelfinale konnte nicht ausgelost werden. Alle Spiele eingetragen?'],
+      'failed update semi finals': ['error', 'Halbfinale konnte nicht ausgelost werden. Alle Spiele eingetragen?'],
+      'failed update final': ['error', 'Finale konnte nicht ausgelost werden. Alle Spiele eingetragen?'],
+      'success game finished': ['success', 'Turnier erfolgreich beendet!'],
+      'failed game finished': ['error', 'Fehler beim Beenden des Turniers!'],
+      'invalid match result': ['error', 'Ungültiges Ergebnis eingegeben!'],
     };
     const entry = map[status!];
     if (entry) {

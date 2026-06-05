@@ -1,6 +1,7 @@
 CREATE TABLE tournaments (
   id SERIAL PRIMARY KEY,
   user_sub VARCHAR(255),
+  mode VARCHAR(32),
   amount_of_teams INTEGER,
   got_stage_inbetween BOOLEAN,
   got_ko_stage BOOLEAN,

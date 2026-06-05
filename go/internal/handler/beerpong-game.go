@@ -52,6 +52,11 @@ func (h *beerpongTournamentHandler) CreateGame(c *gin.Context) {
 		return
 	}
 
+	if err := validateTournament(&tournament.Tournament); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
 	for _, g := range tournament.Tournament.Groups {
 		matches := h.RoundRobin.GenerateOptimalRoundRobinTournament(g.Teams, tournament.Tournament.GameTime, g.GroupName, tournament.Tournament.StartTime)
 		tournament.Tournament.Matches = append(tournament.Tournament.Matches, matches...)
@@ -87,6 +92,64 @@ func (h *beerpongTournamentHandler) CreateGame(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, createdTournament)
+}
+
+func validateTournament(tournament *models.Tournament) error {
+	if tournament.Mode == "" {
+		tournament.Mode = models.TournamentModeGroup
+	}
+
+	if tournament.Mode != models.TournamentModeGroup && tournament.Mode != models.TournamentModeLeague {
+		return fmt.Errorf("invalid tournament mode: %s", tournament.Mode)
+	}
+
+	if len(tournament.Groups) == 0 {
+		return fmt.Errorf("at least one group is required")
+	}
+
+	if tournament.IncludeThirdPlaceMatch && !tournament.GotKoStage {
+		return fmt.Errorf("third-place match requires an active K.O. stage")
+	}
+
+	if tournament.Mode == models.TournamentModeLeague {
+		if len(tournament.Groups) != 1 {
+			return fmt.Errorf("league mode requires exactly one group")
+		}
+		if tournament.AmountOfTeams < 3 || tournament.AmountOfTeams > 16 {
+			return fmt.Errorf("league mode supports 3 to 16 teams")
+		}
+	}
+
+	for _, group := range tournament.Groups {
+		if len(group.Teams) != tournament.AmountOfTeams {
+			return fmt.Errorf("group %s must contain exactly %d teams", group.GroupName, tournament.AmountOfTeams)
+		}
+	}
+
+	if !tournament.GotKoStage {
+		tournament.NumberOfQualifiedTeams = 0
+		return nil
+	}
+
+	if tournament.Mode == models.TournamentModeLeague {
+		if tournament.NumberOfQualifiedTeams < 2 || tournament.NumberOfQualifiedTeams > tournament.AmountOfTeams {
+			return fmt.Errorf("league mode requires 2 to %d qualified teams", tournament.AmountOfTeams)
+		}
+		if !isPowerOfTwo(tournament.NumberOfQualifiedTeams) {
+			return fmt.Errorf("league mode qualified teams must be a power of two")
+		}
+		return nil
+	}
+
+	if tournament.NumberOfQualifiedTeams < 1 || tournament.NumberOfQualifiedTeams >= tournament.AmountOfTeams {
+		return fmt.Errorf("qualified teams per group must be between 1 and %d", tournament.AmountOfTeams-1)
+	}
+
+	return nil
+}
+
+func isPowerOfTwo(n int) bool {
+	return n > 0 && (n&(n-1)) == 0
 }
 
 // GetTournament godoc

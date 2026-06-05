@@ -46,8 +46,8 @@ export class ConfigurationService {
     return this.httpClient.put<string>(this.url + "/tournament/matches/semifinals/id=" + gameId, null).pipe()
   }
 
-  UpdateMatchesFinal(gameId: number, gameMode: number) {
-    return this.httpClient.put<string>(this.url + "/tournament/matches/final/id=" + gameId + "?mode=" + gameMode, null).pipe()
+  UpdateMatchesFinal(gameId: number) {
+    return this.httpClient.put<string>(this.url + "/tournament/matches/final/id=" + gameId, null).pipe()
   }
 
   UpdateTeams(teams: TeamUpdate[]) {
@@ -60,56 +60,21 @@ export class ConfigurationService {
   }
 
   sortMatches(matches: Match[]): Match[][] {
-    let retval: Match[][] = [[], [], [], [], [], []]
-    for (let i = 0; i < matches.length; i++) {
-      switch (matches[i].group_number) {
-        case "A": {
-          if (matches[i].type === "regular") {
-            retval[0].push(matches[i]);
-          }
-          break;
-        }
-        case "B": {
-          if (matches[i].type === "regular") {
-            retval[1].push(matches[i]);
-          }
-          break;
-        }
-        case "C": {
-          if (matches[i].type === "regular") {
-            retval[2].push(matches[i]);
-          }
-          break;
-        }
-        case "D": {
-          if (matches[i].type === "regular") {
-            retval[3].push(matches[i]);
-          }
-          break;
-        }
-        case "E": {
-          if (matches[i].type === "regular") {
-            retval[4].push(matches[i]);
-          }
-          break;
-        }
-        case "F": {
-          if (matches[i].type === "regular") {
-            retval[5].push(matches[i]);
-          }
-          break;
-        }
-        case "": {
-          break;
-        }
-        default:
-          break
-      }
-    }
-    retval.forEach((group) => {
-      group.sort((a, b) => a.match_id! - b.match_id!);
-    })
-    return retval
+    const groupedMatches = new Map<string, Match[]>();
+
+    matches
+      .filter(match => match.type === 'regular' && match.group_number)
+      .forEach(match => {
+        const bucket = groupedMatches.get(match.group_number) ?? [];
+        bucket.push(match);
+        groupedMatches.set(match.group_number, bucket);
+      });
+
+    return [...groupedMatches.entries()]
+      .sort(([left], [right]) => left.localeCompare(right))
+      .map(([, groupMatches]) =>
+        [...groupMatches].sort((a, b) => (a.match_id ?? 0) - (b.match_id ?? 0))
+      );
   }
 
   filterMatches(filter: string, matches: Match[]): Match[] {

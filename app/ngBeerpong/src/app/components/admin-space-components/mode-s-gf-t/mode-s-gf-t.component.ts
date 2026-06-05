@@ -13,10 +13,10 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { BeerpongStore } from '../../../store/beerpong/beerpong.store';
 
 @Component({
-    selector: 'app-mode-s-gf-t',
-    templateUrl: './mode-s-gf-t.component.html',
-    styleUrl: './mode-s-gf-t.component.css',
-    imports: [FieldsetModule, Tabs, TabList, Tab, TabPanels, TabPanel, GameCardComponent, ButtonModule, RankingComponent, ConfirmDialogModule]
+  selector: 'app-mode-s-gf-t',
+  templateUrl: './mode-s-gf-t.component.html',
+  styleUrl: './mode-s-gf-t.component.css',
+  imports: [FieldsetModule, Tabs, TabList, Tab, TabPanels, TabPanel, GameCardComponent, ButtonModule, RankingComponent, ConfirmDialogModule]
 })
 export class ModeSGfTComponent {
   private beerpongStore = inject(BeerpongStore);
@@ -25,11 +25,11 @@ export class ModeSGfTComponent {
   private confirmationService = inject(ConfirmationService);
 
   @Input()
-  showRanking: boolean  | undefined;
+  showRanking: boolean | undefined;
 
   @Input()
   groups: Group[] = [];
-  
+
   @Input()
   gameId: number | undefined;
 
@@ -51,7 +51,7 @@ export class ModeSGfTComponent {
   @Input()
   thirdPlaceMatch: Match[] = [];
 
-  @Input() 
+  @Input()
   finalMatches: Match[] = [];
 
 
@@ -68,7 +68,7 @@ export class ModeSGfTComponent {
   }
 
   updateFinal(): void {
-    if (this.gameId && this.gameMode) this.beerpongStore.updateFinal(this.gameId, this.gameMode);
+    if (this.gameId) this.beerpongStore.updateFinal(this.gameId);
   }
 
   getRanking(): Team[] {
@@ -77,7 +77,7 @@ export class ModeSGfTComponent {
 
     // Alle Teams aus den Gruppen sammeln
     this.groups.forEach(group => {
-        allTeams.push(...group.teams);
+      allTeams.push(...group.teams);
     });
 
     // Prüfen, ob Spiele in den verschiedenen Turnierphasen gespielt wurden
@@ -87,61 +87,61 @@ export class ModeSGfTComponent {
     const finalsPlayed = this.finalMatches.some(match => match.points_home > 0 || match.points_away > 0);
 
     if (!roundOfSixteenPlayed) {
-        // Wenn keine Spiele gespielt wurden, sortiere alle Teams nach Punkten und Cup-Differenz
-        rankedTeams = this.configService.sortTeamsByPointsAndCupDifference(allTeams);
+      // Wenn keine Spiele gespielt wurden, sortiere alle Teams nach Punkten und Cup-Differenz
+      rankedTeams = this.configService.sortTeamsByPointsAndCupDifference(allTeams);
     } else {
-        // Wenn Spiele gespielt wurden, sortiere die Teams entsprechend der Turnierphase
-        const eliminatedTeams = allTeams.filter(team => 
-            !this.roundOfsixteen.some(match => match.home_team === team.team_name || match.away_team === team.team_name) &&
-            !this.quaterFinalMatches.some(match => match.home_team === team.team_name || match.away_team === team.team_name) &&
-            !this.semiFinalMatches.some(match => match.home_team === team.team_name || match.away_team === team.team_name) &&
-            !this.finalMatches.some(match => match.home_team === team.team_name || match.away_team === team.team_name)
-        );
+      // Wenn Spiele gespielt wurden, sortiere die Teams entsprechend der Turnierphase
+      const eliminatedTeams = allTeams.filter(team =>
+        !this.roundOfsixteen.some(match => match.home_team === team.team_name || match.away_team === team.team_name) &&
+        !this.quaterFinalMatches.some(match => match.home_team === team.team_name || match.away_team === team.team_name) &&
+        !this.semiFinalMatches.some(match => match.home_team === team.team_name || match.away_team === team.team_name) &&
+        !this.finalMatches.some(match => match.home_team === team.team_name || match.away_team === team.team_name)
+      );
 
-        // Sortiere ausgeschiedene Teams
-        const sortedEliminatedTeams = this.configService.sortTeamsByPointsAndCupDifference(eliminatedTeams);
+      // Sortiere ausgeschiedene Teams
+      const sortedEliminatedTeams = this.configService.sortTeamsByPointsAndCupDifference(eliminatedTeams);
 
-        // Gewinner und Verlierer der Finalspiele bestimmen (falls gespielt)
-        const finalWinners = finalsPlayed
-            ? this.getTeamsByName(this.finalMatches.map(match => match.points_home > match.points_away ? match.home_team : match.away_team))
-            : [];
-        const finalLosers = finalsPlayed
-            ? this.getTeamsByName(this.finalMatches.map(match => match.points_home > match.points_away ? match.away_team : match.home_team))
-            : [];
+      // Gewinner und Verlierer der Finalspiele bestimmen (falls gespielt)
+      const finalWinners = finalsPlayed
+        ? this.getTeamsByName(this.finalMatches.map(match => match.points_home > match.points_away ? match.home_team : match.away_team))
+        : [];
+      const finalLosers = finalsPlayed
+        ? this.getTeamsByName(this.finalMatches.map(match => match.points_home > match.points_away ? match.away_team : match.home_team))
+        : [];
 
-        // Gewinner und Verlierer der Halbfinalspiele bestimmen (falls gespielt)
-        const semiFinalWinners = semiFinalsPlayed
-            ? this.getTeamsByName(this.semiFinalMatches.map(match => match.points_home > match.points_away ? match.home_team : match.away_team))
-            : [];
-        const semiFinalLosers = semiFinalsPlayed
-            ? this.getTeamsByName(this.semiFinalMatches.map(match => match.points_home > match.points_away ? match.away_team : match.home_team))
-            : [];
+      // Gewinner und Verlierer der Halbfinalspiele bestimmen (falls gespielt)
+      const semiFinalWinners = semiFinalsPlayed
+        ? this.getTeamsByName(this.semiFinalMatches.map(match => match.points_home > match.points_away ? match.home_team : match.away_team))
+        : [];
+      const semiFinalLosers = semiFinalsPlayed
+        ? this.getTeamsByName(this.semiFinalMatches.map(match => match.points_home > match.points_away ? match.away_team : match.home_team))
+        : [];
 
-        // Gewinner und Verlierer der Viertelfinalspiele bestimmen (falls gespielt)
-        const quaterFinalWinners = quaterFinalsPlayed
-            ? this.getTeamsByName(this.quaterFinalMatches.map(match => match.points_home > match.points_away ? match.home_team : match.away_team))
-            : [];
-        const quaterFinalLosers = quaterFinalsPlayed
-            ? this.getTeamsByName(this.quaterFinalMatches.map(match => match.points_home > match.points_away ? match.away_team : match.home_team))
-            : [];
+      // Gewinner und Verlierer der Viertelfinalspiele bestimmen (falls gespielt)
+      const quaterFinalWinners = quaterFinalsPlayed
+        ? this.getTeamsByName(this.quaterFinalMatches.map(match => match.points_home > match.points_away ? match.home_team : match.away_team))
+        : [];
+      const quaterFinalLosers = quaterFinalsPlayed
+        ? this.getTeamsByName(this.quaterFinalMatches.map(match => match.points_home > match.points_away ? match.away_team : match.home_team))
+        : [];
 
-        // Gewinner und Verlierer der Achtelfinalspiele bestimmen (falls gespielt)
-        const roundOfSixteenWinners = roundOfSixteenPlayed
-            ? this.getTeamsByName(this.roundOfsixteen.map(match => match.points_home > match.points_away ? match.home_team : match.away_team))
-            : [];
-        const roundOfSixteenLosers = roundOfSixteenPlayed
-            ? this.getTeamsByName(this.roundOfsixteen.map(match => match.points_home > match.points_away ? match.away_team : match.home_team))
-            : [];
+      // Gewinner und Verlierer der Achtelfinalspiele bestimmen (falls gespielt)
+      const roundOfSixteenWinners = roundOfSixteenPlayed
+        ? this.getTeamsByName(this.roundOfsixteen.map(match => match.points_home > match.points_away ? match.home_team : match.away_team))
+        : [];
+      const roundOfSixteenLosers = roundOfSixteenPlayed
+        ? this.getTeamsByName(this.roundOfsixteen.map(match => match.points_home > match.points_away ? match.away_team : match.home_team))
+        : [];
 
-        // Rangliste zusammenstellen
-        rankedTeams = [
-            ...finalWinners, // Platz 1
-            ...finalLosers,  // Platz 2
-            ...semiFinalLosers, // Platz 3-4
-            ...quaterFinalLosers, // Platz 5-8
-            ...roundOfSixteenLosers, // Platz 9-16
-            ...sortedEliminatedTeams // Platz 17-30
-        ];
+      // Rangliste zusammenstellen
+      rankedTeams = [
+        ...finalWinners, // Platz 1
+        ...finalLosers,  // Platz 2
+        ...semiFinalLosers, // Platz 3-4
+        ...quaterFinalLosers, // Platz 5-8
+        ...roundOfSixteenLosers, // Platz 9-16
+        ...sortedEliminatedTeams // Platz 17-30
+      ];
     }
 
     return rankedTeams;
@@ -152,7 +152,7 @@ export class ModeSGfTComponent {
     teamNames.map(name => {
       this.groups.map(g => {
         g.teams.map(t => {
-          if(t.team_name == name){
+          if (t.team_name == name) {
             retval.push(t);
           }
         })

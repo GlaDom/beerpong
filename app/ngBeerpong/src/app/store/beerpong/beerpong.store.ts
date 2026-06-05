@@ -2,6 +2,7 @@ import { computed, inject } from '@angular/core';
 import { signalStore, withState, withComputed, withMethods, patchState } from '@ngrx/signals';
 import { firstValueFrom } from 'rxjs';
 import { ConfigurationService } from '../../services/configuration.service';
+import { GameModes } from '../../api/game-modes.enum';
 import { GameState } from '../../models/game-state.model';
 import { Match } from '../../api/match.interface';
 import { Team } from '../../api/team.interface';
@@ -27,6 +28,7 @@ export type Status =
 
 const emptyTournament = {
   user_sub: '',
+  mode: GameModes.GROUP,
   amount_of_teams: 0,
   is_finished: false,
   game_time: 0,
@@ -63,10 +65,10 @@ export const BeerpongStore = signalStore(
   withState<BeerpongState>(initialState),
 
   withComputed((store) => ({
-    matches:    computed(() => store.currentGame().tournament.matches ?? []),
-    groups:     computed(() => store.currentGame().tournament.groups),
-    gameId:     computed(() => store.currentGame().tournament.groups[0]?.tournament_id),
-    gameMode:   computed(() => store.currentGame().tournament.amount_of_teams),
+    matches: computed(() => store.currentGame().tournament.matches ?? []),
+    groups: computed(() => store.currentGame().tournament.groups),
+    gameId: computed(() => store.currentGame().tournament.groups[0]?.tournament_id),
+    tournamentMode: computed(() => store.currentGame().tournament.mode),
     isFinished: computed(() => store.currentGame().tournament.is_finished),
   })),
 
@@ -204,9 +206,9 @@ export const BeerpongStore = signalStore(
       }
     },
 
-    async updateFinal(gameId: number, gameMode: number): Promise<void> {
+    async updateFinal(gameId: number): Promise<void> {
       try {
-        await firstValueFrom(configService.UpdateMatchesFinal(gameId, gameMode));
+        await firstValueFrom(configService.UpdateMatchesFinal(gameId));
         const game = await firstValueFrom(configService.GetGame(''));
         patchState(store, { currentGame: game as unknown as GameState, toastStatus: 'notset', isLoading: false });
       } catch {

@@ -49,10 +49,56 @@
         </div>
         <div class="card-body">
 
+          <div class="field-stack">
+            <div class="field-label">
+              <div class="field-name">Spielmodus</div>
+              <div class="field-hint">Wie wird gespielt?</div>
+            </div>
+            <div class="mode-grid">
+              @for (mode of modeOptions; track mode.value) {
+              <button type="button" class="mode-card" [class.mode-card-active]="currentMode() === mode.value"
+                (click)="setMode(mode.value)">
+                <div class="mode-card-head">
+                  <span class="mode-card-icon" [class.mode-card-icon-active]="currentMode() === mode.value">
+                    @if (mode.value === GameModes.GROUP) {
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                      stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="3" y="3" width="7" height="7" rx="1" />
+                      <rect x="14" y="3" width="7" height="7" rx="1" />
+                      <rect x="14" y="14" width="7" height="7" rx="1" />
+                      <rect x="3" y="14" width="7" height="7" rx="1" />
+                    </svg>
+                    } @else {
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                      stroke-linecap="round" stroke-linejoin="round">
+                      <line x1="5" y1="7" x2="19" y2="7" />
+                      <line x1="5" y1="12" x2="19" y2="12" />
+                      <line x1="5" y1="17" x2="19" y2="17" />
+                    </svg>
+                    }
+                  </span>
+                  <span class="mode-card-check" [class.mode-card-check-active]="currentMode() === mode.value">
+                    @if (currentMode() === mode.value) {
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
+                      stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                    }
+                  </span>
+                </div>
+                <div class="mode-card-title">{{ mode.title }}</div>
+                <div class="mode-card-desc">{{ mode.description }}</div>
+              </button>
+              }
+            </div>
+          </div>
+
+          <div class="field-divider"></div>
+
           <div class="field-row">
             <div class="field-label">
               <div class="field-name">Anzahl Gruppen</div>
-              <div class="field-hint">1 bis 10</div>
+              <div class="field-hint">{{ groupCountHint() }}</div>
             </div>
             <div class="num-stepper">
               <button type="button" class="stepper-btn" (click)="setGroups(amountOfGroups.value - 1)"
@@ -65,15 +111,15 @@
 
           <div class="field-row">
             <div class="field-label">
-              <div class="field-name">Teams pro Gruppe</div>
-              <div class="field-hint">3 bis 6</div>
+              <div class="field-name">{{ teamCountLabel() }}</div>
+              <div class="field-hint">{{ teamCountHint() }}</div>
             </div>
             <div class="num-stepper">
               <button type="button" class="stepper-btn" (click)="setTeamsPerGroup(amountOfTeams.value - 1)"
                 [disabled]="amountOfTeams.value <= 3">−</button>
               <span class="stepper-val">{{ amountOfTeams.value }}</span>
               <button type="button" class="stepper-btn" (click)="setTeamsPerGroup(amountOfTeams.value + 1)"
-                [disabled]="amountOfTeams.value >= 6">+</button>
+                [disabled]="amountOfTeams.value >= maxTeamsPerGroup()">+</button>
             </div>
           </div>
 
@@ -98,13 +144,13 @@
           @if (gameForm.get('koStage')?.value) {
           <div class="field-row">
             <div class="field-label">
-              <div class="field-name">Qualifizierte Teams pro Gruppe</div>
-              <div class="field-hint">Wer kommt in die K.O.‑Phase</div>
+              <div class="field-name">{{ qualificationLabel() }}</div>
+              <div class="field-hint">{{ qualificationHint() }}</div>
             </div>
             <select class="styled-select" formControlName="numberOfQualifiedTeams">
-              <option [ngValue]="1">Top 1</option>
-              <option [ngValue]="2">Top 2</option>
-              <option [ngValue]="3">Top 3</option>
+              @for (option of qualifiedTeamOptions(); track option) {
+              <option [ngValue]="option">Top {{ option }}</option>
+              }
             </select>
           </div>
           }
@@ -164,7 +210,7 @@
             <div>
               <div class="card-section-title">Mannschaften eintragen</div>
               <p class="card-section-sub">
-                {{ amountOfGroups.value * amountOfTeams.value }} Teams in {{ amountOfGroups.value }} Gruppen
+                {{ teamSectionSummary() }}
               </p>
             </div>
             <button type="button" class="btn-secondary-sm" (click)="fillGroupsWithTeamNames()">
@@ -184,8 +230,8 @@
           <div class="group-card" [formGroupName]="groupIndex">
             <div class="group-card-header">
               <div style="display:flex;align-items:center;gap:8px">
-                <span class="group-badge">{{ group.get('groupName')?.value }}</span>
-                <span class="group-title">Gruppe {{ group.get('groupName')?.value }}</span>
+                <span class="group-badge">{{ displayGroupBadge(group.get('groupName')?.value) }}</span>
+                <span class="group-title">{{ displayGroupLabel(group.get('groupName')?.value) }}</span>
               </div>
               <span class="label" style="color:var(--fg-3)">{{ amountOfTeams.value }} Teams</span>
             </div>
@@ -220,12 +266,12 @@
           </div>
           <div class="review-stats">
             <div class="review-stat">
-              <div class="label" style="margin-bottom:4px">Gruppen</div>
-              <div class="review-stat-val">{{ amountOfGroups.value }}</div>
+              <div class="label" style="margin-bottom:4px">Modus</div>
+              <div class="review-stat-val review-stat-val-sm">{{ reviewModeLabel() }}</div>
             </div>
             <div class="review-stat">
               <div class="label" style="margin-bottom:4px">Teams</div>
-              <div class="review-stat-val">{{ amountOfGroups.value * amountOfTeams.value }}</div>
+              <div class="review-stat-val">{{ totalTeamCount() }}</div>
             </div>
             <div class="review-stat">
               <div class="label" style="margin-bottom:4px">K.O.‑Phase</div>
@@ -250,8 +296,8 @@
             @for (group of groupsFormArray.controls; track $index; let groupIndex = $index) {
             <div [formGroupName]="groupIndex">
               <div class="review-group-header">
-                <span class="group-badge group-badge-sm">{{ group.get('groupName')?.value }}</span>
-                <span class="review-group-label">Gruppe {{ group.get('groupName')?.value }}</span>
+                <span class="group-badge group-badge-sm">{{ displayGroupBadge(group.get('groupName')?.value) }}</span>
+                <span class="review-group-label">{{ displayGroupLabel(group.get('groupName')?.value) }}</span>
               </div>
               <div class="review-team-list" formArrayName="teams">
                 @for (team of getTeamsFromArray(groupIndex).controls; track $index; let teamIndex = $index) {

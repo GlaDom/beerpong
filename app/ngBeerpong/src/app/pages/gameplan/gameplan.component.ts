@@ -5,6 +5,7 @@ import { DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { ConfigurationService } from '../../services/configuration.service';
 import { BeerpongStore } from '../../store/beerpong/beerpong.store';
+import { GameModes } from '../../api/game-modes.enum';
 import { Match } from '../../api/match.interface';
 import { Team } from '../../api/team.interface';
 
@@ -15,6 +16,7 @@ import { Team } from '../../api/team.interface';
   styleUrl: './gameplan.component.css'
 })
 export class GameplanComponent {
+  protected readonly GameModes = GameModes;
   private beerpongStore = inject(BeerpongStore);
   private configService = inject(ConfigurationService);
   private destroyRef = inject(DestroyRef);
@@ -24,6 +26,8 @@ export class GameplanComponent {
   public lastUpdateTime = signal<Date>(new Date());
   public isLoading = this.beerpongStore.isLoading;
   public isFinished = this.beerpongStore.isFinished;
+  public tournamentMode = this.beerpongStore.tournamentMode;
+  public isLeagueMode = computed(() => this.tournamentMode() === GameModes.LEAGUE);
 
   public groups = computed(() => this.configService.sortTeamsInGroups(this.beerpongStore.groups()));
   public regularMatches = computed(() => this.configService.sortMatches(this.beerpongStore.matches()));
@@ -33,8 +37,65 @@ export class GameplanComponent {
   public final = computed(() => this.configService.filterMatches('final', this.beerpongStore.matches()));
   public numberOfQualifiedTeams = computed(() => this.beerpongStore.currentGame().tournament.number_of_qualified_teams);
   public thirdPlace = computed(() => this.configService.filterMatches('Spiel um Platz 3', this.beerpongStore.matches()));
+  public leagueTableRows = computed(() => {
+    const teams = this.groups()[0]?.teams ?? [];
+    const finishedMatches = this.beerpongStore.matches().filter(m => m.type === 'regular' && this.isLocked(m));
+
+    return teams.map((team, index) => {
+      const playedMatches = finishedMatches.filter(match =>
+        match.home_team === team.team_name || match.away_team === team.team_name
+      );
+      const wins = playedMatches.filter(match =>
+        (match.home_team === team.team_name && match.points_home > match.points_away) ||
+        (match.away_team === team.team_name && match.points_away > match.points_home)
+      ).length;
+
+      return {
+        ...team,
+        rank: index + 1,
+        played: playedMatches.length,
+        wins,
+        losses: playedMatches.length - wins,
+      };
+    });
+  });
+  public leagueMatches = computed(() =>
+    [...this.beerpongStore.matches()]
+      .filter(match => match.type === 'regular')
+      .sort((left, right) => {
+        const leftTime = left.start_time ? new Date(left.start_time).getTime() : 0;
+        const rightTime = right.start_time ? new Date(right.start_time).getTime() : 0;
+        if (leftTime !== rightTime) {
+          return leftTime - rightTime;
+        }
+        return (left.match_id ?? 0) - (right.match_id ?? 0);
+      })
+  );
+  public playedRegularMatchCount = computed(() =>
+    this.leagueMatches().filter(match => this.isLocked(match)).length
+  );
+  public openRegularMatchCount = computed(() =>
+    Math.max(0, this.leagueMatches().length - this.playedRegularMatchCount())
+  );
+  public liveRegularMatchCount = computed(() => {
+    const now = Date.now();
+    return this.leagueMatches().filter(match => {
+      if (this.isLocked(match) || !match.start_time) {
+        return false;
+      }
+      const start = new Date(match.start_time).getTime();
+      const end = match.end_time ? new Date(match.end_time).getTime() : start;
+      return start <= now && end >= now;
+    }).length;
+  });
+  public primaryViewLabel = computed(() => this.isLeagueMode() ? 'Liga-Board' : 'Match-Grid');
+  public regularPhaseLabel = computed(() => this.isLeagueMode() ? 'Liga-Phase' : 'Gruppenphase');
+  public regularPhaseTitle = computed(() => this.isLeagueMode() ? 'Liga-Tabelle' : 'Gruppenphase');
 
   public hasActiveGame = computed(() => this.groups().length > 0);
+  public totalTeamCount = computed(() =>
+    this.groups().reduce((sum, group) => sum + group.teams.length, 0)
+  );
 
   public groupMatchCount = computed(() =>
     this.beerpongStore.matches().filter(m => m.type === 'regular').length
@@ -52,7 +113,7 @@ export class GameplanComponent {
 
   public currentPhase = computed(() => {
     const phases = [
-      { matches: this.beerpongStore.matches().filter(m => m.type === 'regular'), label: 'Gruppenphase' },
+      { matches: this.beerpongStore.matches().filter(m => m.type === 'regular'), label: this.regularPhaseLabel() },
       { matches: this.roundOfsixteen(), label: 'Achtelfinale' },
       { matches: this.quaterFinals(), label: 'Viertelfinale' },
       { matches: this.semiFinals(), label: 'Halbfinale' },
@@ -62,7 +123,7 @@ export class GameplanComponent {
     const active = phases.find(p => p.matches.length > 0 && p.matches.some(m => !this.isLocked(m)));
     if (active) return active.label;
     const last = [...phases].reverse().find(p => p.matches.length > 0);
-    return last?.label ?? 'Gruppenphase';
+    return last?.label ?? this.regularPhaseLabel();
   });
 
   public allMatchesFlat = computed(() => {
@@ -70,7 +131,11 @@ export class GameplanComponent {
     const result: { match: Match; phaseLabel: string; isKO: boolean }[] = [];
     all.filter(m => m.type === 'regular')
       .sort((a, b) => (a.match_id ?? 0) - (b.match_id ?? 0))
-      .forEach(m => result.push({ match: m, phaseLabel: `Gruppe ${m.group_number}`, isKO: false }));
+      .forEach(m => result.push({
+        match: m,
+        phaseLabel: this.isLeagueMode() ? this.regularPhaseLabel() : `Gruppe ${m.group_number}`,
+        isKO: false,
+      }));
     const ko: [string, string][] = [
       ['round_of_16', 'Achtelfinale'],
       ['quaterFinal', 'Viertelfinale'],
