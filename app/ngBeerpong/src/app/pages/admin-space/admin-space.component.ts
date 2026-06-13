@@ -103,7 +103,9 @@ export class AdminSpaceComponent {
   );
 
   constructor() {
-    this.beerpongStore.loadGame();
+    if (!this.beerpongStore.currentGame().tournament.id) {
+      this.beerpongStore.loadGame();
+    }
     effect(() => {
       const status = this.beerpongStore.toastStatus();
       if (!status || status === 'notset') return;

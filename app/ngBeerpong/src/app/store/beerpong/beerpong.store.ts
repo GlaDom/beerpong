@@ -1,6 +1,8 @@
 import { computed, inject } from '@angular/core';
 import { signalStore, withState, withComputed, withMethods, patchState } from '@ngrx/signals';
-import { firstValueFrom } from 'rxjs';
+import { rxMethod } from '@ngrx/signals/rxjs-interop';
+import { EMPTY, firstValueFrom, pipe } from 'rxjs';
+import { catchError, exhaustMap, switchMap, tap } from 'rxjs/operators';
 import { ConfigurationService } from '../../services/configuration.service';
 import { GameModes } from '../../api/game-modes.enum';
 import { GameState } from '../../models/game-state.model';
@@ -110,19 +112,25 @@ export const BeerpongStore = signalStore(
       }
     },
 
-    async createGame(game: NewTournament): Promise<void> {
-      try {
-        await firstValueFrom(configService.CreateGame(game));
-        const currentGame = await firstValueFrom(configService.GetGame(''));
-        patchState(store, {
-          currentGame: currentGame as unknown as GameState,
-          toastStatus: 'notset',
-          isLoading: false,
-        });
-      } catch (e) {
-        console.error('error create game', e);
-      }
-    },
+    createGame: rxMethod<NewTournament>(
+      pipe(
+        exhaustMap((game) =>
+          configService.CreateGame(game).pipe(
+            tap((currentGame) => {
+              patchState(store, {
+                currentGame: currentGame as unknown as GameState,
+                toastStatus: 'notset',
+                isLoading: false,
+              });
+            }),
+            catchError((e) => {
+              console.error('error create game', e);
+              return EMPTY;
+            })
+          )
+        )
+      )
+    ),
 
     async updateMatch(match: Match): Promise<void> {
       try {
