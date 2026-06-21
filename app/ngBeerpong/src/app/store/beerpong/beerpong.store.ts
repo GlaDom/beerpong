@@ -98,6 +98,24 @@ export const BeerpongStore = signalStore(
       }
     },
 
+    refreshGame: rxMethod<void>(
+      switchMap(() =>
+        configService.GetGame('').pipe(
+          tap((game) => {
+            patchState(store, {
+              currentGame: game as unknown as GameState,
+              toastStatus: 'notset',
+              isLoading: false,
+            });
+          }),
+          catchError(() => {
+            patchState(store, { ...initialState, isLoading: false });
+            return EMPTY;
+          })
+        )
+      )
+    ),
+
     async loadLastGame(): Promise<void> {
       try {
         const game = await firstValueFrom(configService.GetLastGame(''));

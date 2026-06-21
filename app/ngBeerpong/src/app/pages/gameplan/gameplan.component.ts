@@ -1,4 +1,4 @@
-import { Component, computed, DestroyRef, inject, signal } from '@angular/core';
+import { Component, computed, DestroyRef, effect, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { interval } from 'rxjs';
 import { DatePipe } from '@angular/common';
@@ -8,10 +8,11 @@ import { BeerpongStore } from '../../store/beerpong/beerpong.store';
 import { GameModes } from '../../api/game-modes.enum';
 import { Match } from '../../api/match.interface';
 import { Team } from '../../api/team.interface';
+import { LoadingOverlayComponent } from '../../components/loading-overlay/loading-overlay.component';
 
 @Component({
   selector: 'app-gameplan',
-  imports: [DatePipe],
+  imports: [DatePipe, LoadingOverlayComponent],
   templateUrl: './gameplan.component.html',
   styleUrl: './gameplan.component.css'
 })
@@ -24,6 +25,8 @@ export class GameplanComponent {
 
   public view = signal<'grid' | 'table'>('grid');
   public lastUpdateTime = signal<Date>(new Date());
+  public updatedMatchKeys = signal(new Set<string>());
+  private previousScores = new Map<string, string>();
   public isLoading = this.beerpongStore.isLoading;
   public isFinished = this.beerpongStore.isFinished;
   public tournamentMode = this.beerpongStore.tournamentMode;
@@ -187,9 +190,37 @@ export class GameplanComponent {
   constructor() {
     this.beerpongStore.loadGame();
     interval(30000).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
-      this.beerpongStore.loadGame();
+      this.beerpongStore.refreshGame();
       this.lastUpdateTime.set(new Date());
     });
+
+    effect(() => {
+      const currentMatches = this.beerpongStore.matches();
+      const changed: string[] = [];
+
+      for (const m of currentMatches) {
+        const key = `${m.home_team}|${m.away_team}`;
+        const fp = `${m.points_home}:${m.points_away}`;
+        const prev = this.previousScores.get(key);
+        if (prev !== undefined && prev !== fp) changed.push(key);
+        this.previousScores.set(key, fp);
+      }
+
+      if (changed.length === 0) return;
+
+      this.updatedMatchKeys.update(s => { const n = new Set(s); changed.forEach(k => n.add(k)); return n; });
+      setTimeout(() => {
+        this.updatedMatchKeys.update(s => { const n = new Set(s); changed.forEach(k => n.delete(k)); return n; });
+      }, 700);
+    });
+  }
+
+  public matchKey(m: Match): string {
+    return `${m.home_team}|${m.away_team}`;
+  }
+
+  public isJustUpdated(m: Match): boolean {
+    return this.updatedMatchKeys().has(this.matchKey(m));
   }
 
   public isLocked(m: Match): boolean {

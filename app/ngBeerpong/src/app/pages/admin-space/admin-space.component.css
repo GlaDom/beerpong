@@ -13,28 +13,6 @@
   padding: 28px 28px 96px;
 }
 
-/* --- Loading --- */
-.admin-loading {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: calc(100vh - 65px);
-}
-.loading-dots { display: flex; gap: 8px; }
-.loading-dots span {
-  width: 10px; height: 10px;
-  border-radius: 50%;
-  background: var(--accent);
-  animation: loadPulse 1.2s ease-in-out infinite;
-}
-.loading-dots span:nth-child(2) { animation-delay: 0.2s; }
-.loading-dots span:nth-child(3) { animation-delay: 0.4s; }
-
-@keyframes loadPulse {
-  0%, 100% { opacity: 0.3; transform: scale(0.8); }
-  50% { opacity: 1; transform: scale(1); }
-}
-
 /* --- Empty state --- */
 .admin-empty-wrap {
   display: flex;

@@ -1,13 +1,7 @@
 <div class="gp-root">
 
   <!-- ===== LOADING ===== -->
-  @if (isLoading()) {
-  <div class="gp-loading">
-    <div class="gp-loading-dots">
-      <span></span><span></span><span></span>
-    </div>
-  </div>
-  }
+  <app-loading-overlay [show]="isLoading()" />
 
   <!-- ===== EMPTY STATE ===== -->
   @if (!hasActiveGame() && !isLoading()) {
@@ -337,7 +331,7 @@
 
         <div class="league-game-list">
           @for (match of leagueMatches(); track match.id ?? match.match_id; let last = $last) {
-          <div class="league-game-row" [class.league-game-row-last]="last">
+          <div class="league-game-row" [class.league-game-row-last]="last" [class.match-card-updated]="isJustUpdated(match)">
             <span class="league-game-time">{{ match.start_time | date:'HH:mm' }}</span>
             <div class="league-game-body">
               <div class="league-game-teams">
@@ -399,8 +393,8 @@
 
         <!-- Match cards -->
         <div class="group-matches">
-          @for (m of regularMatches()[gi]; track $index) {
-          <div class="match-card" [class.match-card-locked]="isLocked(m)" [class.match-card-pending]="!isLocked(m)">
+          @for (m of regularMatches()[gi]; track m.home_team + '|' + m.away_team) {
+          <div class="match-card" [class.match-card-locked]="isLocked(m)" [class.match-card-pending]="!isLocked(m)" [class.match-card-updated]="isJustUpdated(m)">
             <div class="match-teams">
               <div class="match-team-row">
                 <span class="match-team-name" [class.match-winner]="isLocked(m) && m.points_home > m.points_away">
@@ -448,8 +442,8 @@
           <span class="ko-match-count">{{ roundOfsixteen().length }} Spiele</span>
         </div>
         <div class="ko-matches-grid">
-          @for (m of roundOfsixteen(); track $index) {
-          <div class="match-card" [class.match-card-locked]="isLocked(m)">
+          @for (m of roundOfsixteen(); track m.home_team + '|' + m.away_team) {
+          <div class="match-card" [class.match-card-locked]="isLocked(m)" [class.match-card-updated]="isJustUpdated(m)">
             <div class="match-teams">
               <div class="match-team-row">
                 <span class="match-team-name" [class.match-winner]="isLocked(m) && m.points_home > m.points_away">{{
@@ -487,8 +481,8 @@
           <span class="ko-match-count">{{ quaterFinals().length }} Spiele</span>
         </div>
         <div class="ko-matches-grid">
-          @for (m of quaterFinals(); track $index) {
-          <div class="match-card" [class.match-card-locked]="isLocked(m)">
+          @for (m of quaterFinals(); track m.home_team + '|' + m.away_team) {
+          <div class="match-card" [class.match-card-locked]="isLocked(m)" [class.match-card-updated]="isJustUpdated(m)">
             <div class="match-teams">
               <div class="match-team-row">
                 <span class="match-team-name" [class.match-winner]="isLocked(m) && m.points_home > m.points_away">{{
@@ -526,8 +520,8 @@
           <span class="ko-match-count">{{ semiFinals().length }} Spiele</span>
         </div>
         <div class="ko-matches-grid">
-          @for (m of semiFinals(); track $index) {
-          <div class="match-card" [class.match-card-locked]="isLocked(m)">
+          @for (m of semiFinals(); track m.home_team + '|' + m.away_team) {
+          <div class="match-card" [class.match-card-locked]="isLocked(m)" [class.match-card-updated]="isJustUpdated(m)">
             <div class="match-teams">
               <div class="match-team-row">
                 <span class="match-team-name" [class.match-winner]="isLocked(m) && m.points_home > m.points_away">{{
@@ -564,8 +558,8 @@
           <span class="ko-phase-label">Spiel um Platz 3</span>
         </div>
         <div class="ko-matches-grid">
-          @for (m of thirdPlace(); track $index) {
-          <div class="match-card" [class.match-card-locked]="isLocked(m)">
+          @for (m of thirdPlace(); track m.home_team + '|' + m.away_team) {
+          <div class="match-card" [class.match-card-locked]="isLocked(m)" [class.match-card-updated]="isJustUpdated(m)">
             <div class="match-teams">
               <div class="match-team-row">
                 <span class="match-team-name" [class.match-winner]="isLocked(m) && m.points_home > m.points_away">{{
@@ -602,8 +596,8 @@
           <span class="ko-phase-label">Finale</span>
         </div>
         <div class="ko-matches-grid">
-          @for (m of final(); track $index) {
-          <div class="match-card match-card-final" [class.match-card-locked]="isLocked(m)">
+          @for (m of final(); track m.home_team + '|' + m.away_team) {
+          <div class="match-card match-card-final" [class.match-card-locked]="isLocked(m)" [class.match-card-updated]="isJustUpdated(m)">
             <div class="match-teams">
               <div class="match-team-row">
                 <span class="match-team-name" [class.match-winner]="isLocked(m) && m.points_home > m.points_away">{{
@@ -647,8 +641,8 @@
         <span class="label" style="font-size:10px">Tisch</span>
         <span class="label" style="font-size:10px"></span>
       </div>
-      @for (row of allMatchesFlat(); track $index; let last = $last) {
-      <div class="tv-row" [class.tv-row-last]="last" [class.tv-row-live]="!isLocked(row.match)">
+      @for (row of allMatchesFlat(); track row.match.home_team + '|' + row.match.away_team; let last = $last) {
+      <div class="tv-row" [class.tv-row-last]="last" [class.tv-row-live]="!isLocked(row.match)" [class.match-card-updated]="isJustUpdated(row.match)">
         <span class="tv-time">{{ row.match.start_time | date:'HH:mm' }}</span>
         <span class="tv-phase-tag" [class.tv-phase-ko]="row.isKO">{{ row.phaseLabel }}</span>
         <span class="tv-team"

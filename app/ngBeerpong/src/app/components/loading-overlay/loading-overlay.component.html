@@ -1,0 +1,47 @@
+@if (show()) {
+  <div class="loading-overlay">
+    <div class="cupspin" role="status" [attr.aria-label]="label()">
+      <div class="cupspin__stage">
+        <div class="cupspin__shadow"></div>
+        <div class="cupspin__ball"></div>
+        <span class="cupspin__drop" style="--dx:-34px;--dy:-26px;width:8px;height:8px"></span>
+        <span class="cupspin__drop" style="--dx:-20px;--dy:-36px;width:6px;height:6px"></span>
+        <span class="cupspin__drop" style="--dx:-6px;--dy:-42px;width:7px;height:7px"></span>
+        <span class="cupspin__drop" style="--dx:10px;--dy:-40px;width:5px;height:5px"></span>
+        <span class="cupspin__drop" style="--dx:24px;--dy:-34px;width:7px;height:7px"></span>
+        <span class="cupspin__drop" style="--dx:37px;--dy:-22px;width:6px;height:6px"></span>
+        <svg class="cupspin__cup" width="120" height="120" viewBox="0 0 120 120" fill="none">
+          <defs>
+            <linearGradient id="cupGrad" x1="24" y1="50" x2="96" y2="108" gradientUnits="userSpaceOnUse">
+              <stop offset="0" stop-color="#FF6A54"/>
+              <stop offset="0.5" stop-color="#F5503C"/>
+              <stop offset="1" stop-color="#C9341F"/>
+            </linearGradient>
+            <linearGradient id="cupSheen" x1="36" y1="52" x2="50" y2="106" gradientUnits="userSpaceOnUse">
+              <stop offset="0" stop-color="#ffffff" stop-opacity="0.28"/>
+              <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <path d="M24,50 L96,50 L83,108 Q82,112 78,112 L42,112 Q38,112 37,108 Z" fill="url(#cupGrad)"/>
+          <path d="M30,52 L40,52 L33,106 L27,106 Z" fill="url(#cupSheen)"/>
+          <ellipse cx="60" cy="50" rx="36" ry="8.5" fill="#C9341F"/>
+          <ellipse cx="60" cy="49.5" rx="31" ry="6.6" fill="#7E1E11"/>
+          <g class="cupspin__liquid">
+            <ellipse cx="60" cy="49" rx="29" ry="5.6" fill="#EAF6FF"/>
+            <ellipse cx="60" cy="48.4" rx="29" ry="5.6" fill="#CDEBFF" opacity="0.85"/>
+            <ellipse cx="52" cy="47.4" rx="6" ry="1.7" fill="#ffffff" opacity="0.7"/>
+          </g>
+          <path d="M25.5,50.5 Q60,62 94.5,50.5" stroke="#FF7E6A" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.55"/>
+        </svg>
+      </div>
+    </div>
+    <div class="loading-overlay__text-wrap">
+      <span class="loading-overlay__label">
+        {{ label() }}<span class="loading-overlay__dots"><span>.</span><span>.</span><span>.</span></span>
+      </span>
+      @if (sublabel()) {
+        <span class="loading-overlay__sublabel">{{ sublabel() }}</span>
+      }
+    </div>
+  </div>
+}

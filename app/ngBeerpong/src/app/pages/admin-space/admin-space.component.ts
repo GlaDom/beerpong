@@ -4,6 +4,7 @@ import { MessageService } from 'primeng/api';
 import { ConfigurationService } from '../../services/configuration.service';
 import { BeerpongStore, Status } from '../../store/beerpong/beerpong.store';
 import { GameCardComponent } from '../../components/game-card/game-card.component';
+import { LoadingOverlayComponent } from '../../components/loading-overlay/loading-overlay.component';
 import { Match } from '../../api/match.interface';
 
 type PhaseId = 'group' | 'round_of_16' | 'quaterFinal' | 'semiFinal' | 'Spiel um Platz 3' | 'final';
@@ -17,7 +18,7 @@ interface PhaseInfo {
 
 @Component({
   selector: 'app-game-plan',
-  imports: [ToastModule, GameCardComponent],
+  imports: [ToastModule, GameCardComponent, LoadingOverlayComponent],
   providers: [MessageService],
   templateUrl: './admin-space.component.html',
   styleUrl: './admin-space.component.css'
