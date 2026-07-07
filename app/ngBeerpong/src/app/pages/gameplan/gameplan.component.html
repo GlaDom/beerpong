@@ -103,11 +103,21 @@
       <div class="ranking-card">
         <div class="ranking-card-header">
           <h3 class="ranking-card-title">Gesamtwertung</h3>
+          <button type="button" class="btn-ghost btn-sm">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8" />
+              <polyline points="16 6 12 2 8 6" />
+              <line x1="12" y1="2" x2="12" y2="15" />
+            </svg>
+            Exportieren
+          </button>
         </div>
         <!-- Table header -->
         <div class="ranking-head">
           <span class="label" style="font-size:10px">#</span>
           <span class="label" style="font-size:10px">Team</span>
+          <span class="label" style="font-size:10px;text-align:right">Spiele</span>
           <span class="label" style="font-size:10px;text-align:right">+/-</span>
           <span class="label" style="font-size:10px;text-align:right">B</span>
           <span class="label" style="font-size:10px;text-align:right">Punkte</span>
@@ -119,6 +129,7 @@
             {{ row.place }}
           </span>
           <span class="ranking-team" [class.ranking-team-bold]="row.place <= 3">{{ row.team_name }}</span>
+          <span class="ranking-mono">{{ row.played }}</span>
           <span class="ranking-mono"
             [style.color]="row.cup_difference>0?'var(--accent)':row.cup_difference<0?'var(--cup)':'var(--fg-2)'">
             {{ row.cup_difference > 0 ? '+' : '' }}{{ row.cup_difference }}
@@ -137,6 +148,19 @@
             <polyline points="9 22 9 12 15 12 15 22" />
           </svg>
           Zum Home
+        </button>
+        <button type="button" class="btn-primary" (click)="goToSetup()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9" />
+            <path d="M18 3v6h-6" />
+          </svg>
+          Neues Turnier starten
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+            stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12" />
+            <polyline points="12 5 19 12 12 19" />
+          </svg>
         </button>
       </div>
     </div>
@@ -190,6 +214,17 @@
               <line x1="3" y1="18" x2="3.01" y2="18" />
             </svg>
             Tabelle
+          </button>
+          <button class="view-btn" [class.view-btn-active]="view() === 'ranking'" (click)="setView('ranking')">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
+              [attr.stroke]="view()==='ranking'?'var(--accent)':'currentColor'"
+              [attr.stroke-width]="view()==='ranking'?2:1.6" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M6 9H4.5a2.5 2.5 0 010-5H6" />
+              <path d="M18 9h1.5a2.5 2.5 0 000-5H18" />
+              <path d="M4 22h16" />
+              <path d="M18 2H6v7a6 6 0 0012 0V2z" />
+            </svg>
+            Ranking
           </button>
         </div>
         <button type="button" class="btn-ghost" (click)="refreshNow()">
@@ -679,6 +714,83 @@
         </span>
       </div>
       }
+    </div>
+    }
+
+    <!-- ===== RANKING VIEW ===== -->
+    @if (view() === 'ranking') {
+    <div class="ranking-view">
+      @if (podium().length >= 3) {
+      <div class="podium">
+        <!-- 2nd place (left) -->
+        <div class="podium-step">
+          <div class="podium-card">
+            <div class="podium-medal" style="color:#B0BEC5">🥈</div>
+            <div class="podium-team-name">{{ podium()[1].team_name }}</div>
+            <div class="podium-team-stats">
+              <span>{{ podium()[1].points }} Pkt</span>
+              <span>{{ podium()[1].cups_hit }} B</span>
+            </div>
+          </div>
+          <div class="podium-block podium-block-2">2</div>
+        </div>
+        <!-- 1st place (center) -->
+        <div class="podium-step">
+          <div class="podium-card podium-card-winner">
+            <div class="podium-crown">👑</div>
+            <div class="podium-medal" style="color:#FFD54F">🏆</div>
+            <div class="podium-team-name podium-team-winner">{{ podium()[0].team_name }}</div>
+            <div class="podium-team-stats">
+              <span>{{ podium()[0].points }} Pkt</span>
+              <span>{{ podium()[0].cups_hit }} B</span>
+            </div>
+          </div>
+          <div class="podium-block podium-block-1">1</div>
+        </div>
+        <!-- 3rd place (right) -->
+        <div class="podium-step">
+          <div class="podium-card">
+            <div class="podium-medal" style="color:#CD7F32">🥉</div>
+            <div class="podium-team-name">{{ podium()[2].team_name }}</div>
+            <div class="podium-team-stats">
+              <span>{{ podium()[2].points }} Pkt</span>
+              <span>{{ podium()[2].cups_hit }} B</span>
+            </div>
+          </div>
+          <div class="podium-block podium-block-3">3</div>
+        </div>
+      </div>
+      }
+
+      <div class="ranking-card">
+        <div class="ranking-card-header">
+          <h3 class="ranking-card-title">Aktuelle Wertung</h3>
+        </div>
+        <div class="ranking-head">
+          <span class="label" style="font-size:10px">#</span>
+          <span class="label" style="font-size:10px">Team</span>
+          <span class="label" style="font-size:10px;text-align:right">Spiele</span>
+          <span class="label" style="font-size:10px;text-align:right">+/-</span>
+          <span class="label" style="font-size:10px;text-align:right">B</span>
+          <span class="label" style="font-size:10px;text-align:right">Punkte</span>
+        </div>
+        @for (row of finalRanking(); track $index; let last = $last) {
+        <div class="ranking-row" [class.ranking-row-podium]="row.place <= 3" [class.ranking-row-last]="last">
+          <span class="ranking-place"
+            [style.color]="row.place===1?'#FFD54F':row.place===2?'#B0BEC5':row.place===3?'#CD7F32':'var(--fg-3)'">
+            {{ row.place }}
+          </span>
+          <span class="ranking-team" [class.ranking-team-bold]="row.place <= 3">{{ row.team_name }}</span>
+          <span class="ranking-mono">{{ row.played }}</span>
+          <span class="ranking-mono"
+            [style.color]="row.cup_difference>0?'var(--accent)':row.cup_difference<0?'var(--cup)':'var(--fg-2)'">
+            {{ row.cup_difference > 0 ? '+' : '' }}{{ row.cup_difference }}
+          </span>
+          <span class="ranking-mono">{{ row.cups_hit }}</span>
+          <span class="ranking-pts" [class.ranking-pts-podium]="row.place <= 3">{{ row.points }}</span>
+        </div>
+        }
+      </div>
     </div>
     }
 

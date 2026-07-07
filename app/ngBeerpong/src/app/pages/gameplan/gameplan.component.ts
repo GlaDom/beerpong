@@ -23,7 +23,7 @@ export class GameplanComponent {
   private destroyRef = inject(DestroyRef);
   private router = inject(Router);
 
-  public view = signal<'grid' | 'table'>('grid');
+  public view = signal<'grid' | 'table' | 'ranking'>('grid');
   public lastUpdateTime = signal<Date>(new Date());
   public updatedMatchKeys = signal(new Set<string>());
   private previousScores = new Map<string, string>();
@@ -152,10 +152,14 @@ export class GameplanComponent {
     return result;
   });
 
-  public finalRanking = computed((): Array<Team & { place: number }> => {
+  public finalRanking = computed((): Array<Team & { place: number; played: number }> => {
     const allTeams = this.groups().flatMap(g => g.teams);
-    const ranked: Array<Team & { place: number }> = [];
+    const allMatches = this.beerpongStore.matches();
+    const ranked: Array<Team & { place: number; played: number }> = [];
     const placed = new Set<string>();
+
+    const getPlayed = (teamName: string) =>
+      allMatches.filter(m => this.isLocked(m) && (m.home_team === teamName || m.away_team === teamName)).length;
 
     const fin = this.final().find(m => this.isLocked(m));
     if (fin) {
@@ -163,7 +167,7 @@ export class GameplanComponent {
       const lName = fin.points_home >= fin.points_away ? fin.away_team : fin.home_team;
       [wName, lName].forEach((name, idx) => {
         const t = allTeams.find(t => t.team_name === name);
-        if (t && !placed.has(name)) { ranked.push({ ...t, place: idx + 1 }); placed.add(name); }
+        if (t && !placed.has(name)) { ranked.push({ ...t, place: idx + 1, played: getPlayed(name) }); placed.add(name); }
       });
     }
 
@@ -173,14 +177,14 @@ export class GameplanComponent {
       const lName = third.points_home >= third.points_away ? third.away_team : third.home_team;
       [wName, lName].forEach(name => {
         const t = allTeams.find(t => t.team_name === name);
-        if (t && !placed.has(name)) { ranked.push({ ...t, place: ranked.length + 1 }); placed.add(name); }
+        if (t && !placed.has(name)) { ranked.push({ ...t, place: ranked.length + 1, played: getPlayed(name) }); placed.add(name); }
       });
     }
 
     allTeams
       .filter(t => !placed.has(t.team_name))
       .sort((a, b) => b.points !== a.points ? b.points - a.points : b.cup_difference - a.cup_difference)
-      .forEach(t => { ranked.push({ ...t, place: ranked.length + 1 }); placed.add(t.team_name); });
+      .forEach(t => { ranked.push({ ...t, place: ranked.length + 1, played: getPlayed(t.team_name) }); placed.add(t.team_name); });
 
     return ranked.map((r, i) => ({ ...r, place: i + 1 }));
   });
@@ -231,12 +235,16 @@ export class GameplanComponent {
     return (this.regularMatches()[gi] ?? []).filter(m => this.isLocked(m)).length;
   }
 
-  public setView(v: 'grid' | 'table'): void {
+  public setView(v: 'grid' | 'table' | 'ranking'): void {
     this.view.set(v);
   }
 
   public goHome(): void {
     this.router.navigate(['/home']);
+  }
+
+  public goToSetup(): void {
+    this.router.navigate(['/gameconfiguration']);
   }
 
   public refreshNow(): void {
