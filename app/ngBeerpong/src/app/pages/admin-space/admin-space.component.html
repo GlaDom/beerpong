@@ -1,19 +1,206 @@
-<p-toast></p-toast>
-<div class="m-8 grid grid-cols-12 h-full"> 
-    <div class="col-span-12 mb-4 h-full">
-        @if (isLoading) {
-            <div class="flex h-full justify-center">
-                <div class="flex flex-col justify-center items-center gap-4">
-                    <p-progressSpinner styleClass="w-2rem h-2rem" strokeWidth="4" animationDuration="1s"></p-progressSpinner>
-                    <p>Lade Daten...</p>
-                </div>
-            </div>
-        } @else {
-            @if (matches && matches.length > 0) {
-                <app-mode-s-gf-t [groups]="groups" [showRanking]="this.showRanking" [gameId]="gameId" [gameMode]="gameMode" [sortedMatches]="sortedMatches" [roundOfsixteen]="roundOfsixteen" [quaterFinalMatches]="quaterFinalMatches" [semiFinalMatches]="semiFinalMatches" [thirdPlaceMatch]="thirdPlaceMatch" [finalMatches]="finalMatch"></app-mode-s-gf-t>
-            } @else if (matches.length === 0 && !showRanking) {
-                <app-beerpong-setup></app-beerpong-setup>
-            }
-        }
+<p-toast position="top-right" />
+
+<div class="admin-root">
+
+  <!-- ===== LOADING ===== -->
+  <app-loading-overlay [show]="isLoading()" />
+
+  <!-- ===== EMPTY STATE ===== -->
+  @if (!isLoading() && !hasMatches()) {
+  <div class="admin-empty-wrap">
+    <div class="empty-card">
+      <div class="empty-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--fg-3)" stroke-width="1.8"
+          stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+          <line x1="3" y1="9" x2="21" y2="9" />
+          <line x1="9" y1="21" x2="9" y2="9" />
+        </svg>
+      </div>
+      <h2 class="empty-title">Kein aktives Turnier</h2>
+      <p class="empty-body">Erstelle zuerst ein Turnier, um den Spielbetrieb zu starten.</p>
     </div>
+  </div>
+  }
+
+  <!-- ===== ACTIVE GAME ===== -->
+  @if (!isLoading() && hasMatches()) {
+  <div class="admin-inner">
+
+    <!-- Header -->
+    <div class="admin-header">
+      <div>
+        <div class="label" style="margin-bottom:6px">Admin · Turnierleitung</div>
+        <h1 class="admin-title">
+          {{ activePhaseLabel() }}
+        </h1>
+        <div class="admin-header-meta">
+          <span class="meta-chip">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--fg-3)" stroke-width="1.8"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+              <circle cx="9" cy="7" r="4" />
+              <path d="M23 21v-2a4 4 0 00-3-3.87" />
+              <path d="M16 3.13a4 4 0 010 7.75" />
+            </svg>
+            {{ groups().length }} Gruppen · {{ groups().length * (groups()[0]?.teams?.length ?? 0) }} Teams
+          </span>
+          <span class="meta-dot"></span>
+          <span class="meta-chip">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--fg-3)" stroke-width="1.8"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M6 9H4.5a2.5 2.5 0 010-5H6" />
+              <path d="M18 9h1.5a2.5 2.5 0 000-5H18" />
+              <path d="M4 22h16" />
+              <path d="M18 2H6v7a6 6 0 0012 0V2z" />
+            </svg>
+            {{ phaseProgress().locked }} / {{ phaseProgress().total }} eingetragen
+          </span>
+        </div>
+      </div>
+
+      @if (phaseCta()) {
+      <button type="button" class="btn-primary" [class.btn-danger]="isFinalPhase()"
+        [disabled]="!phaseProgress().complete" (click)="advancePhase()">
+        @if (isFinalPhase()) {
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6 9H4.5a2.5 2.5 0 010-5H6" />
+          <path d="M18 9h1.5a2.5 2.5 0 000-5H18" />
+          <path d="M4 22h16" />
+          <path d="M18 2H6v7a6 6 0 0012 0V2z" />
+        </svg>
+        } @else {
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+          stroke-linecap="round" stroke-linejoin="round">
+          <line x1="5" y1="12" x2="19" y2="12" />
+          <polyline points="12 5 19 12 12 19" />
+        </svg>
+        }
+        {{ phaseCta() }}
+      </button>
+      }
+    </div>
+
+    <!-- Phase tab switcher -->
+    <div class="phase-tabs-wrap">
+      <div class="phase-progress-label">
+        <span class="label">Turnierfortschritt</span>
+        <span class="phase-progress-count">{{ phaseProgress().locked }}/{{ phaseProgress().total }} Spiele
+          eingetragen</span>
+      </div>
+      <div class="phase-tabs">
+        @for (p of phases(); track p.id; let i = $index; let last = $last) {
+        <button type="button" class="phase-tab-btn" [class.phase-tab-active]="activePhase() === p.id"
+          [class.phase-tab-done]="activePhase() !== p.id && isPhaseComplete(p)" (click)="setPhase(p.id)">
+          <span class="phase-tab-bubble" [class.phase-tab-bubble-active]="activePhase() === p.id"
+            [class.phase-tab-bubble-done]="activePhase() !== p.id && isPhaseComplete(p)">
+            @if (activePhase() !== p.id && isPhaseComplete(p)) {
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5"
+              stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+            } @else {
+            {{ i + 1 }}
+            }
+          </span>
+          <span class="phase-tab-label">{{ p.label }}</span>
+          @if (p.matches.length > 0) {
+          <span class="phase-tab-count" [class.phase-tab-count-done]="isPhaseComplete(p)">
+            {{ lockedCount(p) }}/{{ p.matches.length }}
+          </span>
+          }
+        </button>
+        @if (!last) {
+        <div class="phase-tab-connector" [class.phase-tab-connector-done]="isPhaseComplete(p)">
+        </div>
+        }
+        }
+      </div>
+    </div>
+
+    <!-- ===== GROUP PHASE ===== -->
+    @if (activePhase() === 'group') {
+
+    <!-- Group standings strip -->
+    <div class="group-standings-strip"
+      [style.grid-template-columns]="'repeat(' + groups().length + ', minmax(0, 1fr))'">
+      @for (g of groups(); track $index; let gi = $index) {
+      <div class="standings-card">
+        <div class="standings-card-header">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="group-badge-sm">{{ g.group_name }}</span>
+            <span class="standings-group-name">Gruppe {{ g.group_name }}</span>
+          </div>
+          <span class="standings-lock-count"
+            [class.standings-lock-done]="lockedInGroup(gi) === (sortedMatches()[gi]?.length ?? 0) && (sortedMatches()[gi]?.length ?? 0) > 0">
+            {{ lockedInGroup(gi) }}/{{ sortedMatches()[gi]?.length ?? 0 }}
+            @if (lockedInGroup(gi) === (sortedMatches()[gi]?.length ?? 0) && (sortedMatches()[gi]?.length ?? 0) > 0) {
+            ✓
+            }
+          </span>
+        </div>
+        @for (t of g.teams; track $index; let ti = $index) {
+        <div class="standings-row" [class.standings-row-sep]="ti > 0">
+          <span class="standings-pos" [class.standings-pos-qual]="ti < numberOfQualifiedTeams()">
+            @if (ti < numberOfQualifiedTeams()) { <span class="qual-bar"></span>
+          }
+          {{ ti + 1 }}
+          </span>
+          <span class="standings-name" [class.standings-name-qual]="ti < numberOfQualifiedTeams()">{{ t.team_name
+            }}</span>
+          <span class="standings-diff" [class.standings-diff-pos]="t.cup_difference > 0">
+            {{ t.cup_difference > 0 ? '+' : '' }}{{ t.cup_difference }}
+          </span>
+          <span class="standings-pts" [class.standings-pts-qual]="ti < numberOfQualifiedTeams()">{{ t.points }}</span>
+        </div>
+        }
+      </div>
+      }
+    </div>
+
+    <!-- Match cards per group -->
+    @for (g of groups(); track $index; let gi = $index) {
+    <div class="matches-section">
+      <div class="matches-section-header">
+        <span class="group-badge">{{ g.group_name }}</span>
+        <h3 class="matches-section-title">Gruppe {{ g.group_name }}</h3>
+        <span class="matches-section-count">
+          {{ lockedInGroup(gi) }}/{{ sortedMatches()[gi]?.length ?? 0 }}
+        </span>
+      </div>
+      <div class="matches-grid">
+        @for (m of sortedMatches()[gi]; track m.id) {
+        <app-game-card [match]="m" />
+        }
+      </div>
+    </div>
+    }
+    }
+
+    <!-- ===== KO PHASES ===== -->
+    @if (activePhase() !== 'group') {
+    <div class="ko-matches-wrap">
+      @if (activeKoMatches().length === 0) {
+      <div class="ko-pending">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--fg-3)" stroke-width="1.8"
+          stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10" />
+          <polyline points="12 6 12 12 16 14" />
+        </svg>
+        <span>Wartet auf vorhergehende Phase</span>
+      </div>
+      } @else {
+      <div class="matches-grid matches-grid-ko">
+        @for (m of activeKoMatches(); track m.id) {
+        <app-game-card [match]="m" [showGroupName]="false" />
+        }
+      </div>
+      }
+    </div>
+    }
+
+  </div>
+  }
+
 </div>

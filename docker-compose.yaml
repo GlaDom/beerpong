@@ -1,32 +1,42 @@
-version: '3.7'
+# Production stack — skbeerpong.com
+#
+# First-time VPS setup:
+#   1. Fill in traefik/traefik.yml (ACME email) and traefik/dynamic.yml (htpasswd hash)
+#   2. mkdir traefik/letsencrypt && touch traefik/letsencrypt/acme.json && chmod 600 traefik/letsencrypt/acme.json
+#   3. cp .env.example .env  and fill in all values
+#   4. Create config.json next to this file — DB host must be "localhost" (not "db")
+#   5. docker compose pull && docker compose up -d
+#
+# Update to a new image:
+#   FRONTEND_TAG=frontend/v0.2.0 BACKEND_TAG=backend/v0.3.0 docker compose up -d --no-deps frontend backend
 
 services:
-  db:
-    image: postgres:latest
-    container_name: postgres-db
-    restart: always
-    environment:
-      POSTGRES_DB: beerpong
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: beerpong
-    ports:
-      - "5433:5432"
 
-  pgadmin:
-    image: dpage/pgadmin4
-    container_name: pgadmin
-    restart: always
-    ports:
-      - "5051:80"
-    environment:
-      PGADMIN_DEFAULT_EMAIL: beerpong@web.de
-      PGADMIN_DEFAULT_PASSWORD: beerpong
-
-  bpbackend:
-    image: gladom95/beeerpong-backend
-    container_name: bpbackend
-    ports:
-      - "8082:8082"
+  traefik:
+    image: traefik:v3.3
+    container_name: traefik
+    restart: unless-stopped
+    network_mode: host
+    security_opt:
+      - no-new-privileges:true
     volumes:
-      - ./go/cmd/config.json:/app/beerpong-server/
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./traefik/traefik.yml:/traefik.yml:ro
+      - ./traefik/dynamic.yml:/dynamic.yml:ro
+      - ./traefik/letsencrypt:/letsencrypt
+      - ./traefik/resolv.conf:/etc/resolv.conf
 
+  frontend:
+    image: ${DOCKERHUB_USERNAME}/beerpong-frontend:${FRONTEND_TAG:-latest}
+    container_name: frontend
+    restart: unless-stopped
+    network_mode: host
+
+  backend:
+    image: ${DOCKERHUB_USERNAME}/beerpong-backend:${BACKEND_TAG:-latest}
+    container_name: backend
+    restart: unless-stopped
+    network_mode: host
+    volumes:
+      # Auth0 + DB credentials — DB host must be "localhost"
+      - ./config.json:/app/config.json:ro

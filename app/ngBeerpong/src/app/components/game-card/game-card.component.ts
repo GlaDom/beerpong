@@ -1,33 +1,15 @@
-import { Component, Input, OnInit, Output } from '@angular/core';
-import { CardModule } from 'primeng/card';
-import { DividerModule } from 'primeng/divider';
-import { InputNumberModule } from 'primeng/inputnumber';
-import { ChipModule } from 'primeng/chip';
-import { ButtonModule } from 'primeng/button';
-import {Match} from '../../api/match.interface';
-import { FormControl, FormGroup, FormsModule, NgModel, ReactiveFormsModule, Validators } from '@angular/forms';
-import { BeerpongState } from '../../store/beerpong/game.state';
-import { Store } from '@ngrx/store';
-import { setToastStatus, updateMatch, updateTeams } from '../../store/beerpong/beerpong.actions';
-import {TeamUpdate} from '../../api/team-update.interface';
-import { TagModule } from 'primeng/tag';
-import { DatePipe, NgIf } from '@angular/common';
+import { Component, Input, OnInit } from '@angular/core';
+import { Match } from '../../api/match.interface';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { BeerpongStore } from '../../store/beerpong/beerpong.store';
+import { inject } from '@angular/core';
+import { TeamUpdate } from '../../api/team-update.interface';
+import { DatePipe } from '@angular/common';
 import { numericValidator } from '../../shared/validators/numeric-validator';
 
 @Component({
     selector: 'app-game-card',
-    imports: [
-        CardModule,
-        DividerModule,
-        InputNumberModule,
-        ChipModule,
-        ButtonModule,
-        FormsModule,
-        TagModule,
-        DatePipe,
-        ReactiveFormsModule,
-        NgIf,
-    ],
+    imports: [DatePipe, ReactiveFormsModule],
     templateUrl: './game-card.component.html',
     styleUrl: './game-card.component.css'
 })
@@ -55,9 +37,17 @@ export class GameCardComponent implements OnInit {
 
   label: "success" | "secondary" | "info" | "warn" | "danger" | "contrast" | "help" | "primary" | null | undefined = 'primary';
 
-  constructor(
-    private beerpongstore: Store<BeerpongState>,
-  ) {}
+  private beerpongStore = inject(BeerpongStore);
+
+  get isLockedState(): boolean { return this.label === 'contrast'; }
+
+  get homeWins(): boolean {
+    return this.isLockedState && (this.points_home?.value ?? 0) > (this.points_away?.value ?? 0);
+  }
+
+  get awayWins(): boolean {
+    return this.isLockedState && (this.points_away?.value ?? 0) > (this.points_home?.value ?? 0);
+  }
 
   ngOnInit(): void {
     if(this.match.points_home>0 || this.match.points_away>0) {
@@ -80,7 +70,7 @@ export class GameCardComponent implements OnInit {
   // method to lock the match points and send request to backend
   setLocked(): void {
     if(this.points_home?.invalid || this.points_away?.invalid) {
-      this.beerpongstore.dispatch(setToastStatus({toastStatus: 'invalid match result'}))
+      this.beerpongStore.setToastStatus('invalid match result');
       return
     }
     if(this.label == 'primary') {
@@ -99,9 +89,9 @@ export class GameCardComponent implements OnInit {
         if(typeof this.points_away?.value === 'number') {
           m.points_away = this.points_away.value
         }
-        this.beerpongstore.dispatch(updateMatch({match: m}))
-        let teamsToUpdate = this.getTeamsToUpdate(m, updateTeamPoints)
-        this.beerpongstore.dispatch(updateTeams({teams: teamsToUpdate}))
+        this.beerpongStore.updateMatch(m);
+        const teamsToUpdate = this.getTeamsToUpdate(m, updateTeamPoints);
+        this.beerpongStore.updateTeams(teamsToUpdate);
         this.points_home?.disable()
         this.points_away?.disable()
       }
@@ -136,13 +126,22 @@ export class GameCardComponent implements OnInit {
     return newMatch
   }
 
+  private getTeamGroupName(teamName: string, fallback: string): string {
+    for (const group of this.beerpongStore.groups()) {
+      if (group.teams.some(t => t.team_name === teamName)) {
+        return group.group_name;
+      }
+    }
+    return fallback;
+  }
+
   getTeamsToUpdate(match: Match, updatePoints: boolean): TeamUpdate[] {
     let retval: TeamUpdate[] = []
     // Auswaertsteam
     let teamOne: TeamUpdate = {
       tournament_id: match.tournament_id,
       team_name: match.away_team,
-      group_name: match.group_number,
+      group_name: this.getTeamGroupName(match.away_team, match.group_number),
       points_to_add: 0,
       cups_hitted: match.points_away,
       cups_got: match.points_home
@@ -151,7 +150,7 @@ export class GameCardComponent implements OnInit {
     let teamTwo: TeamUpdate = {
       tournament_id: match.tournament_id,
       team_name: match.home_team,
-      group_name: match.group_number,
+      group_name: this.getTeamGroupName(match.home_team, match.group_number),
       points_to_add: 0,
       cups_hitted: match.points_home,
       cups_got: match.points_away

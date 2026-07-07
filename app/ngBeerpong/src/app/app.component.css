@@ -1,6 +1,145 @@
-hr {
-    border: none;
-    height: 2px;
-    background-color: #06D6A0;
-    margin: 20px 0;
+/* ============================================================
+   App Nav
+   ============================================================ */
+
+.app-nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: var(--nav-bg);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--border);
+}
+
+.nav-inner {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 14px 28px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+}
+
+/* Brand */
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+.nav-rack { flex-shrink: 0; }
+
+/* Pill nav */
+.nav-pills {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  padding: 4px;
+}
+
+.nav-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 16px;
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: var(--fg-2);
+  font-size: 13px;
+  font-weight: 600;
+  font-family: var(--font-body);
+  text-decoration: none;
+  transition: all 200ms;
+  white-space: nowrap;
+  border: none;
+  cursor: pointer;
+}
+
+.nav-pill svg { color: inherit; }
+
+.nav-pill:hover {
+  color: var(--fg-1);
+  background: var(--surface-2);
+}
+
+.nav-pill.pill-active {
+  background: var(--surface-3);
+  color: var(--fg-1);
+}
+
+.nav-pill.pill-active svg { color: var(--accent); }
+
+/* Right side */
+.nav-end {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.nav-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.nav-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.nav-user-info {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+
+.nav-username {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--fg-1);
+}
+
+.nav-role {
+  font-size: 11px;
+  color: var(--fg-3);
+}
+
+.nav-icon-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-md);
+  background: transparent;
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--fg-2);
+  transition: all 200ms;
+  flex-shrink: 0;
+}
+
+.nav-icon-btn:hover {
+  color: var(--fg-1);
+  border-color: var(--border-strong);
+  background: var(--surface-2);
 }

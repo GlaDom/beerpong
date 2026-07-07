@@ -1,7 +1,8 @@
 // game.interface.ts
 
 import Group from "./group.interface";
-import {Match} from "./match.interface";
+import { GameModes } from "./game-modes.enum";
+import { Match } from "./match.interface";
 import { Referee } from "./referee";
 import { Team } from "./team.interface";
 
@@ -25,6 +26,7 @@ import { Team } from "./team.interface";
 export interface Tournament {
   id?: number;
   user_sub: string;
+  mode: GameModes;
   amount_of_teams: number;
   groups: Group[];
   matches?: Match[];

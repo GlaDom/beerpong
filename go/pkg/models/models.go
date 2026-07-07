@@ -2,10 +2,16 @@ package models
 
 import "time"
 
+const (
+	TournamentModeGroup  = "group"
+	TournamentModeLeague = "league"
+)
+
 // Tournament repräsentiert die Tournament-Tabelle
 type Tournament struct {
 	ID                     int           `json:"id" gorm:"<-:create;primaryKey;autoIncrement"`
 	UserSub                string        `json:"user_sub"`
+	Mode                   string        `json:"mode"`
 	AmountOfTeams          int           `json:"amount_of_teams"`
 	Groups                 []Group       `json:"groups" gorm:"foreignKey:TournamentID;references:ID"`
 	Matches                []Match       `json:"matches" gorm:"foreignKey:TournamentID;references:ID"`
@@ -103,11 +109,6 @@ func (t Teams) Less(i, j int) bool {
 	}
 	return t[i].Points > t[j].Points
 }
-
-// Konstanten und Request Structs (unverändert)
-const (
-	GAME_MODE_30_TEAMS = iota //0
-)
 
 type NewTournament struct {
 	Tournament Tournament `json:"tournament"`

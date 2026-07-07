@@ -1,115 +1,83 @@
-import { Component } from '@angular/core';
-import { BeerpongState } from '../../store/beerpong/game.state';
-import { Store } from '@ngrx/store';
-import { finishGame, loadGame, loadLastGame } from '../../store/beerpong/beerpong.actions';
-import { PanelModule } from 'primeng/panel';
-import { CardModule } from 'primeng/card';
-import { ButtonModule } from 'primeng/button';
-import { async, Observable } from 'rxjs';
-import { selectLastGame } from '../../store/beerpong/beerpong.selectors';
-import { RankingComponent } from "../../components/ranking/ranking.component";
-import { GameState } from '../../models/game-state.model';
-import { CommonModule } from '@angular/common';
-import { TagModule } from 'primeng/tag';
+import { Component, computed, inject } from '@angular/core';
+import { BeerpongStore } from '../../store/beerpong/beerpong.store';
+import { UserStore } from '../../store/user/user.store';
 import { Router, RouterLink } from '@angular/router';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import {Team} from '../../api/team.interface';
 import { ConfigurationService } from '../../services/configuration.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
     selector: 'app-home',
     templateUrl: './home.component.html',
     styleUrl: './home.component.css',
     standalone: true,
-    imports: [PanelModule, CardModule, ButtonModule, RankingComponent, CommonModule, TagModule, RouterLink, ConfirmDialogModule],
+    imports: [ConfirmDialogModule, RouterLink, CommonModule],
     providers: [ConfirmationService, MessageService, ConfigurationService]
 })
 export class HomeComponent {
-  // public Variables
-  public lastGame$: Observable<GameState>;
-  public test: any;
+  private beerpongStore = inject(BeerpongStore);
+  private userStore = inject(UserStore);
+  private configService = inject(ConfigurationService);
+  private confirmationService = inject(ConfirmationService);
+  private messageService = inject(MessageService);
+  private router = inject(Router);
 
-  public lastGame: GameState;
-  public sortedTeams: Team[] = [];
+  protected lastGame = this.beerpongStore.lastGame;
 
-  constructor(private beerpongStore: Store<BeerpongState>, 
-    private confirmationService: ConfirmationService, 
-    private messageService: MessageService, 
-    private router: Router,
-    private configService: ConfigurationService) {
-    this.lastGame$ = this.beerpongStore.select(selectLastGame);
+  protected hasActiveGame = computed(() => {
+    const g = this.lastGame();
+    return g && !g.tournament.is_finished;
+  });
+
+  protected isFinished = computed(() => {
+    const g = this.lastGame();
+    return g?.tournament.is_finished ?? false;
+  });
+
+  protected userName = computed(() => {
+    const u = this.userStore.userDetails();
+    return u?.given_name ?? u?.name ?? u?.email ?? 'Spieler';
+  });
+
+  protected sortedTeams = computed(() => {
+    const groups = this.lastGame().tournament.groups;
+    if (groups.length === 0) return [];
+    return this.configService.sortTeamsByPointsAndCupDifference([...groups[0].teams]);
+  });
+
+  public tips = [
+    { tag: 'TIPP', icon: 'gavel', title: 'Schiedsrichter‑Liste',
+      body: 'Mehrere Schiedsis? Trag sie kommagetrennt ein, SK Beerpong verteilt die Spiele automatisch.' },
+    { tag: 'NEU', icon: 'qr', title: 'QR‑Code teilen',
+      body: 'Premium‑Funktion — generiere einen QR‑Code für deinen Live‑Spielplan. Spieler scannen, fertig.' },
+    { tag: 'GUT ZU WISSEN', icon: 'sparkles', title: '"Random Teams"',
+      body: 'In der Setup‑Phase: ein Klick auf "Zufällige Namen" und SK Beerpong füllt mit Kreativnamen aus der Datenbank.' },
+  ];
+
+  constructor() {
+    this.beerpongStore.loadLastGame();
   }
-  
-  ngOnInit(): void {
-    this.beerpongStore.dispatch(loadLastGame())
-    this.lastGame$.subscribe((game: GameState) => {
-      if (game.tournament.user_sub !== '') {
-        this.lastGame = game;
-        if (game && game.tournament && game.tournament.groups.length > 0) {
-          this.sortedTeams = Array.from(game.tournament.groups[0].teams);
-          this.sortedTeams = this.configService.sortTeamsByPointsAndCupDifference(this.sortedTeams);
-        }
-        console.log('Last game loaded:', game);
-      }
-    });
-  }
 
-  public getGameMode(mode: number): string {
-    switch (mode) {
-      case 0:
-        return '6 Gruppen je 5 Teams';
-      case 1:
-        return '1 Gruppe je 5 Teams';
-      default:
-        return 'Unknown Mode';
-    }
-  }
-
-  public newGame(path: string): void {
-    // This method can be used to navigate to different routes if needed
-    // For example, you can use the Angular Router to navigate
-    // this.router.navigate([path]);
-    if (this.lastGame && !this.lastGame.tournament.is_finished) {
+  public newGame(): void {
+    const game = this.lastGame();
+    if (game && !game.tournament.is_finished) {
       this.confirmationService.confirm({
-            message: 'Ein Spiel ist noch aktiv. Möchtest du das aktuelle Spiel beenden und ein neues Spiel starten?',
-            header: 'Achtung',
-            closable: true,
-            closeOnEscape: true,
-            icon: 'pi pi-exclamation-triangle',
-            rejectButtonProps: {
-                label: 'Abbrechen',
-                severity: 'secondary',
-                outlined: true,
-            },
-            acceptButtonProps: {
-                label: 'Ja',
-            },
-            accept: () => {
-                this.messageService.add({ severity: 'info', summary: 'Confirmed', detail: 'Aktuelles Spiel wird beendet' });
-                this.beerpongStore.dispatch(finishGame({ gameId: this.lastGame.tournament.id! }));
-                this.router.navigate([path]);
-            },
-            reject: () => {
-                this.messageService.add({
-                    severity: 'error',
-                    summary: 'Rejected',
-                    detail: 'You have rejected',
-                    life: 3000,
-                });
-            },
-        });
+        message: 'Ein Spiel ist noch aktiv. Möchtest du das aktuelle Spiel beenden und ein neues Spiel starten?',
+        header: 'Achtung',
+        closable: true,
+        closeOnEscape: true,
+        icon: 'pi pi-exclamation-triangle',
+        rejectButtonProps: { label: 'Abbrechen', severity: 'secondary', outlined: true },
+        acceptButtonProps: { label: 'Ja' },
+        accept: () => {
+          this.beerpongStore.finishGame(game.tournament.id!);
+          this.router.navigate(['/gameconfiguration']);
+        },
+        reject: () => {},
+      });
     } else {
-      this.router.navigate([path]);
-    }
-  }
-
-  public continueGame(): string {
-    if (this.lastGame && !this.lastGame.tournament.is_finished) {
-      return '';
-    } else {
-      return 'text-gray-500'
+      this.router.navigate(['/gameconfiguration']);
     }
   }
 }
-

@@ -1,28 +1,33 @@
 <p-toast />
 <p-confirmDialog />
-<ng-container *ngIf="!showRanking">
-    <p-tabView>
-        <p-tabPanel header="Gruppe A">
-            <div class="flex">
-                <div class="flex flex-row flex-wrap">
-                    <ng-container *ngFor="let m of regularMatches">
-                        <app-game-card [match]="m"></app-game-card>
-                    </ng-container>
+@if (!showRanking) {
+    <p-tabs value="0">
+        <p-tablist>
+            <p-tab value="0">Gruppe A</p-tab>
+        </p-tablist>
+        <p-tabpanels>
+            <p-tabpanel value="0">
+                <div class="flex">
+                    <div class="flex flex-row flex-wrap">
+                        @for (m of regularMatches; track $index) {
+                            <app-game-card [match]="m"></app-game-card>
+                        }
+                    </div>
                 </div>
-            </div>
-        </p-tabPanel>
-    </p-tabView>
+            </p-tabpanel>
+        </p-tabpanels>
+    </p-tabs>
     <div class="flex flex-row-reverse mt-5">
         <p-button (onClick)="updateFinal()" label="Gruppenphase abschliessen"></p-button>
     </div>
     <div class="mt-5">
         <p-fieldset legend="Finale">
             <div class="flex flex-row justify-around">
-                <ng-container *ngFor="let m of finalMatches">
+                @for (m of finalMatches; track $index) {
                     <div class="w-1/2">
                         <app-game-card [match]="m"></app-game-card>
                     </div>
-                </ng-container>
+                }
             </div>
         </p-fieldset>
     </div>
@@ -30,12 +35,12 @@
         <p-button severity="danger" (onClick)="confirmGameFinish($event)" label="Spiel sofort beenden"></p-button>
         <p-button (onClick)="setTournamentFinished()" label="Zur Tabelle"></p-button>
     </div>
-</ng-container>
-<ng-container *ngIf="showRanking">
+}
+@if (showRanking) {
     <app-ranking [teams]="getRanking()">
         <div class="flex gap-3 mt-1">
             <p-button label="Zurueck" (onClick)="backToAdminSpace()"></p-button>
             <p-button label="Spiel beenden" (onClick)="confirmGameFinish($event)"></p-button>
         </div>
     </app-ranking>
-</ng-container>
+}

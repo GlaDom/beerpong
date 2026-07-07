@@ -1,148 +1,320 @@
-<div class="flex flex-col h-screen">
-    <!-- <p-menubar>
-        <ng-template pTemplate="end">
-            <p-button label="Login" icon="pi pi-sign-in" [loading]="false" (onClick)="login()" size="small"></p-button>
-        </ng-template>
-    </p-menubar> -->
-    <div class="navbar flex flex-row justify-between h-20 items-center mx-20">
-        <div class="font-bold text-2xl">
-            <span>SKBeerpong</span>
-        </div>
-        <div class="menu flex flex-row gap-20 font-bold text-gray-500">
-            <div>
-                <a href="#features">Features</a>
-            </div>
-            <div>
-                <a href="#pricing">Pricing</a>
-            </div>
-            <div>
-                <a href="#faq">FAQ's</a>
-            </div>
-        </div>
-        <div class="loginBtn font-bold">
-            <button (click)="login()">Sign up</button>
-        </div>
+<div class="lp-root">
+
+  <!-- ===== PUBLIC NAV ===== -->
+  <header class="pub-nav">
+    <div class="pub-nav-inner">
+      <div class="pub-nav-brand">
+        <svg width="26" height="26" viewBox="0 0 40 40">
+          <g fill="var(--cup)">
+            <circle cx="11" cy="11" r="5.2"/><circle cx="20" cy="11" r="5.2"/><circle cx="29" cy="11" r="5.2"/>
+            <circle cx="15.5" cy="20" r="5.2"/><circle cx="24.5" cy="20" r="5.2"/><circle cx="20" cy="29" r="5.2"/>
+          </g>
+          <g fill="var(--bg)" opacity="0.45">
+            <circle cx="11" cy="11" r="2.1"/><circle cx="20" cy="11" r="2.1"/><circle cx="29" cy="11" r="2.1"/>
+            <circle cx="15.5" cy="20" r="2.1"/><circle cx="24.5" cy="20" r="2.1"/><circle cx="20" cy="29" r="2.1"/>
+          </g>
+        </svg>
+        <span class="wordmark">
+          <span style="letter-spacing:-0.05em">SK</span>
+          <span class="dot"></span>
+          <span style="letter-spacing:-0.04em">Beerpong</span>
+        </span>
+      </div>
+      <nav class="pub-nav-links">
+        <a href="#features" class="pub-nav-link">Features</a>
+        <a href="#pricing" class="pub-nav-link">Preise</a>
+        <a href="#faq" class="pub-nav-link">FAQ</a>
+      </nav>
+      <div class="pub-nav-actions">
+        <button class="btn-ghost" (click)="login()">Anmelden</button>
+        <button class="btn-primary" (click)="login()">
+          Registrieren
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+          </svg>
+        </button>
+      </div>
     </div>
-    <div class="content flex flex-col items-center mt-32 h-full overflow-y-auto">
-        <div class="flex flex-col justify-center items-center text-4xl font-bold">
-            <div>
-                <span>SKBeerpong - Einfach, schnell und intuitiv!</span>
-            </div>
-            <div>
-                <span>Zeig deinen Freunden wer der Beste ist!</span>
-            </div>
-        </div>
-        <div id="features" class="h-2/3 mt-24">
-            <div>features works</div>
-        </div>
-        <div id="pricing" class="h-2/3 mt-24 w-full">
-            <div>
-                <div class="flex justify-center items-center font-bold text-4xl">
-                    <span>Flexible Preisplaene</span>
-                </div>
-                <div id="pricing" class="flex flex-row gap-4 justify-center">
-                    <div class="flex flex-col gap-2.5 m-8 w-1/4">
-                        <div class="font-bold text-2xl">
-                            <span>Freier Plan</span>
-                        </div>
-                        <div class="flex flex-row">
-                            <div class="font-bold text-6xl">
-                                <span>$0</span>
-                            </div>
-                            <div class="flex items-end font-bold text-sm text-gray-500">
-                                <span>/pro Monat</span>
-                            </div>
-                        </div>
-                        <div class="font-bold text-gray-500 text-sm">Zugriff auf essentielle Features.</div>
-                        <div class="w-full my-2">
-                            <button class="pricingBtn">Jetzt kaufen</button>
-                        </div>
-                        <div>
-                            <div class="font-bold text-lg mb-2">
-                                <span>Was ist beinhaltet?</span>
-                            </div>
-                            <div class="flex flex-col gap-1.5">
-                                <div class="flex flex-row gap-2 items-center">
-                                    <i class="pi pi-check-circle" style="color: var(--primary)"></i>
-                                    <div class="text-gray-500 text-sm">
-                                        <span>Erstellen von Turnierplaenen</span>
-                                    </div>
-                                </div>
-                                <div class="flex flex-row gap-2 items-center">
-                                    <i class="pi pi-check-circle"></i>
-                                    <div class="text-gray-500 text-sm">
-                                        <span>Uneingeschraenkte Spielmodi</span>
-                                    </div>
-                                </div>
-                                <div class="flex flex-row gap-2 items-center">
-                                    <i class="pi pi-check-circle"></i>
-                                    <div class="text-gray-500 text-sm">
-                                        <span>Export des Spielplan (.pdf, .xlsx, .csv)</span>
-                                    </div>
-                                </div>
-                                <div class="flex flex-row gap-2 items-center">
-                                    <i class="pi pi-check-circle"></i>
-                                    <div class="text-gray-500 text-sm">
-                                        <span>Spielplan teilen via QR-Code</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="horizontal-divider"></div>
-                    <div class="flex flex-col gap-2.5 m-8 w-1/4">
-                        <div class="font-bold text-2xl">
-                            <span>Premium Plan</span>
-                        </div>
-                        <div class="flex flex-row">
-                            <div class="font-bold text-6xl">
-                                <span>$10</span>
-                            </div>
-                            <div class="flex items-end font-bold text-sm text-gray-500">
-                                <span>/pro Monat</span>
-                            </div>
-                        </div>
-                        <div class="font-bold text-gray-500 text-sm">Zugriff auf alle premium Features.</div>
-                        <div class="w-full my-2">
-                            <button class="pricingBtn">Jetzt kaufen</button>
-                        </div>
-                        <div>
-                            <div class="font-bold text-lg mb-2">
-                                <span>Was ist beinhaltet?</span>
-                            </div>
-                            <div class="flex flex-col gap-1.5">
-                                <div class="flex flex-row gap-2 items-center">
-                                    <i class="pi pi-check-circle" style="color: var(--primary)"></i>
-                                    <div class="text-gray-500 text-sm">
-                                        <span>Erstellen von Turnierplaenen</span>
-                                    </div>
-                                </div>
-                                <div class="flex flex-row gap-2 items-center">
-                                    <i class="pi pi-check-circle" style="color: var(--primary)"></i>
-                                    <div class="text-gray-500 text-sm">
-                                        <span>Uneingeschraenkte Spielmodi</span>
-                                    </div>
-                                </div>
-                                <div class="flex flex-row gap-2 items-center">
-                                    <i class="pi pi-check-circle" style="color: var(--primary)"></i>
-                                    <div class="text-gray-500 text-sm">
-                                        <span>Export des Spielplan (.pdf, .xlsx, .csv)</span>
-                                    </div>
-                                </div>
-                                <div class="flex flex-row gap-2 items-center">
-                                    <i class="pi pi-check-circle" style="color: var(--primary)"></i>
-                                    <div class="text-gray-500 text-sm">
-                                        <span>Spielplan teilen via QR-Code</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div id="faq" class="h-2/3 mt-24">
-            <div>faq works</div>
-        </div>
+  </header>
+
+  <!-- ===== HERO ===== -->
+  <section class="hero">
+    <!-- Background radials -->
+    <div class="hero-bg" aria-hidden="true">
+      <div class="hero-bg-green"></div>
+      <div class="hero-bg-red"></div>
     </div>
+
+    <div class="hero-inner">
+      <!-- Left: copy -->
+      <div class="hero-copy fade-up">
+        <div class="hero-badge">
+          <span class="hero-badge-dot"></span>
+          <span>Made for serious party people</span>
+        </div>
+        <h1 class="hero-headline">
+          Das Turnier-Tool,<br>das deine Truppe<br>verdient hat.
+        </h1>
+        <p class="hero-sub">
+          Gruppen ziehen, Tabellen führen, K.O.‑Runde auslosen — automatisch.
+          Du konzentrierst dich auf das Trinken, SK Beerpong erledigt den Rest.
+        </p>
+        <div class="hero-cta-row">
+          <button class="btn-primary btn-lg" (click)="login()">
+            Kostenlos starten
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+            </svg>
+          </button>
+          <button class="btn-ghost btn-lg">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="6 4 20 12 6 20 6 4"/>
+            </svg>
+            Live-Spielplan ansehen
+          </button>
+        </div>
+        <div class="hero-stats">
+          <div class="hero-stat">
+            <div class="hero-stat-val">5 243</div>
+            <div class="hero-stat-label">Turniere gespielt</div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat-val">41 089</div>
+            <div class="hero-stat-label">gewertete Spiele</div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat-val">312 K</div>
+            <div class="hero-stat-label">Becher versenkt</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: scoreboard preview -->
+      <div class="hero-preview fade-up">
+        <div class="hero-card">
+          <div class="hero-card-header">
+            <span class="live-tag">
+              <span class="live-dot"></span>
+              Live
+            </span>
+            <span class="hero-card-phase">Gruppenphase</span>
+            <span class="hero-card-count">14 / 24 Spiele</span>
+          </div>
+          <div class="match-row">
+            <span class="group-tag">A</span>
+            <span class="match-team match-winner">Bierkönige</span>
+            <div class="match-score"><span class="score-win">10</span><span class="score-sep">:</span><span>7</span></div>
+            <span class="match-team">Pupskanone Jessica</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="match-row">
+            <span class="group-tag">A</span>
+            <span class="match-team">Flying Eagles</span>
+            <div class="match-score"><span>8</span><span class="score-sep">:</span><span class="score-win">10</span></div>
+            <span class="match-team match-winner">Volltrottel</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="match-row" style="border-bottom:none">
+            <span class="group-tag group-tag-live">B</span>
+            <span class="match-team">Freispiel</span>
+            <div class="match-score" style="color:var(--accent);font-size:11px;font-weight:700">LIVE</div>
+            <span class="match-team">Tulpe</span>
+            <span class="live-indicator"></span>
+          </div>
+          <div class="hero-card-footer">
+            <span class="label">Achtelfinale ab 19:30</span>
+            <div class="progress-dots">
+              @for (i of [1,2,3,4,5,6]; track i) {
+                <div class="progress-dot" [class.progress-dot-active]="i <= 3"></div>
+              }
+            </div>
+          </div>
+        </div>
+        <!-- Floating cup icon -->
+        <div class="floating-cup">
+          <svg width="68" height="79" viewBox="0 0 24 28" fill="var(--cup)" style="filter:drop-shadow(var(--cup-glow))">
+            <path d="M5 4 L19 4 L17.5 25 Q17.4 26.5 16 26.5 L8 26.5 Q6.6 26.5 6.5 25 Z"/>
+            <ellipse cx="12" cy="4" rx="7" ry="1.6" opacity="0.65"/>
+            <ellipse cx="12" cy="4" rx="5.4" ry="1.05" fill="#0C0E0B" opacity="0.45" stroke="none"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FEATURES ===== -->
+  <section id="features" class="section">
+    <div class="section-inner">
+      <div class="features-header">
+        <div>
+          <div class="label" style="margin-bottom:10px">Features</div>
+          <h2 class="section-title">Vom ersten Wurf<br>bis zum letzten Becher.</h2>
+        </div>
+        <p class="features-sub">
+          Alles was du brauchst um ein Turnier zu organisieren — und nichts was du nicht brauchst.
+        </p>
+      </div>
+      <div class="features-grid">
+        @for (f of features; track f.title) {
+          <div class="feature-card">
+            <div class="feature-icon">
+              @switch (f.icon) {
+                @case ('users') {
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                }
+                @case ('tree') {
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h6v4H4z"/><path d="M14 16h6v4h-6z"/><path d="M14 4h6v4h-6z"/><path d="M7 8v8h7"/><path d="M17 8v4"/></svg>
+                }
+                @case ('gavel') {
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m14 13-7.5 7.5"/><path d="M16 16 3 3"/><path d="M9 5 5 9"/><path d="m19 11-4 4"/></svg>
+                }
+                @case ('eye') {
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s4-8 10-8 10 8 10 8-4 8-10 8-10-8-10-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                }
+                @case ('whistle') {
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="13" r="6"/><path d="M15 13h6"/><path d="m19 10 2-2"/></svg>
+                }
+                @case ('trophy') {
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8"/><path d="M12 17v4"/><path d="M7 4h10v5a5 5 0 0 1-10 0V4Z"/><path d="M17 6h3v3a3 3 0 0 1-3 3"/><path d="M7 6H4v3a3 3 0 0 0 3 3"/></svg>
+                }
+              }
+            </div>
+            <div class="feature-title">{{ f.title }}</div>
+            <p class="feature-desc">{{ f.desc }}</p>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== PRICING ===== -->
+  <section id="pricing" class="section section-sm">
+    <div class="section-inner">
+      <div class="pricing-header">
+        <div class="label" style="margin-bottom:10px">Preise</div>
+        <h2 class="section-title">Zwei Pläne. Kein Bullshit.</h2>
+      </div>
+      <div class="pricing-grid">
+        <!-- Free plan -->
+        <div class="pricing-card">
+          <div class="pricing-card-name">Freier Plan</div>
+          <div class="pricing-card-tagline">Für gemütliche Abende.</div>
+          <div class="pricing-card-price"><span class="price-amount">$0</span></div>
+          <button class="btn-secondary pricing-cta" (click)="login()">Loslegen</button>
+          <div class="pricing-features">
+            @for (f of freePlanFeatures; track f[0]) {
+              <div class="pricing-feature">
+                @if (f[1]) {
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                } @else {
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--fg-3)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                }
+                <span [style.color]="f[1] ? 'var(--fg-1)' : 'var(--fg-3)'">{{ f[0] }}</span>
+              </div>
+            }
+          </div>
+        </div>
+        <!-- Premium plan -->
+        <div class="pricing-card pricing-card-featured">
+          <div class="pricing-badge">Beliebt</div>
+          <div class="pricing-card-name">Premium</div>
+          <div class="pricing-card-tagline">Für ernsthafte Turniere.</div>
+          <div class="pricing-card-price">
+            <span class="price-amount price-accent">$10</span>
+            <span class="price-unit">/Monat</span>
+          </div>
+          <button class="btn-primary pricing-cta" (click)="login()">Premium holen</button>
+          <div class="pricing-features">
+            @for (f of premiumFeatures; track f[0]) {
+              <div class="pricing-feature">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                <span style="color:var(--fg-1)">{{ f[0] }}</span>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FAQ ===== -->
+  <section id="faq" class="section section-sm">
+    <div class="faq-inner">
+      <div class="pricing-header">
+        <div class="label" style="margin-bottom:10px">FAQ</div>
+        <h2 style="font-family:var(--font-display);font-size:36px;font-weight:700;letter-spacing:-0.03em">Häufige Fragen.</h2>
+      </div>
+      <div class="faq-list">
+        @for (item of faqItems; track $index; let i = $index) {
+          <div class="faq-item">
+            <button class="faq-trigger" (click)="toggleFaq(i)">
+              <span>{{ item.q }}</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--fg-2)"
+                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                   [style.transform]="openFaqIndex() === i ? 'rotate(180deg)' : 'rotate(0deg)'"
+                   style="transition:transform 200ms;flex-shrink:0">
+                <polyline points="6 9 12 15 18 9"/>
+              </svg>
+            </button>
+            @if (openFaqIndex() === i) {
+              <div class="faq-body">{{ item.a }}</div>
+            }
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CTA BANNER ===== -->
+  <section class="section section-sm">
+    <div class="section-inner">
+      <div class="cta-banner">
+        <!-- Cup rack motif -->
+        <div class="cta-motif" aria-hidden="true">
+          <svg width="260" height="260" viewBox="0 0 40 40" style="color:var(--fg-inv);opacity:0.12">
+            <g fill="currentColor">
+              <circle cx="11" cy="11" r="5.2"/><circle cx="20" cy="11" r="5.2"/><circle cx="29" cy="11" r="5.2"/>
+              <circle cx="15.5" cy="20" r="5.2"/><circle cx="24.5" cy="20" r="5.2"/><circle cx="20" cy="29" r="5.2"/>
+            </g>
+          </svg>
+        </div>
+        <div class="cta-copy">
+          <h2 class="cta-title">Bereit für die nächste Runde?</h2>
+          <p class="cta-sub">Kostenlos. Keine Kreditkarte. Erstes Turnier in 90 Sekunden.</p>
+        </div>
+        <button class="cta-action-btn" (click)="login()">
+          Jetzt starten
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="lp-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <svg width="22" height="22" viewBox="0 0 40 40">
+          <g fill="var(--fg-3)">
+            <circle cx="11" cy="11" r="5.2"/><circle cx="20" cy="11" r="5.2"/><circle cx="29" cy="11" r="5.2"/>
+            <circle cx="15.5" cy="20" r="5.2"/><circle cx="24.5" cy="20" r="5.2"/><circle cx="20" cy="29" r="5.2"/>
+          </g>
+        </svg>
+        <span class="wordmark" style="color:var(--fg-2);font-size:15px">
+          <span style="letter-spacing:-0.05em">SK</span>
+          <span class="dot"></span>
+          <span style="letter-spacing:-0.04em">Beerpong</span>
+        </span>
+      </div>
+      <div class="footer-links">
+        <span>© 2026 SK Beerpong</span>
+        <a href="#">Impressum</a>
+        <a href="#">Datenschutz</a>
+        <a href="#">AGB</a>
+      </div>
+    </div>
+  </footer>
+
 </div>

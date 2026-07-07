@@ -1,15 +1,31 @@
+import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { RouterTestingModule } from '@angular/router/testing';
+import { provideRouter } from '@angular/router';
+import { AuthService } from './services/auth/auth.service';
 import { AppComponent } from './app.component';
+import { UserStore } from './store/user/user.store';
 
 describe('AppComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
-        RouterTestingModule
+        AppComponent,
       ],
-      declarations: [
-        AppComponent
+      providers: [
+        provideRouter([]),
+        {
+          provide: AuthService,
+          useValue: {
+            logout: jasmine.createSpy('logout'),
+          },
+        },
+        {
+          provide: UserStore,
+          useValue: {
+            isLoggedIn: signal(false),
+            userDetails: signal({ name: 'Test User' }),
+          },
+        },
       ],
     }).compileComponents();
   });
@@ -20,16 +36,10 @@ describe('AppComponent', () => {
     expect(app).toBeTruthy();
   });
 
-  it(`should have as title 'ngBeerpong'`, () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.componentInstance;
-    expect(app.title).toEqual('ngBeerpong');
-  });
-
-  it('should render title', () => {
+  it('should render the router outlet shell', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, ngBeerpong');
+    expect(compiled.querySelector('router-outlet')).not.toBeNull();
   });
 });

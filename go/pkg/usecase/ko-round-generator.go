@@ -256,32 +256,37 @@ func isPowerOfTwo(n int) bool {
 }
 
 // UpdateKOMatchWithResult aktualisiert K.O.-Match und erstellt Folgematches
-func UpdateKOMatchWithResult(matches []models.Match, completedMatchID int, winnerTeam string) []models.Match {
-	// Match finden und Winner setzen
-	for _, match := range matches {
-		if match.MatchID == completedMatchID {
-			// Winner bestimmen basierend auf Punkten
-			var winner string
-			if match.PointsHome > match.PointsAway {
-				winner = match.HomeTeam
-			} else {
-				winner = match.AwayTeam
-			}
-
-			// In Folgematch einsetzen
-			winnerPlaceholder := fmt.Sprintf("Gewinner Match %d", completedMatchID)
-
-			for j := range matches {
-				if matches[j].HomeTeam == winnerPlaceholder {
-					matches[j].HomeTeam = winner
-				} else if matches[j].AwayTeam == winnerPlaceholder {
-					matches[j].AwayTeam = winner
-				}
-			}
-			break
+func UpdateKOMatchWithResult(matches []models.Match, completedMatch models.Match) []models.Match {
+	var winner string
+	if completedMatch.PointsHome > completedMatch.PointsAway {
+		winner = completedMatch.HomeTeam
+	} else {
+		winner = completedMatch.AwayTeam
+	}
+	winnerPlaceholder := fmt.Sprintf("Gewinner Match %d", completedMatch.MatchID)
+	for j := range matches {
+		if matches[j].HomeTeam == winnerPlaceholder {
+			matches[j].HomeTeam = winner
+		} else if matches[j].AwayTeam == winnerPlaceholder {
+			matches[j].AwayTeam = winner
 		}
 	}
+	return matches
+}
 
+func UpdateKOMatchWithLoser(matches []models.Match, completedMatch models.Match, semifinalNumber int) []models.Match {
+	loser := completedMatch.HomeTeam
+	if completedMatch.PointsHome > completedMatch.PointsAway {
+		loser = completedMatch.AwayTeam
+	}
+	placeholder := fmt.Sprintf("Verlierer Halbfinale %d", semifinalNumber)
+	for j := range matches {
+		if matches[j].HomeTeam == placeholder {
+			matches[j].HomeTeam = loser
+		} else if matches[j].AwayTeam == placeholder {
+			matches[j].AwayTeam = loser
+		}
+	}
 	return matches
 }
 

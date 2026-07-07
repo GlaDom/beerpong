@@ -1,0 +1,162 @@
+/* Full-screen frosted overlay */
+.loading-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 26px;
+  background: color-mix(in srgb, var(--bg) 82%, transparent);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  animation: fadeUp 240ms ease-out both;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Label */
+.loading-overlay__text-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  text-align: center;
+}
+.loading-overlay__label {
+  font-family: var(--font-display);
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--fg-1);
+  display: inline-flex;
+  align-items: baseline;
+}
+.loading-overlay__dots { display: inline-flex; margin-left: 2px; }
+.loading-overlay__dots span { animation: cupDots 1.4s infinite; }
+.loading-overlay__dots span:nth-child(2) { animation-delay: 0.18s; }
+.loading-overlay__dots span:nth-child(3) { animation-delay: 0.36s; }
+.loading-overlay__sublabel {
+  font-size: 13px;
+  color: var(--fg-3);
+}
+
+@keyframes cupDots {
+  0%, 20%  { opacity: 0.2; }
+  50%      { opacity: 1; }
+  80%, 100%{ opacity: 0.2; }
+}
+
+/* =========================================================
+   Cup spinner — ball drops into cup, liquid splashes.
+   Design space is 120×120; container sized 96×96 (scale 0.8).
+   ========================================================= */
+.cupspin {
+  position: relative;
+  width: 96px;
+  height: 96px;
+}
+.cupspin__stage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 120px;
+  height: 120px;
+  transform: scale(0.8);
+  transform-origin: top left;
+}
+.cupspin__ball {
+  position: absolute;
+  left: 48px;
+  top: 38px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 34% 30%, #ffffff 0%, #eef1f4 46%, #c7ccd2 100%);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35), inset -2px -2px 4px rgba(0, 0, 0, 0.12);
+  z-index: 2;
+  animation: cupBall 2s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+}
+@keyframes cupBall {
+  0%   { transform: translate(-18px, -70px) scale(1); opacity: 0; animation-timing-function: cubic-bezier(0.5, 0, 0.85, 0.35); }
+  6%   { opacity: 1; }
+  20%  { transform: translate(-10px, -40px) scale(1); opacity: 1; animation-timing-function: cubic-bezier(0.5, 0, 0.85, 0.4); }
+  38%  { transform: translate(0px, 0px) scale(1); opacity: 1; }
+  44%  { transform: translate(0px, 13px) scale(0.8); opacity: 1; }
+  52%  { transform: translate(0px, 24px) scale(0.45); opacity: 0; }
+  100% { transform: translate(0px, 24px) scale(0.45); opacity: 0; }
+}
+.cupspin__cup {
+  position: absolute;
+  inset: 0;
+  transform-origin: 60px 108px;
+  animation: cupSquash 2s ease-in-out infinite;
+}
+@keyframes cupSquash {
+  0%, 40%   { transform: scale(1, 1); }
+  46%       { transform: scale(1.06, 0.93); }
+  58%       { transform: scale(0.98, 1.02); }
+  70%, 100% { transform: scale(1, 1); }
+}
+.cupspin__liquid {
+  transform-origin: 60px 50px;
+  animation: cupLiquid 2s ease-in-out infinite;
+}
+@keyframes cupLiquid {
+  0%, 40%   { transform: scaleY(1) translateY(0); }
+  46%       { transform: scaleY(1.4) translateY(-2px); }
+  60%       { transform: scaleY(0.88) translateY(1px); }
+  74%       { transform: scaleY(1.05); }
+  86%, 100% { transform: scaleY(1); }
+}
+.cupspin__drop {
+  position: absolute;
+  left: 58px;
+  top: 48px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #ffffff 0%, #dff0ff 55%, #b6dcff 100%);
+  opacity: 0;
+  z-index: 3;
+  animation: cupSplash 2s ease-out infinite;
+}
+@keyframes cupSplash {
+  0%, 40%  { transform: translate(0, 0) scale(0); opacity: 0; animation-timing-function: cubic-bezier(0.2, 0.7, 0.4, 1); }
+  45%      { transform: translate(calc(var(--dx) * 0.45), calc(var(--dy) * 0.55)) scale(1); opacity: 1; }
+  60%      { transform: translate(var(--dx), calc(var(--dy) * 0.1)) scale(0.92); opacity: 0.95; animation-timing-function: cubic-bezier(0.5, 0, 0.85, 0.5); }
+  80%      { transform: translate(calc(var(--dx) * 1.2), 30px) scale(0.55); opacity: 0; }
+  100%     { transform: translate(calc(var(--dx) * 1.2), 30px) scale(0); opacity: 0; }
+}
+.cupspin__shadow {
+  position: absolute;
+  left: 34px;
+  top: 112px;
+  width: 52px;
+  height: 9px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.30);
+  filter: blur(2px);
+  animation: cupShadow 2s ease-in-out infinite;
+}
+@keyframes cupShadow {
+  0%, 40%   { transform: scaleX(1); opacity: 0.30; }
+  47%       { transform: scaleX(1.18); opacity: 0.42; }
+  70%, 100% { transform: scaleX(1); opacity: 0.30; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cupspin__ball,
+  .cupspin__cup,
+  .cupspin__liquid,
+  .cupspin__drop,
+  .cupspin__shadow {
+    animation-duration: 0.001ms;
+    animation-iteration-count: 1;
+  }
+  .cupspin__ball { opacity: 1; transform: translate(0, 0); }
+}

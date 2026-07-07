@@ -1,94 +1,201 @@
 <p-confirmDialog/>
-<div class="grid h-[calc(100%-66px)] lg:grid-cols-12 md:grid-cols-8 m-4 gap-4">
-    <div class="lg:col-span-5 md:col-span-8 flex flex-col gap-2">
-        <!-- <p-panel>
-            
-        </p-panel> -->
-        <p-card>
-            <div class="flex flex-row justify-between items-center font-bold text-2xl">
-                <h1>Neues Spiel starten</h1>
-                <p-button icon="pi pi-angle-right" (click)="newGame('adminspace')"></p-button>
-            </div>
-        </p-card>
-        <p-card>
-            <div class="flex flex-row justify-between items-center font-bold text-2xl" [ngClass]="continueGame()">
-                <h1>Aktuelles Spiel fortsetzen</h1>
-                <p-button icon="pi pi-angle-right" routerLink="/adminspace"></p-button>
-            </div>
-        </p-card>
-        <p-card>
-            <div class="flex flex-row justify-between items-center font-bold text-2xl text-gray-500">
-                <h1>Vergange Spiele</h1>
-                <p-button [disabled]="true" icon="pi pi-angle-right"></p-button>
-            </div>
-        </p-card>
+
+<div class="home-root">
+  <div class="home-inner">
+
+    <!-- Greeting -->
+    <div class="home-greeting">
+      <div class="label" style="margin-bottom:6px">Willkommen zurück</div>
+      <h1 class="home-title">{{ userName() }}</h1>
     </div>
-    <div class="lg:col-span-7 md:col-span-8">
-        <p-panel>
-            <ng-template #header>
-                <div class="font-bold text-2xl w-full">
-                    <div class="flex flex-row justify-between">
-                        <span>Ergebnis des letzten Turnieres</span>
-                        @if (lastGame && !lastGame.tournament.is_finished) {
-                            <div class="flex items-center gap-2 text-lg">
-                                <span class="relative flex h-3 w-3">
-                                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                                    <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
-                                </span>
-                                <span>Aktiv</span>
-                            </div>
-                        } @else {
-                            <div class="flex items-center gap-2 text-lg">
-                                <span class="inline-flex rounded-full bg-red-500 h-3 w-3"></span>
-                                <span>Beendet</span>
-                            </div>
-                        }
-                    </div>
-                    <hr />
-                </div>
-            </ng-template>
-            @if (lastGame) {
-            <div class="flex flex-col gap-4">
-                <div class="flex flex-row justify-between">
-                    <span>Datum</span>
-                    <p-tag severity="secondary">
-                        <span>{{lastGame.tournament.created_at | date:'dd.MM.yyyy hh:mm'}}</span>
-                    </p-tag>
-                </div>
-                <div class="flex flex-row justify-between">
-                    <span>Schiedsrichter</span>
-                    @if (lastGame.tournament.referee?.length === 0) {
-                    <p-tag value="Keine Schiedsrichter" severity="info"></p-tag>
-                    } @else {
-                    <div class="flex gap-2">
-                        @for (referee of lastGame.tournament.referee; track $index) {
-                        <p-tag [value]="referee.name" severity="info"></p-tag>
-                        }
-                    </div>
-                    }
-                </div>
-                <div class="flex flex-row justify-between">
-                    <span>Anzahl Gruppen</span>
-                    <p-tag [value]="lastGame.tournament.groups.length.toString()" severity="secondary"></p-tag>
-                </div>
-                <div class="flex flex-row justify-between">
-                    <span>Anzahl Teams</span>
-                    <p-tag [value]="lastGame.tournament.amount_of_teams.toString()" severity="danger"></p-tag>
-                </div>
+
+    <div class="home-grid">
+
+      <!-- Left: Action Cards -->
+      <div class="action-cards">
+
+        <!-- New Game -->
+        <button class="action-card action-card-primary" (click)="newGame()">
+          <div class="action-icon action-icon-primary">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--fg-inv)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 3v18"/><path d="M5 8l7-5 7 5"/><path d="M5 16l7 5 7-5"/>
+            </svg>
+          </div>
+          <div class="action-copy">
+            <div class="action-title action-title-primary">Neues Spiel starten</div>
+            <div class="action-sub action-sub-primary">Gruppen einrichten, Teams eintragen, los geht's</div>
+          </div>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--fg-inv)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;opacity:0.7">
+            <polyline points="9 18 15 12 9 6"/>
+          </svg>
+        </button>
+
+        <!-- Continue Game -->
+        <a routerLink="/adminspace" class="action-card"
+           [class.action-card-disabled]="!hasActiveGame()">
+          <div class="action-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="6 4 20 12 6 20 6 4"/>
+            </svg>
+          </div>
+          <div class="action-copy">
+            <div class="action-title">Aktuelles Spiel fortsetzen</div>
+            <div class="action-sub">
+              @if (hasActiveGame()) {
+                Turnier läuft · Gruppenphase
+              } @else {
+                Kein aktives Turnier
+              }
             </div>
-            <hr />
-            <div>
-                @if (sortedTeams.length > 0) {
-                    <div>
-                        <app-ranking [teams]="sortedTeams"></app-ranking>
-                    </div>
-                }
-            </div>
+          </div>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--fg-3)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0">
+            <polyline points="9 18 15 12 9 6"/>
+          </svg>
+        </a>
+
+        <!-- Past Games -->
+        <div class="action-card action-card-disabled">
+          <div class="action-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--fg-3)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+            </svg>
+          </div>
+          <div class="action-copy">
+            <div class="action-title">Vergangene Spiele</div>
+            <div class="action-sub">Bald verfügbar — Premium Feature</div>
+          </div>
+          <span class="action-badge">Soon</span>
+        </div>
+
+      </div>
+
+      <!-- Right: Last tournament -->
+      <div class="tournament-card">
+        <div class="tournament-card-header">
+          <div>
+            <div class="tournament-card-title">Letztes Turnier</div>
+            <div class="tournament-card-sub">Übersicht & Platzierungen</div>
+          </div>
+          @if (lastGame()) {
+            @if (hasActiveGame()) {
+              <span class="status-pill status-live">
+                <span class="status-dot"></span>
+                Live
+              </span>
             } @else {
-            <div class="flex flex-col items-center justify-center h-60">
-                <p>Es wurde noch kein Turnier gespielt</p>
-            </div>
+              <span class="status-pill status-done">Beendet</span>
             }
-        </p-panel>
+          } @else {
+            <span class="status-pill status-inactive">Kein Spiel</span>
+          }
+        </div>
+
+        @if (lastGame()) {
+          <!-- Stats strip -->
+          <div class="stats-strip">
+            <div class="meta-item">
+              <div class="meta-label">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--fg-3)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg>
+                Datum
+              </div>
+              <div class="meta-value">{{ lastGame().tournament.created_at | date:'dd. MMM yyyy' }}</div>
+            </div>
+            <div class="meta-item">
+              <div class="meta-label">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--fg-3)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                Gruppen
+              </div>
+              <div class="meta-value">{{ lastGame().tournament.groups.length }}</div>
+            </div>
+            <div class="meta-item">
+              <div class="meta-label">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--fg-3)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                Teams
+              </div>
+              <div class="meta-value">{{ lastGame().tournament.amount_of_teams }}</div>
+            </div>
+            <div class="meta-item">
+              <div class="meta-label">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--fg-3)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="13" r="6"/><path d="M15 13h6"/><path d="m19 10 2-2"/></svg>
+                Refs
+              </div>
+              <div class="meta-value">{{ lastGame().tournament.referee.length }}</div>
+            </div>
+          </div>
+
+          <!-- Mini ranking -->
+          <div class="ranking-section">
+            <div class="ranking-header">
+              <span class="label">Top 5 — aktuell</span>
+            </div>
+            @if (sortedTeams().length > 0) {
+              <div class="ranking-table">
+                <div class="ranking-head">
+                  <span class="r-col-rank label" style="font-size:10px;color:var(--fg-3)">#</span>
+                  <span class="r-col-team label" style="font-size:10px;color:var(--fg-3)">Team</span>
+                  <span class="r-col-num label" style="font-size:10px;color:var(--fg-3);text-align:right">BD</span>
+                  <span class="r-col-num label" style="font-size:10px;color:var(--fg-3);text-align:right">B</span>
+                  <span class="r-col-num label" style="font-size:10px;color:var(--fg-3);text-align:right">P</span>
+                </div>
+                @for (team of sortedTeams() | slice:0:5; track team.id; let i = $index) {
+                  <div class="ranking-row" [class.ranking-row-last]="i === 4 || i === sortedTeams().slice(0,5).length - 1">
+                    <span class="r-col-rank">
+                      @if (i === 0) { <span class="medal">🏆</span> }
+                      @else if (i === 1) { <span class="medal">🥈</span> }
+                      @else if (i === 2) { <span class="medal">🥉</span> }
+                      <span class="rank-num" [style.color]="i < 3 ? 'var(--fg-1)' : 'var(--fg-3)'">{{ i + 1 }}</span>
+                    </span>
+                    <span class="r-col-team team-name" [style.font-weight]="i < 3 ? '600' : '500'"
+                          [style.color]="i < 3 ? 'var(--fg-1)' : 'var(--fg-2)'">{{ team.team_name }}</span>
+                    <span class="r-col-num mono-val">{{ team.cup_difference > 0 ? '+' : '' }}{{ team.cup_difference }}</span>
+                    <span class="r-col-num mono-val">{{ team.cups_hit }}</span>
+                    <span class="r-col-num accent-val">{{ team.points }}</span>
+                  </div>
+                }
+              </div>
+            } @else {
+              <div class="ranking-empty">Keine Daten — Spiele werden eingetragen…</div>
+            }
+          </div>
+        } @else {
+          <div class="empty-state">
+            <div class="empty-title">Noch kein Turnier gespielt</div>
+            <p class="empty-body">Starte dein erstes Turnier — es dauert keine zwei Minuten bis zum ersten Wurf.</p>
+            <button class="btn-primary-sm" (click)="newGame()">
+              Erstes Turnier starten
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+              </svg>
+            </button>
+          </div>
+        }
+      </div>
+
     </div>
+
+    <!-- Tips strip -->
+    <div class="tips-strip">
+      @for (tip of tips; track tip.title) {
+        <div class="tip-card">
+          <div class="tip-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              @switch (tip.icon) {
+                @case ('gavel') { <path d="m14 13-7.5 7.5"/><path d="M16 16 3 3"/><path d="M9 5 5 9"/><path d="m19 11-4 4"/> }
+                @case ('qr')    { <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/> }
+                @default        { <path d="M12 3v18"/><path d="M5 8l7-5 7 5"/><path d="M5 16l7 5 7-5"/> }
+              }
+            </svg>
+          </div>
+          <div>
+            <div class="tip-header">
+              <span class="tip-tag">{{ tip.tag }}</span>
+              <span class="tip-title">{{ tip.title }}</span>
+            </div>
+            <p class="tip-body">{{ tip.body }}</p>
+          </div>
+        </div>
+      }
+    </div>
+
+  </div>
 </div>

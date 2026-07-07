@@ -1,10 +1,7 @@
-/* You can add global styles to this file, and also import other style files */
-/* @tailwind base;
-@tailwind components;
-@tailwind utilities; */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap');
 
 @layer tailwind-base, primeng, tailwind-utilities;
-        
+
 @layer tailwind-base {
     @tailwind base;
 }
@@ -14,7 +11,436 @@
     @tailwind utilities;
 }
 
+/* ============================================================
+   Tracktion Design System — Global Tokens
+   ============================================================ */
+
+:root {
+  /* Brand */
+  --accent:        #9EF53C;
+  --accent-dim:    #7ACC28;
+  --accent-muted:  rgba(158, 245, 60, 0.15);
+  --accent-glow:   0 0 24px rgba(158, 245, 60, 0.28);
+  --cup:           #F5503C;
+  --cup-deep:      #C9341F;
+  --cup-glow:      0 0 22px rgba(245, 80, 60, 0.30);
+
+  /* Semantic status */
+  --red:           #F5503C;
+  --red-muted:     rgba(245, 80, 60, 0.15);
+  --green:         #3CF598;
+  --green-muted:   rgba(60, 245, 152, 0.15);
+  --yellow:        #F5C43C;
+  --yellow-muted:  rgba(245, 196, 60, 0.15);
+
+  /* Typography */
+  --font-display:  'Space Grotesk', sans-serif;
+  --font-body:     'DM Sans', sans-serif;
+  --font-mono:     'Space Mono', monospace;
+
+  /* Shape & Motion */
+  --radius-sm:    6px;
+  --radius-md:    10px;
+  --radius-lg:    16px;
+  --radius-xl:    24px;
+  --radius-full:  9999px;
+  --ease-out:     200ms ease-out;
+  --ease-spring:  300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* Light surfaces (default) */
+  --bg:            #F4F6F0;
+  --surface-0:     #F4F6F0;
+  --surface-1:     #FFFFFF;
+  --surface-2:     #ECEEED;
+  --surface-3:     #E2E5DF;
+  --border:        rgba(0, 0, 0, 0.08);
+  --border-strong: rgba(0, 0, 0, 0.14);
+  --fg-1:          #0C0E0B;
+  --fg-2:          #5A6357;
+  --fg-3:          #9AA496;
+  --fg-inv:        #0C0E0B;
+  --shadow-sm:     0 1px 3px rgba(0,0,0,0.07);
+  --shadow-md:     0 1px 3px rgba(0,0,0,0.07), 0 4px 16px rgba(0,0,0,0.06);
+  --shadow-lg:     0 2px 6px rgba(0,0,0,0.08), 0 8px 32px rgba(0,0,0,0.07);
+  --nav-bg:        rgba(244, 246, 240, 0.85);
+}
+
+/* Dark mode — toggled via .my-app-dark on <html> */
+html.my-app-dark {
+  color-scheme: dark;
+  --bg:            #0C0E0B;
+  --surface-0:     #0C0E0B;
+  --surface-1:     #161A15;
+  --surface-2:     #1E231C;
+  --surface-3:     #252C23;
+  --border:        rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.14);
+  --fg-1:          #F0F5EC;
+  --fg-2:          #8A9688;
+  --fg-3:          #4E5A4B;
+  --fg-inv:        #0C0E0B;
+  --shadow-sm:     0 1px 3px rgba(0,0,0,0.50);
+  --shadow-md:     0 1px 3px rgba(0,0,0,0.50), 0 4px 16px rgba(0,0,0,0.30);
+  --shadow-lg:     0 2px 6px rgba(0,0,0,0.60), 0 8px 32px rgba(0,0,0,0.40);
+  --nav-bg:        rgba(12, 14, 11, 0.82);
+}
+
+/* ============================================================
+   Base
+   ============================================================ */
+
 html, body {
-    /* background-color: rgb(240, 237, 233); */
-    height: 100%;
-} 
+  height: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
+  color: var(--fg-1);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a { color: inherit; text-decoration: none; }
+button, input, select, textarea { font: inherit; color: inherit; }
+
+/* ============================================================
+   Animations
+   ============================================================ */
+
+@keyframes lockPulse {
+  0%   { box-shadow: 0 0 0 0   var(--accent-muted); }
+  100% { box-shadow: 0 0 0 14px rgba(0,0,0,0); }
+}
+@keyframes livePulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.5; transform: scale(0.85); }
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.fade-up { animation: fadeUp 320ms ease-out both; }
+
+/* ============================================================
+   Brand utilities
+   ============================================================ */
+
+.wordmark {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  color: var(--fg-1);
+}
+.wordmark .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--cup);
+  display: inline-block;
+  transform: translateY(-2px);
+  box-shadow: var(--cup-glow);
+}
+
+.noise-bg {
+  background-image:
+    radial-gradient(circle at 20% 20%, var(--accent-muted), transparent 40%),
+    radial-gradient(circle at 80% 60%, rgba(245, 80, 60, 0.12), transparent 50%);
+}
+
+/* ============================================================
+   Typography helpers
+   ============================================================ */
+
+.label {
+  font-family: var(--font-body);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg-2);
+}
+
+/* ============================================================
+   Phase tab indicator
+   ============================================================ */
+
+.phase-tab {
+  position: relative;
+  transition: color var(--ease-out);
+}
+.phase-tab::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; bottom: -1px;
+  height: 2px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform var(--ease-out);
+}
+.phase-tab.active::after { transform: scaleX(1); }
+
+/* ============================================================
+   Scrollbar
+   ============================================================ */
+
+.scroll { scrollbar-width: thin; scrollbar-color: var(--surface-3) transparent; }
+.scroll::-webkit-scrollbar { width: 8px; }
+.scroll::-webkit-scrollbar-thumb { background: var(--surface-3); border-radius: 4px; }
+.no-scrollbar { scrollbar-width: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+
+/* ============================================================
+   Focus ring
+   ============================================================ */
+
+button:focus-visible, input:focus-visible, select:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ============================================================
+   PrimeNG ConfirmDialog — app design system overrides
+   ============================================================ */
+
+.p-confirmdialog.p-dialog {
+  background: var(--surface-1);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  font-family: var(--font-body);
+  min-width: 380px;
+  max-width: 480px;
+  overflow: hidden;
+}
+
+.p-confirmdialog .p-dialog-header {
+  background: var(--surface-1);
+  border-bottom: 1px solid var(--border);
+  padding: 20px 24px 18px;
+  border-radius: 0;
+}
+
+.p-confirmdialog .p-dialog-title {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--fg-1);
+}
+
+.p-confirmdialog .p-dialog-close-button {
+  color: var(--fg-3) !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: var(--radius-md) !important;
+  width: 32px;
+  height: 32px;
+}
+.p-confirmdialog .p-dialog-close-button:hover {
+  background: var(--surface-2) !important;
+  color: var(--fg-1) !important;
+}
+
+.p-confirmdialog .p-dialog-content {
+  background: var(--surface-1);
+  padding: 24px;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  color: var(--fg-2);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.p-confirmdialog .p-confirmdialog-icon {
+  color: var(--cup);
+  font-size: 22px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.p-confirmdialog .p-confirmdialog-message {
+  color: var(--fg-2);
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.p-confirmdialog .p-dialog-footer {
+  background: var(--surface-2);
+  border-top: 1px solid var(--border);
+  padding: 16px 24px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  border-radius: 0;
+}
+
+/* ============================================================
+   PrimeNG DatePicker panel — app design system overrides
+   ============================================================ */
+
+/* Override PrimeNG's own CSS variables so all internal elements inherit dark values */
+.p-datepicker-panel {
+  --p-datepicker-panel-background:         var(--surface-1);
+  --p-datepicker-panel-color:              var(--fg-1);
+  --p-datepicker-panel-border-color:       var(--border-strong);
+  --p-datepicker-panel-border-radius:      var(--radius-lg);
+  --p-datepicker-panel-shadow:             var(--shadow-lg);
+  --p-datepicker-header-background:        var(--surface-1);
+  --p-datepicker-header-color:             var(--fg-1);
+  --p-datepicker-header-border-color:      var(--border);
+  --p-datepicker-week-day-color:           var(--fg-3);
+  --p-datepicker-date-color:               var(--fg-2);
+  --p-datepicker-date-hover-background:    var(--surface-2);
+  --p-datepicker-date-hover-color:         var(--fg-1);
+  --p-datepicker-date-border-radius:       var(--radius-md);
+  --p-datepicker-date-selected-background: var(--accent);
+  --p-datepicker-date-selected-color:      var(--fg-inv);
+  --p-datepicker-today-background:         var(--accent-muted);
+  --p-datepicker-today-color:              var(--accent);
+  --p-datepicker-time-picker-border-color: var(--border);
+
+  background: var(--surface-1) !important;
+  border: 1px solid var(--border-strong) !important;
+  border-radius: var(--radius-lg) !important;
+  box-shadow: var(--shadow-lg) !important;
+  font-family: var(--font-body);
+  overflow: hidden;
+  padding: 0;
+}
+
+/* Ensure inner containers also pick up the dark background */
+.p-datepicker-panel .p-datepicker-calendar-container,
+.p-datepicker-panel .p-datepicker-calendar {
+  background: var(--surface-1) !important;
+}
+
+/* Header */
+.p-datepicker-panel .p-datepicker-header {
+  background: var(--surface-1) !important;
+  border-bottom: 1px solid var(--border);
+  padding: 12px 16px;
+}
+
+/* Month / year title buttons */
+.p-datepicker-panel .p-datepicker-select-month,
+.p-datepicker-panel .p-datepicker-select-year {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--fg-1);
+  letter-spacing: -0.01em;
+  background: transparent;
+  border: none;
+}
+
+/* Navigation arrows */
+.p-datepicker-panel .p-datepicker-prev-button,
+.p-datepicker-panel .p-datepicker-next-button {
+  color: var(--fg-3) !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: var(--radius-md) !important;
+}
+.p-datepicker-panel .p-datepicker-prev-button:hover,
+.p-datepicker-panel .p-datepicker-next-button:hover {
+  background: var(--surface-2) !important;
+  color: var(--fg-1) !important;
+}
+
+/* Calendar grid padding */
+.p-datepicker-panel .p-datepicker-calendar-container {
+  padding: 10px 14px !important;
+}
+
+/* Weekday headers (SU MO TU …) */
+.p-datepicker-panel .p-datepicker-weekday {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--fg-3);
+}
+
+/* Day cells */
+.p-datepicker-panel .p-datepicker-day {
+  border-radius: var(--radius-md);
+  color: var(--fg-2);
+  font-size: 13px;
+  transition: background 120ms, color 120ms;
+  background: transparent;
+}
+.p-datepicker-panel .p-datepicker-day:hover {
+  background: var(--surface-2) !important;
+  color: var(--fg-1) !important;
+}
+
+/* Selected day */
+.p-datepicker-panel .p-datepicker-day.p-datepicker-day-selected,
+.p-datepicker-panel .p-datepicker-day.p-datepicker-day-selected:hover {
+  background: var(--accent) !important;
+  color: var(--fg-inv) !important;
+  font-weight: 600;
+}
+
+/* Today (when not selected) */
+.p-datepicker-panel .p-datepicker-today .p-datepicker-day:not(.p-datepicker-day-selected) {
+  background: var(--accent-muted) !important;
+  color: var(--accent) !important;
+}
+
+/* Days from adjacent months */
+.p-datepicker-panel .p-datepicker-other-month .p-datepicker-day {
+  color: var(--fg-3);
+  opacity: 0.5;
+}
+
+/* Time picker — correct v20 class name */
+.p-datepicker-panel .p-datepicker-time-picker {
+  border-top: 1px solid var(--border);
+  background: var(--surface-2) !important;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.p-datepicker-panel .p-datepicker-separator {
+  color: var(--fg-3);
+  font-weight: 600;
+}
+
+/* Time value display (hour / minute spans) */
+.p-datepicker-panel .p-datepicker-hour-picker span,
+.p-datepicker-panel .p-datepicker-minute-picker span {
+  font-family: var(--font-mono);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--fg-1);
+}
+
+/* Increment / decrement buttons */
+.p-datepicker-panel .p-datepicker-increment-button,
+.p-datepicker-panel .p-datepicker-decrement-button {
+  color: var(--fg-3) !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: var(--radius-sm) !important;
+}
+.p-datepicker-panel .p-datepicker-increment-button:hover,
+.p-datepicker-panel .p-datepicker-decrement-button:hover {
+  background: var(--surface-3) !important;
+  color: var(--fg-1) !important;
+}
